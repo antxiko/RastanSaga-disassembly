@@ -1,0 +1,33 @@
+# Puntos de entrada del banco 0. Los escribe tools/cartucho.py
+# (`make semillas`), que sigue el flujo por el cartucho entero
+# llevando la cuenta de los bancos. Los saltos dentro del propio
+# banco los encuentra z80trace.py solo.
+!texto 0x4612   # detras del call, una cadena acabada en 0
+0x4011   # INIT de la cabecera (p00:4002)
+0x406c   # interrupcion: p00:405E pone `jp 0x406C` en H.TIMI
+0x42ba   # call desde p06:6A1F
+0x431f   # call desde p04:8C53
+0x43af   # call desde p05:6589
+0x440e   # call desde p04:8CC0
+0x445d   # call desde p04:8C9E
+0x44de   # call desde p03:6768
+0x44f1   # call desde p01:60D1
+0x4633   # call desde p04:8CFA
+0x46c9   # call desde p05:61F4
+0x4777   # call desde p06:638D
+0x4823   # call desde p06:605B
+0x48b6   # call desde p03:60BE
+0x48f9   # call desde p03:798B
+0x4a8b   # call desde p03:7B76
+0x4b10   # call desde p03:7896
+0x4e14   # tarea 0 (tabla p00:429A)
+0x524f   # tarea 1 (tabla p00:429A)
+0x56f2   # tarea 2 (tabla p00:429A)
+0x5760   # tarea 3 (tabla p00:429A)
+0x5799   # tarea 4 (tabla p00:429A)
+0x57af   # call desde p05:6494
+0x57bb   # call desde p05:64B1
+0x57c7   # call desde p05:64E1
+0x58c3   # call desde p03:7F72
+0x5aa5   # call desde p06:6196
+0x5b95   # call desde p06:6203

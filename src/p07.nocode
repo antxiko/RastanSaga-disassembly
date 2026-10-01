@@ -1,0 +1,6 @@
+# Zonas del banco 7 donde el trazador NO puede entrar: las tablas
+# de saltos (tools/cartucho_datos.py, ZONAS_TABLA).
+0x8407 0x844c   tabla de 3 bytes que salta p07:819E (entradas 1-23)
+0x8596 0x85f2   tabla de 4 bytes que salta p07:847A (entradas 1-23)
+0x864c 0x8668   tabla de 14 palabras que salta p07:864A
+0x8c13 0x8c31   tabla de 15 palabras que salta p07:8C11

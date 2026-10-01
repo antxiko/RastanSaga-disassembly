@@ -1,0 +1,2 @@
+# Zonas del banco 2 donde el trazador NO puede entrar: las tablas
+# de saltos (tools/cartucho_datos.py, ZONAS_TABLA).

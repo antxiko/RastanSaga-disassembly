@@ -1,0 +1,10 @@
+# Puntos de entrada del banco 1. Los escribe tools/cartucho.py
+# (`make semillas`), que sigue el flujo por el cartucho entero
+# llevando la cuenta de los bancos. Los saltos dentro del propio
+# banco los encuentra z80trace.py solo.
+0x6000   # call desde p00:4050
+0x6020   # call desde p00:4053
+0x6077   # call desde p00:4FB2
+0x6153   # call desde p00:40A1
+0x63e1   # call desde p00:4157
+0x640f   # call desde p00:4148

@@ -1,0 +1,47 @@
+# Puntos de entrada del banco 7. Los escribe tools/cartucho.py
+# (`make semillas`), que sigue el flujo por el cartucho entero
+# llevando la cuenta de los bancos. Los saltos dentro del propio
+# banco los encuentra z80trace.py solo.
+0x8000   # p06:7FFE sigue de largo (el codigo cruza la frontera de banco)
+0x807c   # call desde p06:7F9C
+0x80e6   # call desde p06:7EDF
+0x8104   # call desde p06:6946
+0x81a0   # tabla de p07:819E
+0x81de   # tabla de p07:819E
+0x8214   # tabla de p07:819E
+0x8250   # tabla de p07:819E
+0x828e   # tabla de p07:819E
+0x83f6   # tabla de p07:819E
+0x847c   # tabla de p07:847A
+0x8495   # tabla de p07:847A
+0x84be   # tabla de p07:847A
+0x84e7   # tabla de p07:847A
+0x8500   # tabla de p07:847A
+0x8519   # tabla de p07:847A
+0x8532   # tabla de p07:847A
+0x854b   # tabla de p07:847A
+0x8668   # tabla de p07:864A
+0x876e   # tabla de p07:864A
+0x878b   # tabla de p07:864A
+0x87a8   # tabla de p07:864A
+0x87f1   # tabla de p07:864A
+0x883d   # tabla de p07:864A
+0x8856   # tabla de p07:864A
+0x8873   # tabla de p07:864A
+0x8891   # tabla de p07:864A
+0x8892   # tabla de p07:864A
+0x893e   # tabla de p07:864A
+0x8c4f   # tabla de p07:8C11
+0x8c53   # tabla de p07:8C11
+0x8c57   # tabla de p07:8C11
+0x8c6f   # tabla de p07:8C11
+0x8c73   # tabla de p07:8C11
+0x8c7a   # tabla de p07:8C11
+0x8c7e   # tabla de p07:8C11
+0x8c82   # tabla de p07:8C11
+0x8cb6   # tabla de p07:8C11
+0x8cc8   # tabla de p07:8C11
+0x8ce1   # tabla de p07:8C11
+0x8cfc   # tabla de p07:8C11
+0x8d0a   # tabla de p07:8C11
+0x91d1   # jp cc desde p06:7C95

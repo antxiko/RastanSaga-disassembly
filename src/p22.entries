@@ -1,0 +1,5 @@
+# Puntos de entrada del banco 22. Los escribe tools/cartucho.py
+# (`make semillas`), que sigue el flujo por el cartucho entero
+# llevando la cuenta de los bancos. Los saltos dentro del propio
+# banco los encuentra z80trace.py solo.
+# Ninguno: en este banco no se ejecuta nada.

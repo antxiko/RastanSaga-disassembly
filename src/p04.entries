@@ -1,0 +1,17 @@
+# Puntos de entrada del banco 4. Los escribe tools/cartucho.py
+# (`make semillas`), que sigue el flujo por el cartucho entero
+# llevando la cuenta de los bancos. Los saltos dentro del propio
+# banco los encuentra z80trace.py solo.
+0x8002   # p03:7FFF sigue de largo (el codigo cruza la frontera de banco)
+0x8003   # jr cc desde p03:7FDF
+0x8016   # jp cc desde p03:6005
+0x8262   # jp cc desde p03:600A
+0x848e   # jp cc desde p03:600F
+0x8799   # jp cc desde p03:6014
+0x89ce   # jp cc desde p03:6019
+0x8bf4   # jp cc desde p03:601E
+0x8c06   # jp cc desde p03:6023
+0x8c18   # jp cc desde p03:6028
+0x8c2a   # jp cc desde p03:602D
+0x8c3c   # jp cc desde p03:6032
+0x8c4e   # jp cc desde p03:6037
