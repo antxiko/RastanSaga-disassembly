@@ -1,43 +1,1343 @@
 
+
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+B 0x6000 LOS ACTORES (tarea 3, cada cuadro). En las fases de jefe (2, 5, 8, 0x0B,
+B 0x6000 0x0E y 0x12-0x17) salta a la rutina del jefe en p04. Si no, mueve UN actor
+B 0x6000 de los tres de D933 por cuadro (DA1A apunta al que toca, DA1C cuenta), con
+B 0x6000 la rutina de su tipo de la tabla p03:60C9.
+L 0x6000 actores
+C 0x6000 la fase...
+C 0x6003 ...2: el jefe de p04:8016
+C 0x6008 5: p04:8262
+C 0x600D 8: p04:848E
+C 0x6012 0x0B: p04:8799
+C 0x6017 0x0E: p04:89CE
+C 0x601C 0x12: p04:8BF4
+C 0x6021 0x13: p04:8C06
+C 0x6026 0x14: p04:8C18
+C 0x602B 0x15: p04:8C2A
+C 0x6030 0x16: p04:8C3C
+C 0x6035 0x17: p04:8C4E
+C 0x603A el actor al que le toca
+C 0x603E su tipo: 0, hueco
+C 0x6045 0x24: el que suelta objetos (p03:607A)
+C 0x604A tipo - 1...
+C 0x604F ...en la tabla de p03:60C9
+C 0x6057 la rutina vuelve a p03:605C
+C 0x605B salta a la rutina del tipo
+L 0x605C siguiente_actor
+C 0x605C cuantos quedan en la vuelta
+C 0x6060 38 bytes por actor
+C 0x6065 acabada la vuelta...
+C 0x6067 ...otra vez desde el primero
+C 0x606A apunta el siguiente
+L 0x6073 primer_actor
+C 0x6073 D933, tres actores
+B 0x607A Tipo 0x24: cuando acaba su animacion (+2 bit 7), si no hay bloque
+B 0x607A especial en la pantalla, una vez de cada cuatro deja uno al azar (tipos
+B 0x607A 4-0x12) donde estaba, y se da de baja.
+L 0x607A suelta_objeto
+C 0x607A un paso de animacion
+C 0x607D aun no ha acabado
+C 0x6084 ya hay un bloque especial: nada
+C 0x608B al azar...
+C 0x608E ...una vez de cada cuatro
+C 0x6095 en su casilla: x...
+C 0x609F ...e y
+L 0x60A9 tipo_al_azar
+C 0x60A9 azar...
+C 0x60AD ...mezclado con R
+C 0x60B0 0-15 + 3...
+C 0x60B4 ...pero no el 3: de 4 a 0x12
+C 0x60B9 apuntado...
+C 0x60BE ...y pintado
+L 0x60C3 se_va
+C 0x60C3 se da de baja
+D 0x60C9 0x6109 rutinas_por_tipo  La rutina de cada tipo de actor (1-32); las del 22 en adelante son p03:6109, un `ret`
+F 0x60C9 w8
+L 0x6109 tipo_sin_rutina
+C 0x6109 nada
+B 0x610A Tipo 0x0B: se vuelve hacia Rastan y, si delante no hay una casilla de clase
+B 0x610A 0x20, se le acerca en y, anda y a veces cambia de rumbo al azar.
+L 0x610A tipo_0b
+C 0x610A sin vida: p03:7AAF
+C 0x6111 de cara a Rastan? (p03:7B29)
+C 0x6115 de espaldas: se da la vuelta
+C 0x6118 las casillas de alrededor
+C 0x611B la de los pies: clase 0x20?
+C 0x6125 se acerca 2 pixeles a la y de Rastan (p03:7B90)...
+C 0x6128 ...anda 2 pixeles (p03:7E83)...
+C 0x612B ...y a veces cambia de direccion
+C 0x612E pintado
+L 0x6131 tipo_0b_pinta
+B 0x6134 Tipo 0x0C: la primera vez pide el efecto 9; se vuelve hacia Rastan, rebota
+B 0x6134 en los bordes de la pantalla, anda y se le acerca en y.
+L 0x6134 tipo_0c
+C 0x6134 sin vida
+C 0x613B +10 = 0: la primera vez...
+C 0x6141 ...efecto 9...
+C 0x6146 ...y ya no
+L 0x614A tipo_0c_mueve
+C 0x614A de espaldas a Rastan: se da la vuelta
+C 0x6151 x < 1: a la derecha
+C 0x6159 x >= 0xEF: a la izquierda
+C 0x615E y < 1: hacia abajo
+C 0x6166 y >= 0xB6: hacia arriba
+C 0x616B las casillas
+C 0x616E delante, clase 0x20: se para
+C 0x6178 anda 2 pixeles...
+C 0x617B ...y se acerca a la y de Rastan
+L 0x6181 tipo_0c_pinta
+L 0x6184 cambia_al_azar
+C 0x6184 B = 4
+C 0x6186 R & 0x18: al azar
+C 0x618A (este `cp 0` no sirve: el `jr` salta siempre)
+D 0x618E 0x619B resto_618E  trozos de codigo que nadie ejecuta (`cp 8`, `cp 0x10`, `ld a,(ix+6)`)
+L 0x619B x_menos_b
+C 0x619B la x del actor - B
+D 0x61A0 0x61AA resto_61A0  dos trozos que nadie ejecuta (`ld a,(ix+7) / add a,b / ret` y `sub b`)
+B 0x61AA Tipo 0x0E: si esta de espaldas a Rastan se da la vuelta; si no, anda mientras
+B 0x61AA tenga suelo delante, y cae si no hay nada debajo.
+L 0x61AA tipo_0e
+C 0x61AA sin vida
+C 0x61B1 de espaldas: se da la vuelta y nada mas
+C 0x61B8 debajo, casillas de clase 0xF0 (nada)?...
+C 0x61BD ...cae un pixel (p03:7E4B)
+C 0x61C0 (los dos `call` de abajo no tienen condicion: da la vuelta dos veces y queda igual)
+C 0x61CD las casillas
+C 0x61D0 mirando a la izquierda...
+C 0x61D6 ...delante una pared (0x20): se para
+C 0x61DF ...si la de delante-abajo no es suelo: da la vuelta
+L 0x61EB tipo_0e_der
+C 0x61EB a la derecha, lo mismo
+C 0x61FD anda
+L 0x6203 tipo_0e_pinta
+B 0x6206 Tipo 0x10: anda hasta 0x20 pasos y lanza un proyectil (el actor 5, D9F1)
+B 0x6206 cada tanto; con +13 se para un rato al azar.
+L 0x6206 tipo_10
+C 0x6206 sin vida
+C 0x620D el actor 5 con +15 = 0x0F: proyectil en vuelo, se mueve
+C 0x6215 +1 bit 1: le toca lanzar
+C 0x621C de espaldas: se da la vuelta y nada mas
+C 0x6223 +11: esperando
+C 0x622A +13: parado un rato
+C 0x6235 x < 1: derecha
+C 0x623D x >= 0xEF: izquierda
+C 0x6242 las casillas
+C 0x6245 mirando a la izquierda...
+C 0x624B ...pared: se para
+C 0x6255 ...sin suelo delante: se para
+L 0x6261 tipo_10_der
+L 0x6275 tipo_10_anda
+C 0x6275 +10: pasos dados; a 0x20, lanza
+C 0x627D uno mas
+C 0x6281 anda
+L 0x6284 tipo_10_parado
+C 0x6284 +13 = 0xFF: se queda parado
+L 0x628B tipo_10_lanza
+C 0x628B el actor 4 ya tiene +15 = 0x0F: no
+C 0x6292 marca de lanzar
+C 0x6296 pasos a 0...
+C 0x629A ...y 15 cuadros de espera
+C 0x62A5 el proyectil (+15)...
+L 0x62AC tipo_10_espera
+C 0x62AC un cuadro menos de espera
+L 0x62B3 tipo_10_al_azar
+C 0x62B3 R con paridad impar...
+C 0x62B8 ...un cuadro menos parado
+L 0x62BF tipo_10_ya
+C 0x62BF ...si no, lanza
+B 0x62C6 El proyectil del tipo 0x10: el actor 5 (D9F1). Sale del lado al que mira
+B 0x62C6 quien lo lanza (IY) y sigue una lista de pasos (p03:63D6).
+L 0x62C6 proyectil
+C 0x62C6 IY = el que lanza
+C 0x62CC IX = el actor 5
+C 0x62D0 +15 = 0: aun no ha salido
+C 0x62D8 0x0F: en vuelo (este `cp` no decide nada)
+L 0x62DC lanza_proyectil
+C 0x62DC el que lanza ha acabado su animacion?
+C 0x62E3 en vuelo
+C 0x62E7 se coloca
+C 0x62EA la lista de pasos de p03:63D6
+C 0x62F0 alta...
+C 0x62F3 ...y pintado
+L 0x62F9 pinta_y_vuelve
+L 0x62FF fin_proyectil
+C 0x62FF +15 = 0: ya no hay
+C 0x6303 la lista otra vez al principio
+C 0x630C baja
+L 0x6312 coloca_proyectil
+C 0x6312 mira al mismo lado que quien lo lanza
+C 0x6318 a la izquierda: x - 16...
+L 0x6328 coloca_der
+C 0x6328 ...a la derecha: x + 16
+L 0x6330 coloca_y
+C 0x6330 y + 6
+C 0x6338 tipo 0x16
+C 0x633D pose 0x10, con el lado
+L 0x6348 mueve_proyectil
+C 0x6348 las casillas
+C 0x634B toca una de clase 0x20: se acaba
+C 0x6355 hacia la izquierda...
+C 0x635B ...p03:6AFF: 0, se acaba
+C 0x6362 el paso siguiente de la lista
+C 0x636A 0xFF: se acaba
+C 0x636F x - paso
+C 0x637B menos de 4: p03:6AAE
+C 0x6380 nueva x
+C 0x6383 y la y
+L 0x6385 mueve_proyectil_der
+C 0x6385 hacia la derecha: p03:6B2C...
+C 0x6388 ...0: se acaba
+C 0x638C el paso siguiente
+C 0x6394 0xFF: se acaba
+C 0x6399 x + paso
+C 0x63A5 por la derecha de 0xE6: p03:6AAB
+C 0x63AD y uno mas
+L 0x63B4 proyectil_y
+C 0x63B4 el paso en y
+C 0x63B6 0xFF: se acaba
+C 0x63BC y + paso
+C 0x63C3 apunta por donde va
+C 0x63C9 pose 0x10 con el lado
+D 0x63D6 0x63F3 pasos_proyectil  Los pasos del proyectil del tipo 0x10: un byte de cabecera y pares (x, y) hasta 0xFF
+D 0x63F3 0x640F resto_63F3  codigo que nadie ejecuta (mira la x de Rastan contra el actor)
+L 0x640F huerfana_choca_x
+C 0x640F nadie la llama: si la x del actor >= D...
+L 0x6417 choca_y
+C 0x6417 ...y su y < la de Rastan...
+C 0x641F ...le hace dano
+B 0x6423 DANO POR CHOQUE: 8 de vida a Rastan, como p06:7818, y ademas la pose de
+B 0x6423 tocado (bit 6) sin el ataque (bit 5).
+L 0x6423 dano_por_choque
+C 0x6423 D = 8
+C 0x6425 ya tocado...
+C 0x642B ...o sin mandos: nada
+C 0x642E tocado y sin mandos
+C 0x6435 la pose: tocado, sin ataque
+C 0x643F 0x50 cuadros
+C 0x6444 D910 bit 7: no pierde vida
+C 0x644A vida - 8
+C 0x6451 a 0: muere
+L 0x6454 muere_por_choque
+C 0x6454 vida 0...
+C 0x6458 ...y D90F = 0x80: muerto
+B 0x645E Tipo 1: anda; salta (+10/+11/+12: subir y bajar de dos en
+B 0x645E dos pixeles) segun lo que hay delante, y cuando esta cerca para.
+L 0x645E tipo_01
+C 0x645E sin vida
+C 0x6465 +12: bajando
+C 0x646C +11: subiendo
+C 0x6473 +10: subiendo un poco
+C 0x6479 un cuadro menos...
+C 0x647D ...y 2 pixeles arriba
+C 0x6485 la pose del salto (bit 2)
+C 0x648D anda
+L 0x6493 tipo_01_suelo
+C 0x6493 fuera la pose del salto
+C 0x6497 nada debajo?...
+C 0x649C ...cae
+C 0x649F x < 1: a la derecha
+C 0x64A7 x >= 0xE6: a la izquierda
+C 0x64AC a cuanto esta de Rastan en x
+C 0x64AF menos de 4: p03:656E
+C 0x64B4 las casillas
+C 0x64B7 mirando a la izquierda...
+C 0x64BD ...pared delante: da la vuelta
+C 0x64CC ...casilla de tipo 2 debajo-delante: p03:661F
+L 0x64D6 tipo_01_delante
+C 0x64D6 la casilla de debajo-delante, nibble bajo:
+C 0x64DB 0x0F: p03:6558
+C 0x64E0 1: da la vuelta
+C 0x64EA 2 o 3: p03:6591
+C 0x64F4 4: p03:6560
+C 0x64F9 5 o 6: un salto alto (p03:65B3)
+C 0x6503 mas: p03:6602
+L 0x6506 tipo_01_vuelta
+L 0x650C tipo_01_der
+C 0x650C a la derecha, lo mismo con las otras casillas
+L 0x6525 tipo_01_der_delante
+L 0x6555 tipo_01_der_vuelta
+L 0x6558 tipo_01_cerca
+C 0x6558 a 0x30 o mas de Rastan...
+L 0x6560 tipo_01_anda
+C 0x6560 la pose de andar
+L 0x6568 tipo_01_pinta
+C 0x6568 anda
+L 0x656E tipo_01_junto
+C 0x656E cerca: al azar (paridad de R)...
+C 0x6574 ...de espaldas a Rastan, se da la vuelta
+C 0x657B a cuanto esta en y
+C 0x657E lejos: nada
+C 0x6583 pose con el bit 1
+L 0x658E tipo_01_fin
+L 0x6591 tipo_01_escalon
+C 0x6591 la de encima-delante libre: salta un poco (+10 = 12)
+L 0x659B tipo_01_salta
+L 0x65A2 tipo_01_escalon_der
+L 0x65B3 tipo_01_salto_alto
+C 0x65B3 pose del salto, +11 = 16 cuadros subiendo
+L 0x65C2 huerfana_baja
+C 0x65C2 nadie llega aqui: +12 = 16
+L 0x65C9 tipo_01_bajando
+C 0x65C9 2 pixeles abajo
+C 0x65D1 un cuadro menos
+L 0x65DB tipo_01_subiendo
+C 0x65DB pose del salto
+C 0x65E3 2 pixeles arriba
+C 0x65EB un cuadro menos...
+C 0x65F2 ...y al acabar...
+L 0x65F9 tipo_01_cumbre
+C 0x65F9 ...16 cuadros bajando
+D 0x6600 0x6602 resto_6600  dos `ret` que nadie ejecuta
+L 0x6602 tipo_01_otra
+C 0x6602 0x0F: da la vuelta
+L 0x6609 tipo_01_otra_der
+L 0x6611 tipo_01_vuelta_cerca
+C 0x6611 da la vuelta...
+C 0x6614 ...y si esta cerca, p03:656E
+L 0x661F tipo_01_tipo2
+C 0x661F la de encima-delante libre: salta
+L 0x662C tipo_01_tipo2_der
+B 0x6639 Tipo 7: pide el efecto 9 la primera vez; anda y se para en los bordes
+B 0x6639 o lejos de Rastan (0x58 en y).
+L 0x6639 tipo_07
+C 0x6639 sin vida
+C 0x6640 la primera vez...
+C 0x6646 ...efecto 9
+L 0x664F tipo_07_mueve
+C 0x664F de espaldas a Rastan: se da la vuelta
+C 0x6656 x < 0x1E o >= 0xDC: se para
+C 0x6663 y < 0x28: se para
+C 0x666B las casillas
+C 0x666E pared: se para
+C 0x6678 anda
+C 0x667B a cuanto esta en y
+C 0x667E 0x58 o menos: se para
+C 0x6684 si no, se acerca a la y de Rastan
+L 0x668A tipo_07_pinta
+B 0x668D Tipo 4: pide el efecto 9; anda, y en cuanto esta a menos de 0x20 de
+B 0x668D Rastan en x se lanza hacia el (p03:7BA7).
+L 0x668D tipo_04
+C 0x668D sin vida
+C 0x6694 la primera vez, efecto 9
+L 0x66A3 tipo_04_mueve
+C 0x66AA de espaldas: se da la vuelta y nada mas
+C 0x66B1 x < 1: a la derecha
+C 0x66B9 x >= 0xEF: y = 0xA0 (p03:670A)
+C 0x66BE y < 0x28: p03:6728
+C 0x66C6 las casillas
+C 0x66C9 mirando a la izquierda: pared o suelo raro, se para
+L 0x66E4 tipo_04_der
+C 0x66F6 a menos de 0x20 de Rastan...
+L 0x66FD tipo_04_se_lanza
+C 0x66FD ...hacia la y de Rastan - 0x14
+L 0x670A tipo_04_abajo
+L 0x670F tipo_04_cerca
+C 0x670F a cuanto esta en y
+C 0x6714 lejos: se lanza
+C 0x6716 hacia la y de Rastan - 0x14...
+C 0x671C ...contando en +13...
+C 0x671F ...con la pose del bit 1
+L 0x6722 tipo_04_sube
+C 0x6722 un pixel arriba
+L 0x6728 tipo_04_baja
+C 0x6728 un pixel abajo
+L 0x672E huerfana_tipo_04
+C 0x672E nadie la llama: de cara a Rastan, se da la vuelta...
+C 0x6735 ...fuera de x 0x1E-0xDB, baja...
+C 0x6742 ...y si no, va hacia la y A
+B 0x6745 Tipo 0x0D: de cara a Rastan; cae si no hay nada debajo; retrocede un rato
+B 0x6745 (+10) y anda de pixel en pixel mientras tenga suelo delante.
+L 0x6745 tipo_0d
+C 0x6745 sin vida
+C 0x674C de espaldas: se da la vuelta
+C 0x6753 nada debajo: cae
+C 0x675B +10: retrocediendo
+C 0x6761 un cuadro menos...
+C 0x6765 ...2 pixeles atras...
+C 0x6768 ...y al azar, se pinta y ya
+L 0x6770 tipo_0d_anda
+C 0x6770 x < 1 o >= 0xEF: rebota
+C 0x677D las casillas
+C 0x6780 mirando a la izquierda: pared o sin suelo, para
+L 0x679C tipo_0d_der
+L 0x67B0 tipo_0d_avanza
+C 0x67B0 un pixel
+L 0x67B3 tipo_0d_retrocede
+C 0x67B3 8 cuadros hacia atras
+B 0x67BA Tipo 3: como el tipo 1 (anda, salta los escalones) pero ademas lanza un
+B 0x67BA proyectil (el actor 3, D9A5) cuando esta cerca de Rastan en y.
+L 0x67BA tipo_03
+C 0x67BA sin vida
+C 0x67C1 su proyectil en vuelo: se mueve
+C 0x67C9 pose bit 2 (lanzando): tambien
+C 0x67D0 +12: bajando
+C 0x67D7 +11: subiendo
+C 0x67DE +10: subiendo un poco
+C 0x67E4 un cuadro menos, 2 pixeles arriba
+C 0x67ED pose del salto (bit 1)
+C 0x67F5 anda
+L 0x67FB tipo_03_suelo
+C 0x67FB fuera las poses del salto y de lanzar
+C 0x6803 nada debajo: cae
+C 0x680B x < 1 o >= 0xDC: rebota
+C 0x6818 muy cerca en x (menos de 4): p03:68D0
+C 0x6820 las casillas
+C 0x6823 mirando a la izquierda...
+C 0x6829 ...pared delante: da la vuelta y nada mas
+C 0x6838 ...casilla de tipo 2 debajo-delante: p03:6987
+L 0x6842 tipo_03_delante
+C 0x6842 la de debajo-delante, nibble bajo:
+C 0x6847 0x0F: p03:68BA
+C 0x684C 1: da la vuelta
+C 0x6851 2 o 3: escalon (p03:6901)
+C 0x685B 4: anda
+C 0x6860 5 o 6: salto alto (p03:6923)
+C 0x686A mas: p03:696A
+L 0x686D tipo_03_vuelta
+L 0x6873 tipo_03_der
+C 0x6873 a la derecha, igual con las otras casillas
+L 0x688C tipo_03_der_delante
+L 0x68B7 tipo_03_der_vuelta
+L 0x68BA tipo_03_lejos
+C 0x68BA a menos de 0x50 en x: p03:68D0
+L 0x68C2 tipo_03_anda
+C 0x68C2 pose de andar
+L 0x68CA tipo_03_pinta
+C 0x68CA 2 pixeles y pintado
+L 0x68D0 tipo_03_cerca
+C 0x68D0 proyectil en vuelo: solo se pinta
+C 0x68D8 de espaldas: se da la vuelta
+C 0x68DF a 0x20 o mas en y: nada
+C 0x68E7 pose de lanzar (bit 2)
+C 0x68F1 pintado
+C 0x68F6 sin proyectil: lo lanza
+L 0x68FE tipo_03_fin
+L 0x6901 tipo_03_escalon
+C 0x6901 encima-delante libre: salta un poco
+L 0x690B tipo_03_salta
+C 0x690B 12 cuadros subiendo
+L 0x6912 tipo_03_escalon_der
+L 0x6923 tipo_03_salto_alto
+C 0x6923 pose del salto, 16 cuadros subiendo
+L 0x6932 huerfana_tipo_03_baja
+C 0x6932 nadie llega aqui
+L 0x6939 tipo_03_bajando
+C 0x6939 2 abajo, un cuadro menos
+L 0x6945 tipo_03_subiendo
+C 0x6945 pose del salto, 2 arriba
+C 0x6953 un cuadro menos...
+L 0x6961 tipo_03_cumbre
+C 0x6961 ...y 16 bajando
+D 0x6968 0x696A resto_6968  dos `ret` que nadie ejecuta
+L 0x696A tipo_03_otra
+L 0x6971 tipo_03_otra_der
+L 0x6979 tipo_03_vuelta_cerca
+C 0x6979 se da la vuelta; cerca en x (0x30): p03:68D0
+L 0x6987 tipo_03_tipo2
+L 0x6994 tipo_03_tipo2_der
+L 0x69A1 tipo_03_quieto
+C 0x69A1 sin poses de salto ni de lanzar
+B 0x69AC El proyectil del tipo 3: el actor 3 (D9A5). Sale cuando acaba la
+B 0x69AC animacion de lanzar, con el efecto 0x0D, y sigue la lista de pasos de
+B 0x69AC p04:8BCF; se acaba al tocar una casilla de clase 0x20 o al acabar la lista.
+L 0x69AC proyectil_03
+C 0x69AC IY = el que lanza, IX = el actor 3
+C 0x69B6 +15 = 0: aun no ha salido
+C 0x69BC (este `cp` no decide nada)
+L 0x69C0 lanza_proyectil_03
+C 0x69C0 la animacion de lanzar ha acabado?
+C 0x69C7 efecto 0x0D
+C 0x69CC en vuelo
+C 0x69D0 se coloca
+C 0x69D3 la lista de pasos de p04:8BCF
+C 0x69DB alta...
+C 0x69E0 ...y pintado
+L 0x69E3 proyectil_03_fin
+L 0x69E6 acaba_proyectil_03
+C 0x69E6 ya no hay
+C 0x69EA la lista al principio
+C 0x69F3 baja
+L 0x69F9 coloca_proyectil_03
+C 0x69F9 mira al mismo lado
+C 0x69FF a la izquierda: x - 0x0C
+L 0x6A0F coloca_03_der
+C 0x6A0F a la derecha: x + 0x1C
+L 0x6A17 coloca_03_y
+C 0x6A17 y + 8
+C 0x6A1F tipo 0x16, pose con el bit 3
+L 0x6A29 mueve_proyectil_03
+C 0x6A29 las casillas
+C 0x6A2C toca una de clase 0x20: se acaba
+C 0x6A36 hacia la izquierda...
+C 0x6A3C ...p03:6AB7
+C 0x6A3F el paso siguiente
+C 0x6A47 0xFF: se acaba
+C 0x6A4C x - paso, sin bajar de 4
+L 0x6A62 mueve_proyectil_03_der
+C 0x6A62 hacia la derecha: p03:6ADB
+C 0x6A6D 0xFF: se acaba
+C 0x6A72 x + paso, sin pasar de 0xE6, y uno mas
+L 0x6A89 proyectil_03_y
+C 0x6A89 el paso en y
+C 0x6A8B 0xFF: se acaba
+C 0x6A91 y + paso
+C 0x6A98 apunta por donde va
+C 0x6A9E la pose: bits 0, 1 y 3 de la suya y el 1 y el 3 puestos
+L 0x6AAB tope_e6
+C 0x6AAB A = 0xE6
+L 0x6AAE tope_4
+C 0x6AAE A = 4
+L 0x6AB1 proyectil_03_pinta
+B 0x6AB7 El proyectil (hacia la izquierda) contra Rastan: si cae en su caja
+B 0x6AB7 (x + 8 a x + 16, y - 4 a y + 0x18), le hace dano.
+L 0x6AB7 proyectil_toca_izq
+C 0x6AB7 B = x de Rastan
+C 0x6ABB C = y de Rastan
+C 0x6ABF D, E = la x y la y del proyectil
+C 0x6AC5 a la izquierda de x + 8: no
+C 0x6ACA a la derecha de x + 16: no
+C 0x6ACE por encima de y - 4: no
+C 0x6AD3 por debajo de y + 0x18: no
+C 0x6AD7 le da
+L 0x6ADB proyectil_toca_der
+C 0x6ADB lo mismo yendo a la derecha (x - 8 a x + 8)
+C 0x6AE9 a la derecha de x + 8: no
+C 0x6AEE a la izquierda de x - 8: no
+C 0x6AF2 y entre y - 4 e y + 0x18
+C 0x6AFB le da
+B 0x6AFF Lo mismo pero agachado (pose 4) no le da, y devuelve A = 0 si le ha
+B 0x6AFF dado: el proyectil se acaba.
+L 0x6AFF proyectil_choca_izq
+C 0x6AFF agachado: pasa por encima
+C 0x6B07 Rastan
+C 0x6B0F el proyectil
+C 0x6B15 x + 8 a x + 16
+C 0x6B1E y - 4 a y + 0x18
+C 0x6B27 le da...
+C 0x6B2A ...y A = 0
+L 0x6B2C proyectil_choca_der
+C 0x6B2C agachado: pasa por encima
+C 0x6B42 x - 8 a x + 8
+C 0x6B4B y - 4 a y + 0x18
+C 0x6B54 le da, A = 0
+B 0x6B59 Tipo 5: de cara a Rastan; anda deprisa si esta a menos de 0x40 en x y, si
+B 0x6B59 esta lejos en x pero cerca en y, lanza un proyectil recto (el actor 5).
+L 0x6B59 tipo_05
+C 0x6B59 sin vida
+C 0x6B60 proyectil en vuelo: se mueve
+C 0x6B68 pose bit 1 (lanzando): tambien
+C 0x6B6F de espaldas: se da la vuelta y nada mas
+C 0x6B76 nada debajo: cae
+C 0x6B7E rebota en los bordes
+C 0x6B8B las casillas
+C 0x6B8E mirando a la izquierda: pared o sin suelo, para
+L 0x6BAA tipo_05_der
+L 0x6BBE tipo_05_anda
+C 0x6BBE a menos de 0x40 en x: anda 2 pixeles
+L 0x6BC8 tipo_05_pinta
+C 0x6BC8 pose sin el bit 1
+L 0x6BCF tipo_05_parado
+C 0x6BCF cerca: solo se pinta
+L 0x6BD8 tipo_05_lanza
+C 0x6BD8 ya hay proyectil: nada
+C 0x6BDF a 0x20 o mas en y: nada
+C 0x6BE7 pose de lanzar
+C 0x6BF2 sin proyectil: lo lanza
+L 0x6BFA proyectil_05
+C 0x6BFA IY = el que lanza, IX = el actor 5
+C 0x6C04 +15 = 0: aun no ha salido
+C 0x6C0C (este `cp` no decide nada)
+L 0x6C10 lanza_proyectil_05
+C 0x6C10 la animacion de lanzar ha acabado?
+C 0x6C17 en vuelo
+C 0x6C1B se coloca
+C 0x6C1E alta y pintado
+L 0x6C24 proyectil_05_fin
+L 0x6C27 sigue_proyectil_05
+L 0x6C2A proyectil_05_pinta
+L 0x6C30 coloca_proyectil_05
+C 0x6C30 pose 0x15
+C 0x6C34 +13 = la pose del que lanza (el lado)
+C 0x6C3A a la izquierda: +12 bit 0 y x - 0x0C
+L 0x6C4E coloca_05_der
+C 0x6C4E a la derecha: x + 0x1C
+L 0x6C5A coloca_05_y
+C 0x6C5A la misma y
+C 0x6C60 tipo 0x16
+L 0x6C66 mueve_proyectil_05
+C 0x6C66 las casillas
+C 0x6C69 toca una de clase 0x20: se acaba
+C 0x6C73 C = x de Rastan + 8
+C 0x6C79 hacia la izquierda...
+C 0x6C7F ...si da a Rastan, se acaba
+C 0x6C86 3 pixeles a la izquierda...
+C 0x6C8C ...hasta x = 4
+L 0x6C96 mueve_proyectil_05_der
+C 0x6C96 hacia la derecha...
+C 0x6C9A ...si da a Rastan, se acaba
+C 0x6CA1 3 pixeles a la derecha, hasta 0xF0
+L 0x6CAF proyectil_05_sigue
+L 0x6CB2 acaba_proyectil_05
+C 0x6CB2 el actor 5...
+C 0x6CB6 ...ya no esta...
+C 0x6CBA ...y se da de baja
+L 0x6CC0 huerfana_baja_actor5
+C 0x6CC0 nadie la llama: baja del actor 5
+D 0x6CCA 0x6CDC resto_6CCA  un trozo que nadie ejecuta (distancia en y a Rastan)
+B 0x6CDC Tipo 9: de cara a Rastan. Lejos (mas de 0x50 en x) anda hacia el; justo a
+B 0x6CDC 0x50 se para; mas cerca retrocede o lanza un proyectil (el actor 4).
+L 0x6CDC tipo_09
+C 0x6CDC sin vida
+C 0x6CE3 proyectil en vuelo: se mueve
+C 0x6CEB pose bit 1 (lanzando): tambien
+C 0x6CF2 de espaldas: se da la vuelta
+C 0x6CF9 nada debajo: cae
+C 0x6D01 a cuanto esta en x
+C 0x6D06 justo 0x50: quieto
+C 0x6D09 mas cerca: p03:6D56
+C 0x6D0C mirando a la izquierda...
+C 0x6D12 ...casilla de tipo 1 debajo-delante: quieto
+C 0x6D1C ...pared: quieto
+L 0x6D29 tipo_09_der
+L 0x6D3C tipo_09_anda
+C 0x6D3C con proyectil en vuelo no anda
+C 0x6D43 2 pixeles, pose de andar, pintado
+L 0x6D4E tipo_09_quieto
+L 0x6D56 tipo_09_cerca
+C 0x6D56 en los bordes (x < 0x10 o >= 0xDC): lanza
+C 0x6D63 mirando a la izquierda: la de detras...
+C 0x6D6A ...pared o sin suelo: lanza
+C 0x6D7E si no, retrocede 2 pixeles
+L 0x6D88 tipo_09_cerca_der
+L 0x6DA6 tipo_09_lanza
+C 0x6DA6 ya hay proyectil: quieto
+C 0x6DAD pose de lanzar
+C 0x6DB8 sin proyectil: lo lanza
+L 0x6DBF tipo_09_pinta
+L 0x6DC6 da_la_vuelta_y_vuelve
+L 0x6DCA proyectil_09
+C 0x6DCA IY = el que lanza, IX = el actor 4
+C 0x6DD4 +15 = 0: aun no ha salido
+C 0x6DDC (este `cp` no decide nada)
+L 0x6DE0 lanza_proyectil_09
+C 0x6DE0 la animacion de lanzar ha acabado?
+C 0x6DE7 en vuelo
+C 0x6DEB se coloca
+C 0x6DEE alta y pintado
+L 0x6DF4 proyectil_09_fin
+L 0x6DF7 proyectil_09_pinta
+L 0x6DFD acaba_proyectil_09
+C 0x6DFD ya no esta, y baja
+L 0x6E07 coloca_proyectil_09
+C 0x6E07 pose 0x13
+C 0x6E0B a la izquierda: x - 0x10
+L 0x6E1F coloca_09_der
+C 0x6E1F a la derecha: x + 0x20
+L 0x6E2B coloca_09_y
+C 0x6E31 tipo 0x16
+L 0x6E37 mueve_proyectil_09
+C 0x6E37 las casillas
+C 0x6E3A toca una de clase 0x20: se acaba
+C 0x6E44 C = x de Rastan + 8
+C 0x6E4A hacia la izquierda: si da a Rastan, se acaba
+C 0x6E57 2 pixeles a la izquierda, hasta 4
+L 0x6E66 mueve_proyectil_09_der
+C 0x6E66 hacia la derecha: si da a Rastan, se acaba
+C 0x6E6D 2 pixeles a la derecha, hasta 0xF0
+L 0x6E7A proyectil_09_sigue
+L 0x6E7D acaba_proyectil_09_b
+C 0x6E7D el actor 4 ya no esta...
+C 0x6E85 ...y se da de baja
+L 0x6E8B huerfana_baja_actor4
+C 0x6E8B nadie la llama: baja del actor 4
+B 0x6E95 Tipo 0x13: como el tipo 1 (anda, sube escalones, salta) pero no se mueve
+B 0x6E95 en todos los cuadros: R & 0x52 con paridad impar, solo se pinta.
+L 0x6E95 tipo_13
+C 0x6E95 sin vida
+C 0x6E9C al azar, este cuadro no se mueve
+C 0x6EA3 +12: bajando
+C 0x6EAA +11: subiendo
+C 0x6EB1 +10: subiendo un poco
+C 0x6EB7 un cuadro menos...
+C 0x6EBB ...2 pixeles arriba
+C 0x6EC3 fuera las poses 1 y 2
+C 0x6ECB anda
+L 0x6ED1 tipo_13_suelo
+C 0x6ED1 de espaldas: se da la vuelta
+C 0x6ED8 nada debajo: cae
+C 0x6EE0 rebota en los bordes
+C 0x6EED muy cerca en x: p03:6FAD
+C 0x6EF5 las casillas
+C 0x6EF8 mirando a la izquierda...
+C 0x6EFE ...pared: da la vuelta y nada mas
+C 0x6F0D ...casilla de tipo 2 debajo-delante: p03:705C
+L 0x6F17 tipo_13_delante
+C 0x6F17 la de debajo-delante, nibble bajo:
+C 0x6F1C 0x0F: p03:6F8F
+C 0x6F21 1: da la vuelta
+C 0x6F26 2 o 3: escalon
+C 0x6F30 4: anda
+C 0x6F35 5 o 6: salto alto
+C 0x6F3F mas: p03:703F
+L 0x6F42 tipo_13_vuelta
+L 0x6F48 tipo_13_der
+C 0x6F48 a la derecha, igual
+L 0x6F61 tipo_13_der_delante
+L 0x6F8C tipo_13_der_vuelta
+L 0x6F8F tipo_13_lejos
+C 0x6F8F a menos de 0x30 en x: p03:6FAD
+L 0x6F97 tipo_13_anda
+C 0x6F97 fuera las poses 1 y 2
+L 0x6F9F tipo_13_pinta
+C 0x6F9F fuera las 2 y 3
+C 0x6FA7 anda 2 pixeles
+L 0x6FAD tipo_13_cerca
+C 0x6FAD de cara a Rastan
+C 0x6FB4 a 0x18 o mas en y: nada
+C 0x6FBC pose bit 1
+L 0x6FCB tipo_13_fin
+L 0x6FCE tipo_13_escalon
+C 0x6FCE encima-delante libre: salta un poco
+L 0x6FD8 tipo_13_salta
+C 0x6FD8 12 cuadros subiendo
+L 0x6FDF tipo_13_escalon_der
+L 0x6FF0 tipo_13_salto_alto
+C 0x6FF0 pose bit 3, 16 cuadros subiendo
+L 0x7003 huerfana_tipo_13_baja
+C 0x7003 nadie llega aqui
+L 0x700A tipo_13_bajando
+C 0x700A 2 abajo, un cuadro menos
+L 0x701C tipo_13_subiendo
+C 0x701C 2 arriba, un cuadro menos
+L 0x7036 tipo_13_cumbre
+C 0x7036 16 cuadros bajando
+D 0x703D 0x703F resto_703D  dos `ret` que nadie ejecuta
+L 0x703F tipo_13_otra
+L 0x7046 tipo_13_otra_der
+L 0x704E tipo_13_vuelta_cerca
+C 0x704E se da la vuelta; cerca en x: p03:6FAD
+L 0x705C tipo_13_tipo2
+L 0x7069 tipo_13_tipo2_der
+B 0x7076 Tipo 0x0F: patrulla. Anda de 4 en 4 pixeles y da la vuelta en los bordes,
+B 0x7076 contra una pared o donde se acaba el suelo; no mira a Rastan.
+L 0x7076 tipo_0f
+C 0x7076 sin vida
+C 0x707D x < 2 o >= 0xF0: da la vuelta
+C 0x708A las casillas
+C 0x708D mirando a la izquierda: pared delante...
+C 0x709D ...o sin suelo delante: da la vuelta
+L 0x70A9 tipo_0f_der
+L 0x70BD tipo_0f_anda
+C 0x70BD dos veces 2 pixeles
+B 0x70C6 Tipo 0x0A: de cara a Rastan; anda deprisa hasta 0x10 de el en x, y segun
+B 0x70C6 el tipo de la casilla de encima-delante (1, 2-4, 5 o mas) cambia de paso.
+L 0x70C6 tipo_0a
+C 0x70C6 sin vida
+C 0x70CD de espaldas: se da la vuelta y nada mas
+C 0x70D4 nada en la fila de debajo (p03:7ED7): cae
+C 0x70DC (el segundo `jp z` no sirve)
+C 0x70DF rebota en los bordes
+C 0x70EC las casillas
+C 0x70EF mirando a la izquierda: la de encima-delante...
+C 0x70FA ...tipo 1: p03:7146
+C 0x70FF ...tipo 2 o mas: p03:716E
+L 0x7103 tipo_0a_5
+C 0x7103 5 o mas: p03:7159
+L 0x7107 tipo_0a_pared
+C 0x7107 pared delante: p03:7146
+L 0x7112 tipo_0a_der
+L 0x711F tipo_0a_der_5
+L 0x7123 tipo_0a_der_pared
+L 0x712C tipo_0a_anda
+C 0x712C a menos de 0x10 en x (con +7): quieto
+C 0x7133 dos veces 2 pixeles
+C 0x7139 pose sin el bit 1
+L 0x7140 tipo_0a_pinta
+L 0x7143 tipo_0a_cerca
+C 0x7143 pose del bit 1 y pintado
+L 0x7146 tipo_0a_casilla_1
+C 0x7146 cerca en x: pose del bit 1
+C 0x714D si no, sin el bit 1
+L 0x7153 tipo_0a_der_alta
+C 0x7153 0x0F: como si no hubiera nada
+L 0x7159 tipo_0a_alta
+L 0x715F tipo_0a_der_2
+C 0x715F 5 o mas: la siguiente comprobacion
+C 0x7163 la casilla de +22 de clase 0xF0 (nada): anda
+L 0x716E tipo_0a_2
+C 0x7172 la de +1F de clase 0xF0: anda
+B 0x717D Tipo 6: se queda escondido (pose bit 2) hasta que acaba su animacion de
+B 0x717D salir (+2 = 4); luego, cada cuadro que toca (R & 0x76 con paridad par),
+B 0x717D como el tipo 1: anda, sube escalones y salta.
+L 0x717D tipo_06
+C 0x717D aun escondido (bit 2)...
+C 0x7184 ...o +14 = 0: p03:7345
+L 0x718B tipo_06_activo
+C 0x718B sin vida
+C 0x7192 al azar, este cuadro no se mueve
+C 0x7199 +12: bajando
+C 0x71A0 +11: subiendo
+C 0x71A7 +10: subiendo un poco
+C 0x71AD un cuadro menos, 2 arriba
+C 0x71B9 pose sin el bit 1
+C 0x71BD anda
+L 0x71C3 tipo_06_suelo
+C 0x71C3 nada debajo: cae
+C 0x71CB rebota en los bordes
+C 0x71D8 muy cerca en x: p03:728C
+C 0x71E0 las casillas
+C 0x71E3 mirando a la izquierda...
+C 0x71E9 ...pared: da la vuelta y nada mas
+C 0x71F8 ...tipo 2 debajo-delante: p03:732B
+L 0x7202 tipo_06_delante
+C 0x7202 la de debajo-delante, nibble bajo:
+C 0x7207 0x0F: p03:727A
+C 0x720C 1: da la vuelta
+C 0x7211 2 o 3: escalon
+C 0x721B 4: anda
+C 0x7220 5 o 6: salto alto
+C 0x722A mas: p03:730E
+L 0x722D tipo_06_vuelta
+L 0x7233 tipo_06_der
+L 0x724C tipo_06_der_delante
+L 0x7277 tipo_06_der_vuelta
+L 0x727A tipo_06_lejos
+C 0x727A a menos de 0x30 en x: p03:728C
+L 0x7282 tipo_06_anda
+C 0x7282 pose sin el bit 1
+L 0x7286 tipo_06_pinta
+C 0x7286 anda 2 pixeles y pintado
+L 0x728C tipo_06_cerca
+C 0x728C de cara a Rastan
+C 0x7293 a 0x18 o mas en y: nada
+C 0x729B pose del bit 1
+L 0x72A2 tipo_06_fin
+L 0x72A5 tipo_06_escalon
+L 0x72AF tipo_06_salta
+C 0x72AF 12 cuadros subiendo
+L 0x72B6 tipo_06_escalon_der
+L 0x72C7 tipo_06_salto_alto
+C 0x72C7 16 cuadros subiendo
+L 0x72D2 huerfana_tipo_06_baja
+C 0x72D2 nadie llega aqui
+L 0x72D9 tipo_06_bajando
+C 0x72D9 2 abajo, un cuadro menos
+L 0x72EB tipo_06_subiendo
+C 0x72EB 2 arriba, un cuadro menos
+L 0x7305 tipo_06_cumbre
+C 0x7305 16 cuadros bajando
+D 0x730C 0x730E resto_730C  dos `ret` que nadie ejecuta
+L 0x730E tipo_06_otra
+L 0x7315 tipo_06_otra_der
+L 0x731D tipo_06_vuelta_cerca
+L 0x732B tipo_06_tipo2
+L 0x7338 tipo_06_tipo2_der
+L 0x7345 tipo_06_escondido
+C 0x7345 mirando a la izquierda, escondido
+C 0x734D el cuadro de su animacion: 4, la ultima de salir?
+C 0x7356 aun no: +14 = 0
+L 0x735D tipo_06_sale
+C 0x735D ya ha salido: fuera la pose del bit 2...
+C 0x7361 ...+14 = 0xFF y a moverse
+B 0x7368 Tipo 0x12: de cara a Rastan; anda de pixel en pixel si esta a mas de 0x40
+B 0x7368 en x, y entre 0x20 y 0x40 lanza un proyectil (el actor 3) si esta cerca
+B 0x7368 en y.
+L 0x7368 tipo_12
+C 0x7368 sin vida
+C 0x736F proyectil en vuelo: se mueve
+C 0x7377 lanzando: tambien
+C 0x737E de espaldas: se da la vuelta y nada mas
+C 0x7385 nada debajo: cae
+C 0x738D rebota en los bordes
+C 0x739A las casillas
+C 0x739D mirando a la izquierda: pared o sin suelo, quieto
+L 0x73B9 tipo_12_der
+L 0x73CD tipo_12_lejos
+C 0x73CD a 0x40 o mas en x: anda
+L 0x73D4 tipo_12_anda
+C 0x73D4 un pixel
+L 0x73D7 tipo_12_quieto
+C 0x73D7 (la distancia en y se calcula y no decide nada)
+L 0x73DF tipo_12_pinta
+L 0x73E2 tipo_12_medio
+C 0x73E2 a menos de 0x20: anda
+L 0x73E8 tipo_12_lanza
+C 0x73E8 ya hay proyectil: nada
+C 0x73EF a 0x20 o mas en y: nada
+C 0x73F7 pose de lanzar (bit 1)
+C 0x740A sin proyectil: lo lanza
+L 0x7411 tipo_12_sin_poses
+C 0x7411 fuera las poses 1, 2 y 3
+L 0x7420 proyectil_12
+C 0x7420 IY = el que lanza, IX = el actor 3
+C 0x742A +15 = 0: aun no ha salido
+C 0x7432 (este `cp` no decide nada)
+L 0x7436 lanza_proyectil_12
+C 0x7436 la animacion de lanzar ha acabado?
+C 0x743D en vuelo
+C 0x7441 se coloca
+C 0x7444 alta y pintado
+L 0x744A proyectil_12_fin
+L 0x744D sigue_proyectil_12
+L 0x7450 proyectil_12_pinta
+L 0x7456 huerfana_acaba_12
+C 0x7456 nadie llega aqui
+L 0x7460 coloca_proyectil_12
+C 0x7460 pose 0x0F
+C 0x7464 +13 = el lado del que lanza
+C 0x746A a la izquierda: x - 8
+L 0x747E coloca_12_der
+C 0x747E a la derecha: x + 0x18
+L 0x748A coloca_12_y
+C 0x748A la misma y, tipo 0x16
+L 0x7496 mueve_proyectil_12
+C 0x7496 pose 0x0F
+C 0x749A las casillas
+C 0x749D toca una de clase 0x20: se acaba
+C 0x74A7 C = x de Rastan + 8
+C 0x74AD hacia la izquierda: si da a Rastan, se acaba
+C 0x74BA 2 a la izquierda, hasta 4
+L 0x74C9 mueve_proyectil_12_der
+C 0x74C9 hacia la derecha: si da a Rastan, se acaba
+C 0x74D4 2 a la derecha, hasta 0xF0
+L 0x74E1 proyectil_12_sigue
+L 0x74E4 acaba_proyectil_12
+C 0x74E4 el actor 3 ya no esta, baja
+L 0x74F2 huerfana_baja_actor3
+C 0x74F2 nadie la llama: baja del actor 3
+B 0x74FC Tipo 0x11: no se mueve en todos los cuadros (paridad de R); si Rastan
+B 0x74FC esta agachado (pose 4), pone su pose del bit 2; luego como el tipo 1.
+L 0x74FC tipo_11
+C 0x74FC sin vida
+C 0x7503 al azar, este cuadro no se mueve
+C 0x7508 Rastan agachado?
+C 0x7512 si: pose del bit 2
+L 0x7518 tipo_11_rastan_de_pie
+C 0x7518 no: sin ella
+L 0x751C tipo_11_mueve
+C 0x751C +12: bajando
+C 0x7523 +11: subiendo
+C 0x752A +10: subiendo un poco
+C 0x7530 un cuadro menos...
+C 0x7534 ...un pixel arriba...
+C 0x753B ...con la pose del bit 3
+C 0x7547 anda
+L 0x754D tipo_11_suelo
+C 0x754D fuera la pose del bit 2
+C 0x7551 nada debajo: cae
+C 0x7559 rebota en los bordes
+C 0x7566 muy cerca en x: p03:7622
+C 0x756E las casillas
+C 0x7571 mirando a la izquierda...
+C 0x7577 ...pared: da la vuelta y nada mas
+C 0x7586 ...tipo 2 debajo-delante: p03:76D7
+L 0x7590 tipo_11_delante
+C 0x7590 la de debajo-delante, nibble bajo:
+C 0x7595 0x0F: p03:7608
+C 0x759A 1: da la vuelta
+C 0x759F 2 o 3: escalon
+C 0x75A9 4: anda
+C 0x75AE 5 o 6: salto alto
+C 0x75B8 mas: p03:76BA
+L 0x75BB tipo_11_vuelta
+L 0x75C1 tipo_11_der
+L 0x75DA tipo_11_der_delante
+L 0x7605 tipo_11_der_vuelta
+L 0x7608 tipo_11_lejos
+C 0x7608 a menos de 0x30 en x: p03:7622
+L 0x7610 tipo_11_anda
+C 0x7610 fuera las poses 1, 2 y 3
+L 0x761C tipo_11_pinta
+C 0x761C anda y pintado
+L 0x7622 tipo_11_cerca
+C 0x7622 de cara a Rastan
+C 0x7629 a 0x20 o mas en y: nada
+C 0x7631 pose del bit 1
+L 0x7640 tipo_11_fin
+L 0x7643 tipo_11_escalon
+L 0x764D tipo_11_salta
+C 0x764D 16 cuadros subiendo de pixel en pixel
+L 0x7654 tipo_11_escalon_der
+L 0x7665 tipo_11_salto_alto
+C 0x7665 pose del bit 3 y 32 cuadros subiendo
+L 0x7678 huerfana_tipo_11_baja
+C 0x7678 nadie llega aqui
+L 0x767F tipo_11_bajando
+C 0x767F un pixel abajo, un cuadro menos
+L 0x7690 tipo_11_subiendo
+C 0x7690 pose del bit 3
+C 0x769C un pixel arriba
+C 0x76A3 un cuadro menos...
+L 0x76B1 tipo_11_cumbre
+C 0x76B1 ...y 28 bajando
+D 0x76B8 0x76BA resto_76B8  dos `ret` que nadie ejecuta
+L 0x76BA tipo_11_otra
+L 0x76C1 tipo_11_otra_der
+L 0x76C9 tipo_11_vuelta_cerca
+L 0x76D7 tipo_11_tipo2
+L 0x76E4 tipo_11_tipo2_der
+B 0x76F1 Tipo 0x14: como el 0x12 pero su proyectil (el actor 4) va de pixel en
+B 0x76F1 pixel y, al tocar algo, se queda un momento con la pose 3 (+15 = 0xF1)
+B 0x76F1 antes de desaparecer.
+L 0x76F1 tipo_14
+C 0x76F1 sin vida
+C 0x76F8 proyectil acabando (0xF1): se atiende
+C 0x7700 proyectil en vuelo: se mueve
+C 0x7708 lanzando: tambien
+C 0x770F de espaldas: se da la vuelta y nada mas
+C 0x7716 nada debajo: cae
+C 0x771E rebota en los bordes
+C 0x772B las casillas
+C 0x772E mirando a la izquierda: pared o sin suelo, p03:77A1
+L 0x774A tipo_14_der
+L 0x775E tipo_14_lejos
+C 0x775E a 0x40 o mas en x: anda
+L 0x7765 tipo_14_anda
+C 0x7765 un pixel
+L 0x7768 huerfana_tipo_14_quieto
+C 0x7768 nadie llega aqui (la distancia en y no decide nada)
+L 0x7770 tipo_14_pinta
+L 0x7773 tipo_14_medio
+C 0x7773 a menos de 0x20: anda
+L 0x7779 tipo_14_lanza
+C 0x7779 ya hay proyectil: nada
+C 0x7780 a 0x20 o mas en y: nada
+C 0x7788 pose de lanzar
+C 0x7793 sin proyectil: lo lanza
+L 0x779A tipo_14_sin_pose
+L 0x77A1 tipo_14_parado
+C 0x77A1 parado: lanza si esta entre 0x20 y 0x40 en x
+L 0x77AF proyectil_14
+C 0x77AF IY = el que lanza, IX = el actor 4
+C 0x77B9 +15 = 0: aun no ha salido
+C 0x77C1 0x0F: en vuelo
+C 0x77C5 si no (0xF1), acabando
+L 0x77C8 lanza_proyectil_14
+C 0x77C8 la animacion de lanzar ha acabado?
+C 0x77CF en vuelo
+C 0x77D3 se coloca
+C 0x77D6 alta y pintado
+L 0x77DC proyectil_14_fin
+L 0x77DF sigue_proyectil_14
+L 0x77E2 proyectil_14_pinta
+L 0x77E8 huerfana_acaba_14
+C 0x77E8 nadie llega aqui
+L 0x77F2 coloca_proyectil_14
+C 0x77F2 pose 1
+C 0x77F6 +13 = el lado del que lanza
+C 0x77FC a la izquierda: x - 8
+L 0x7810 coloca_14_der
+C 0x7810 a la derecha: x + 0x18
+L 0x781C coloca_14_y
+C 0x781C la misma y, tipo 0x16
+L 0x7828 mueve_proyectil_14
+C 0x7828 las casillas
+C 0x782B toca una de clase 0x20: se acaba
+C 0x7835 C = x de Rastan + 8
+C 0x783B hacia la izquierda: si da a Rastan, se acaba
+C 0x7848 un pixel a la izquierda, hasta 4
+L 0x7856 mueve_proyectil_14_der
+C 0x7856 hacia la derecha: si da a Rastan, se acaba
+C 0x7861 un pixel a la derecha, hasta 0xF0
+L 0x786D proyectil_14_sigue
+L 0x7870 choca_proyectil_14
+C 0x7870 al chocar: +15 = 0xF1...
+C 0x7878 ...pose 3...
+C 0x787C ...pintado...
+C 0x7883 ...y baja
+L 0x7889 acaba_proyectil_14
+C 0x7889 la animacion del choque aun no ha acabado: pinta y baja
+L 0x789C fin_choque_14
+C 0x789C acabada: +15 = 0, ya no hay
+B 0x78AD Tipo 0x15: como el 0x14, con otro proyectil (pose 5).
+L 0x78AD tipo_15
+C 0x78AD sin vida
+C 0x78B4 proyectil acabando: se atiende
+C 0x78BC proyectil en vuelo: se mueve
+C 0x78C4 lanzando: tambien
+C 0x78CB de espaldas: se da la vuelta y nada mas
+C 0x78D2 nada debajo: cae
+C 0x78DA rebota en los bordes
+C 0x78E7 las casillas
+C 0x78EA mirando a la izquierda: pared o sin suelo, p03:7956
+L 0x7906 tipo_15_der
+L 0x791A tipo_15_lejos
+C 0x791A a 0x40 o mas: anda
+L 0x7921 tipo_15_anda
+L 0x7924 tipo_15_pinta
+L 0x7927 tipo_15_medio
+C 0x7927 a menos de 0x20: anda
+L 0x792D tipo_15_lanza
+C 0x792D ya hay proyectil: solo pinta
+C 0x7934 cerca en y: pose de lanzar
+L 0x7940 tipo_15_pinta_y_lanza
+C 0x7947 sin proyectil: lo lanza
+L 0x794F huerfana_tipo_15_sin_pose
+C 0x794F nadie llega aqui
+L 0x7956 tipo_15_parado
+C 0x7956 entre 0x20 y 0x40 en x: lanza
+L 0x7964 proyectil_15
+C 0x7964 IY = el que lanza, IX = el actor 4
+C 0x796E +15 = 0: aun no ha salido
+C 0x7976 0x0F: en vuelo
+C 0x797A 0xF1: acabando (p03:7889)
+L 0x797D lanza_proyectil_15
+C 0x797D la animacion de lanzar ha acabado?
+C 0x7984 en vuelo
+C 0x7988 se coloca
+C 0x798B alta y pintado
+L 0x7991 proyectil_15_fin
+L 0x7994 sigue_proyectil_15
+L 0x7997 proyectil_15_pinta
+L 0x799D huerfana_acaba_15
+C 0x799D nadie llega aqui
+L 0x79A7 coloca_proyectil_15
+C 0x79A7 pose 5
+C 0x79AB +13 = el lado
+C 0x79B1 a la izquierda: x - 8
+L 0x79C5 coloca_15_der
+C 0x79C5 a la derecha: x + 0x18
+L 0x79D1 coloca_15_y
+C 0x79D1 la misma y, tipo 0x16
+L 0x79DD mueve_proyectil_15
+C 0x79DD las casillas
+C 0x79E0 toca una de clase 0x20: se acaba
+C 0x79EA C = x de Rastan + 8
+C 0x79F0 hacia la izquierda: si da a Rastan, se acaba
+C 0x79FD un pixel a la izquierda, hasta 4
+L 0x7A0B mueve_proyectil_15_der
+C 0x7A0B hacia la derecha: si da a Rastan, se acaba
+C 0x7A16 un pixel a la derecha, hasta 0xF0
+L 0x7A22 proyectil_15_sigue
+L 0x7A25 choca_proyectil_15
+C 0x7A25 al chocar: +15 = 0xF1...
+C 0x7A2D ...pose 7...
+C 0x7A31 ...pintado...
+C 0x7A38 ...y baja
+B 0x7A3E Huerfana: un paso al azar de 4 pixeles dentro de una caja hecha con los
+B 0x7A3E bytes +3/+4 del actor 0 y D92C/D92D (5 pixeles de margen). Nadie la llama.
+L 0x7A3E huerfana_paso_al_azar
+C 0x7A3E margen de 5
+C 0x7A40 H = actor 0 +3 + 5
+C 0x7A45 L = D92C - 5
+C 0x7A4A D = actor 0 +4 + 5
+C 0x7A4F E = D92D - 5
+C 0x7A54 al azar, una de cuatro direcciones (o ninguna)
+L 0x7A6B paso_der_azar
+C 0x7A6B 4 a la derecha, sin pasar de H
+L 0x7A7C paso_izq_azar
+C 0x7A7C 4 a la izquierda, sin bajar de L
+L 0x7A8D paso_abajo_azar
+C 0x7A8D y + 4, sin pasar de D (y lo guarda en la x: un error)
+L 0x7A9E paso_arriba_azar
+C 0x7A9E y - 4, sin bajar de E (tambien en la x)
+B 0x7AAF MUERTE DE UN ACTOR (vida +0F = 0): si lleva otro actor de la mano (un
+B 0x7AAF proyectil, segun la tabla de p03:7AE4) lo da de baja, y el actor pasa a ser
+B 0x7AAF del tipo 0x24 con la pose de la tabla: el de la muerte, que al acabar quiza suelta algo
+B 0x7AAF (p03:607A).
+L 0x7AAF muere_actor
+C 0x7AB1 tipo - 1...
+C 0x7AB8 ...* 3...
+C 0x7ABE ...en la tabla de p03:7AE4
+C 0x7AC2 el actor que lleva consigo
+C 0x7AC6 ninguno
+C 0x7ACD no tiene sprites: nada que quitar
+C 0x7AD4 se da de baja
+L 0x7AD8 pasa_a_24
+C 0x7ADA la pose de la muerte
+C 0x7ADE tipo 0x24
+D 0x7AE4 0x7B29 muerte_por_tipo  Por cada tipo de actor (1-23): el actor que lleva consigo (D9A5 o D9CB, o 0) y la pose de la muerte
+F 0x7AE4 3
+L 0x7B29 de_cara
+C 0x7B29 la x de Rastan
+C 0x7B2D Rastan a la derecha?
+C 0x7B33 mirando a la izquierda: de espaldas
+C 0x7B39 1: de cara
+L 0x7B3C de_cara_izq
+C 0x7B3C Rastan a la izquierda: mirando a la derecha, de espaldas
+L 0x7B45 de_espaldas
+C 0x7B45 0: de espaldas
+L 0x7B48 anda_2
+C 0x7B48 mirando a la derecha...
+C 0x7B4E ...x + 2
+L 0x7B56 anda_2_izq
+C 0x7B56 ...o x - 2
+L 0x7B5C anda_y_pinta
+C 0x7B5C pose sin el bit 1...
+C 0x7B60 ...y pintado
+L 0x7B64 anda_1
+C 0x7B64 lo mismo de pixel en pixel
+L 0x7B6F anda_1_izq
+L 0x7B72 anda_1_pinta
+D 0x7B7A 0x7B90 resto_7B7A  otra version de anda_1 que nadie ejecuta
+L 0x7B90 acerca_y
+C 0x7B90 la y de Rastan
+C 0x7B96 por encima: 2 pixeles abajo
+L 0x7BA0 acerca_y_sube
+C 0x7BA0 por debajo: 2 arriba
+L 0x7BA7 hacia_y_a
+C 0x7BA7 va hacia la y A...
+C 0x7BAB ...ya esta
+C 0x7BAF ...abajo 2
+L 0x7BB5 hacia_y_anda
+C 0x7BB5 y anda 2 hacia donde mira
+L 0x7BC3 hacia_y_izq
+L 0x7BC9 hacia_y_pinta
+C 0x7BC9 pose sin el bit 1, pintado
+L 0x7BD1 hacia_y_sube
+C 0x7BD1 arriba 2
+D 0x7BD9 0x7C14 resto_7BD9  otra rutina de acercarse que nadie ejecuta
+L 0x7C14 hacia_y_b
+C 0x7C14 como p03:7BA7 pero con la pose del bit 1
+L 0x7C22 hacia_y_b_anda
+L 0x7C30 hacia_y_b_izq
+L 0x7C36 hacia_y_b_pinta
+C 0x7C36 pose con el bit 1
+L 0x7C3E hacia_y_b_sube
+L 0x7C46 anda_4
+C 0x7C46 4 pixeles a la derecha...
+C 0x7C58 pose sin el bit 1
+L 0x7C60 anda_4_izq
+C 0x7C60 ...o a la izquierda
+L 0x7C74 anda_segun_10
+C 0x7C74 +10 = 0: deprisa (4)...
+L 0x7C7E anda_segun_10_b
+C 0x7C7E ...si no, 2
+D 0x7C82 0x7CC6 resto_7C82  rutinas que nadie ejecuta (un contador en +10 y otra de acercarse en x)
+L 0x7CC6 distancia_x
+C 0x7CC6 |(x de Rastan + 16) - (x del actor + 16)|
+C 0x7CD3 el actor mas a la derecha
+L 0x7CD8 distancia_x_b
+C 0x7CD8 Rastan mas a la derecha
+L 0x7CDD distancia_x_7
+C 0x7CDD lo mismo con x del actor + 7
+L 0x7CEF distancia_x_7b
+D 0x7CF4 0x7CFB resto_7CF4  `ld a,1 / ld c,a / ret` y `xor a / ld c,a / ret` sueltos
+L 0x7CFB distancia_y
+C 0x7CFB |(y de Rastan + 16) - y del actor|
+L 0x7D0A distancia_y_b
+L 0x7D0F retrocede_2
+C 0x7D0F 2 pixeles hacia atras
+L 0x7D1C retrocede_2_izq
+L 0x7D23 vuelve_y_anda
+C 0x7D23 se da la vuelta...
+C 0x7D26 ...y 2 pixeles hacia el nuevo lado
+L 0x7D37 vuelve_y_anda_der
+D 0x7D40 0x7D56 resto_7D40  otro trozo que nadie ejecuta (mira x >= 0xFB)
+B 0x7D56 Las clases de las casillas de alrededor del actor (byte alto de D774), en
+B 0x7D56 +17..+24: cuatro filas desde la suya, tres o cuatro casillas por fila, la
+B 0x7D56 ventana corrida una casilla hacia donde mira.
+L 0x7D56 casillas_actor
+C 0x7D56 H = x + 1, L = y + 1
+C 0x7D60 la fila: (y - 0x20) / 16 * 0x20 bytes
+C 0x7D68 la columna: x / 16 * 2
+C 0x7D76 en D774
+C 0x7D7A el byte alto
+C 0x7D7B mirando a la derecha: una casilla mas alla
+C 0x7D82 la de atras: +1F
+C 0x7D88 la suya: +20
+C 0x7D8E la de delante: +21
+C 0x7D94 la siguiente: +22
+C 0x7D9A una fila mas abajo: +17..+1A
+C 0x7DB4 otra fila: +1B..+1E
+C 0x7DCE y otra: +23, +24
+L 0x7DDD corre_ventana
+C 0x7DDD una casilla mas (2 bytes)
+D 0x7DE0 0x7E18 resto_7DE0  otra lectura de casillas que nadie ejecuta
+L 0x7E18 da_la_vuelta
+C 0x7E18 el bit 0 de la pose: hacia donde mira
+C 0x7E1F a la derecha
+L 0x7E24 da_la_vuelta_izq
+C 0x7E24 a la izquierda
+D 0x7E29 0x7E4B resto_7E29  trozos que nadie ejecuta (moverse en diagonal)
+L 0x7E4B cae_1
+C 0x7E4B y + 1
+C 0x7E52 pose sin el bit 1
+C 0x7E56 pintado
+L 0x7E5A cae_2_especial
+C 0x7E5A y + 2 y la animacion del actor 0 (p03:7F3E)
+L 0x7E63 bordes_x
+C 0x7E63 x < 1...
+C 0x7E6B ...o >= 0xE7: se da la vuelta en el borde
+L 0x7E71 borde_izq
+C 0x7E71 x = 1 y la vuelta
+L 0x7E7A borde_der
+C 0x7E7A x = 0xE7 y la vuelta
+L 0x7E83 anda
+C 0x7E83 2 pixeles hacia donde mira
+L 0x7E90 anda_izq
+L 0x7E97 rebota_izq
+C 0x7E97 x = 2 y la vuelta
+L 0x7EA0 rebota_der
+C 0x7EA0 x = 0xDC y la vuelta
+L 0x7EA9 tope_arriba
+C 0x7EA9 y = 2
+L 0x7EAF tope_abajo
+C 0x7EAF y = 0xB5
+L 0x7EB5 pose_b1_y_pinta
+C 0x7EB5 pose con el bit 1 y pintado
+L 0x7EBD nada_debajo
+C 0x7EBD las casillas
+C 0x7EC0 las dos de debajo, +1C y +1D, de clase 0xF0...
+L 0x7ECA nada_debajo_2
+L 0x7ED4 nada_debajo_si
+C 0x7ED4 ...A = 0xFF: no hay nada, cae
+L 0x7ED7 nada_debajo_16
+C 0x7ED7 lo mismo con +18 y +19, la fila siguiente: debajo de los actores de 16 de alto
+L 0x7EE4 nada_debajo_16_2
+L 0x7EEE nada_debajo_16_si
+D 0x7EF1 0x7F1F resto_7EF1  otro trozo de andar que nadie ejecuta
+B 0x7F1F El actor 0 (D933) con animacion propia: sus poses salen de la tabla de
+B 0x7F1F p03:7F76 por tipo, y sus 12 sprites, desde la ficha 17, con el banco 8.
+L 0x7F1F anima_actor0_desde_cero
+C 0x7F1F la animacion desde el principio (+A = 0xFE, +B = 1)...
+C 0x7F29 ...y ocho pasos
+L 0x7F3E anima_actor0
+C 0x7F3E su tipo - 1...
+C 0x7F46 ...en p03:7F76: su tabla de poses
+C 0x7F4E y su pose (+1)
+C 0x7F5A la definicion
+C 0x7F5D a la ficha 17
+C 0x7F60 estado en +A/+B
+C 0x7F64 su x y su y
+C 0x7F70 12 sprites
+C 0x7F72 con el banco 8
+D 0x7F76 0x7FDA poses_actor0  Las tablas de poses del actor 0 por tipo (7 palabras) y las definiciones de cada pose (banco 8)
+F 0x7F76 w8
+B 0x7FDA El actor 0 pasa a tipo 7 (con la musica 7) y empieza su animacion; la
+B 0x7FDA rutina sigue en p04:8000.
+L 0x7FDA actor0_a_tipo7
+C 0x7FDA ya es del tipo 7: salta
+C 0x7FE1 la musica 7
+C 0x7FE6 tipo 7...
+C 0x7FEB ...pose 0...
+C 0x7FEF ...animacion desde el principio
+C 0x7FF9 el primer paso
+C 0x7FFC HL = 0x0130 (el `ld (nn),hl` que sigue empieza aqui y acaba en p04)
+D 0x7FFF 0x8000 cruce_7FFF  el primer byte de `ld (nn),hl` (0x22): la instruccion acaba en p04:8000-8001
+# --- fin de las notas por tandas ---
+
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
-C 0x6000 a = la fase
-C 0x6073 ix -> los 6 actores de la pantalla
-C 0x607a p00 pinta_actor
-C 0x6084 a = cual es el bloque especial
-C 0x608b p00 azar
 C 0x609c x del bloque especial de la pantalla = a
 C 0x60a6 y del bloque especial = a
-C 0x60a9 p00 azar
-C 0x60b9 cual es el bloque especial = a
-C 0x60be p00 pinta_bloque_especial
-C 0x60c3 p00 baja_actor
-C 0x612e p00 pinta_actor
 C 0x6131 p00 pinta_actor
 C 0x6143 efecto pedido, para p01:63E1 = a
 C 0x617e p00 pinta_actor
 C 0x6181 p00 pinta_actor
 C 0x6200 p00 pinta_actor
 C 0x6203 p00 pinta_actor
-C 0x620d a = actor 5, byte +15
 C 0x6288 p00 pinta_actor
-C 0x628b a = actor 4, byte +15
 C 0x62a0 p00 pinta_actor
 C 0x62b0 p00 pinta_actor
 C 0x62bc p00 pinta_actor
 C 0x62c3 p00 pinta_actor
-C 0x62cc ix -> actor 5
 C 0x62ed actor 5, byte +10 = hl
-C 0x62f0 p00 alta_actor
-C 0x62f3 p00 pinta_actor
 C 0x62f9 p00 pinta_actor
-C 0x630c p00 baja_actor
-C 0x6417 a = la y de Rastan
-C 0x6425 a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x6432 bit 7 muerto, bit 4 un rato sin mandos = a
-C 0x6435 a = la pose de Rastan
 C 0x643c la pose de Rastan = a
 C 0x6441 cuenta del estado del jugador = a
-C 0x644a a = la vida de Rastan
 C 0x644e la vida de Rastan = a
 C 0x6455 la vida de Rastan = a
 C 0x645a bit 7 muerto, bit 4 un rato sin mandos = a
@@ -51,71 +1351,40 @@ C 0x6648 efecto pedido, para p01:63E1 = a
 C 0x6687 p00 pinta_actor
 C 0x668a p00 pinta_actor
 C 0x669c efecto pedido, para p01:63E1 = a
-C 0x66fd a = la y de Rastan
-C 0x6716 a = la y de Rastan
 C 0x6725 p00 pinta_actor
 C 0x672b p00 pinta_actor
 C 0x673a p00 baja_actor
 C 0x673f p00 baja_actor
-C 0x6768 p00 azar
 C 0x676d p00 pinta_actor
 C 0x67b7 p00 pinta_actor
-C 0x67c1 a = actor 3, byte +15
 C 0x67f8 p00 pinta_actor
 C 0x68cd p00 pinta_actor
-C 0x68d0 a = actor 3, byte +15
-C 0x68f1 p00 pinta_actor
-C 0x68f6 a = actor 3, byte +15
 C 0x68fe p00 pinta_actor
 C 0x69a9 p00 pinta_actor
 C 0x69b2 ix -> actor 3
 C 0x69c9 efecto pedido, para p01:63E1 = a
 C 0x69d6 actor 3, byte +10 = hl
-C 0x69db p00 alta_actor
-C 0x69e0 p00 pinta_actor
-C 0x69f3 p00 baja_actor
 C 0x6ab1 p00 pinta_actor
-C 0x6ab7 a = la x de Rastan
-C 0x6abb a = la y de Rastan
-C 0x6adb a = la x de Rastan
 C 0x6adf a = la y de Rastan
-C 0x6aff a = la pose de Rastan para la animacion
-C 0x6b07 a = la x de Rastan
 C 0x6b0b a = la y de Rastan
-C 0x6b2c a = la pose de Rastan para la animacion
 C 0x6b34 a = la x de Rastan
 C 0x6b38 a = la y de Rastan
-C 0x6b60 a = actor 5, byte +15
 C 0x6bcc p00 pinta_actor
-C 0x6bd8 a = actor 5, byte +15
 C 0x6bed p00 pinta_actor
 C 0x6c00 ix -> actor 5
-C 0x6c1e p00 alta_actor
 C 0x6c21 p00 pinta_actor
 C 0x6c2a p00 pinta_actor
-C 0x6c73 a = la x de Rastan
-C 0x6cb2 ix -> actor 5
-C 0x6cba p00 baja_actor
-C 0x6cc0 ix -> actor 5
 C 0x6cc4 p00 baja_actor
-C 0x6ce3 a = actor 4, byte +15
-C 0x6d3c a = actor 4, byte +15
 C 0x6d4a p00 pinta_actor
 C 0x6d52 p00 pinta_actor
 C 0x6d85 p00 pinta_actor
 C 0x6da3 p00 pinta_actor
-C 0x6da6 a = actor 4, byte +15
 C 0x6db3 p00 pinta_actor
 C 0x6dc3 p00 pinta_actor
 C 0x6dd0 ix -> actor 4
-C 0x6dee p00 alta_actor
 C 0x6df1 p00 pinta_actor
 C 0x6df7 p00 pinta_actor
 C 0x6e01 p00 baja_actor
-C 0x6e44 a = la x de Rastan
-C 0x6e7d ix -> actor 4
-C 0x6e85 p00 baja_actor
-C 0x6e8b ix -> actor 4
 C 0x6e8f p00 baja_actor
 C 0x6ea0 p00 pinta_actor
 C 0x6ece p00 pinta_actor
@@ -131,96 +1400,51 @@ C 0x7289 p00 pinta_actor
 C 0x729f p00 pinta_actor
 C 0x72a2 p00 pinta_actor
 C 0x735a p00 pinta_actor
-C 0x736f a = actor 3, byte +15
 C 0x73df p00 pinta_actor
-C 0x73e8 a = actor 3, byte +15
 C 0x7405 p00 pinta_actor
-C 0x740a a = actor 3, byte +15
 C 0x741d p00 pinta_actor
 C 0x7426 ix -> actor 3
-C 0x7444 p00 alta_actor
 C 0x7447 p00 pinta_actor
 C 0x7450 p00 pinta_actor
 C 0x745a p00 baja_actor
-C 0x74a7 a = la x de Rastan
-C 0x74e4 ix -> actor 3
 C 0x74ec p00 baja_actor
-C 0x74f2 ix -> actor 3
 C 0x74f6 p00 baja_actor
 C 0x7505 p00 pinta_actor
-C 0x7508 hl -> la pose de Rastan para la animacion
 C 0x754a p00 pinta_actor
 C 0x761f p00 pinta_actor
 C 0x763d p00 pinta_actor
 C 0x7640 p00 pinta_actor
-C 0x76f8 a = actor 4, byte +15
-C 0x7700 a = actor 4, byte +15
 C 0x7770 p00 pinta_actor
-C 0x7779 a = actor 4, byte +15
 C 0x778e p00 pinta_actor
-C 0x7793 a = actor 4, byte +15
 C 0x779e p00 pinta_actor
 C 0x77b5 ix -> actor 4
-C 0x77d6 p00 alta_actor
 C 0x77d9 p00 pinta_actor
 C 0x77e2 p00 pinta_actor
 C 0x77ec p00 baja_actor
-C 0x7835 a = la x de Rastan
-C 0x7870 ix -> actor 4
 C 0x787e p00 pinta_actor
-C 0x7883 p00 baja_actor
 C 0x7891 p00 pinta_actor
 C 0x7896 p00 baja_actor
 C 0x78a2 p00 pinta_actor
 C 0x78a7 p00 baja_actor
-C 0x78b4 a = actor 4, byte +15
-C 0x78bc a = actor 4, byte +15
 C 0x7924 p00 pinta_actor
-C 0x792d a = actor 4, byte +15
 C 0x7942 p00 pinta_actor
-C 0x7947 a = actor 4, byte +15
 C 0x7953 p00 pinta_actor
 C 0x796a ix -> actor 4
-C 0x798b p00 alta_actor
 C 0x798e p00 pinta_actor
 C 0x7997 p00 pinta_actor
 C 0x79a1 p00 baja_actor
-C 0x79ea a = la x de Rastan
-C 0x7a25 ix -> actor 4
 C 0x7a33 p00 pinta_actor
-C 0x7a38 p00 baja_actor
-C 0x7a40 a = actor 0, byte +3
-C 0x7a45 a = y del bloque especial
-C 0x7a4a a = actor 0, byte +4
-C 0x7a4f a = cual es el bloque especial
-C 0x7a54 p00 azar
-C 0x7ad4 p00 baja_actor
-C 0x7b29 a = la x de Rastan
-C 0x7b60 p00 pinta_actor
 C 0x7b76 p00 pinta_actor
-C 0x7b90 a = la y de Rastan
 C 0x7bcd p00 pinta_actor
 C 0x7c3a p00 pinta_actor
 C 0x7c5c p00 pinta_actor
 C 0x7c70 p00 pinta_actor
-C 0x7cc6 a = la x de Rastan
-C 0x7cdd a = la x de Rastan
-C 0x7cfb a = la y de Rastan
-C 0x7d76 de -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x7e56 p00 pinta_actor
 C 0x7eb9 p00 pinta_actor
 C 0x7f21 actor 0, byte +A = a
 C 0x7f26 actor 0, byte +B = a
-C 0x7f3e a = los 6 actores de la pantalla
-C 0x7f4e a = actor 0, byte +1
-C 0x7f5d hl -> ficha de sprite 17
-C 0x7f60 iy -> actor 0, byte +A
-C 0x7f64 a = actor 0, byte +6
 C 0x7f67 lo que se suma a la x de los sprites = a
 C 0x7f6a a = actor 0, byte +7
 C 0x7f6d lo que se suma a la y de los sprites = a
-C 0x7f72 p00 pinta_con_banco_8
-C 0x7fda a = los 6 actores de la pantalla
 C 0x7fe3 musica pedida, para p01:640F = a
 C 0x7fe8 los 6 actores de la pantalla = a
 C 0x7fec actor 0, byte +1 = a

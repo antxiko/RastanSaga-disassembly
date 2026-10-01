@@ -1,6 +1,8 @@
 
 
 
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 RASTAN, el jugador: lo que la tarea 2 (p00:56F2) hace cada cuadro. Si esta
 B 0x6000 muriendo (D90F bit 7) solo cuenta y al final avisa; si no, p06:68A7, la

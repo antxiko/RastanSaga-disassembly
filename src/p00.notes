@@ -3,6 +3,8 @@
 
 
 
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x4011 INIT: limpia la RAM, desactiva los ganchos de la BIOS, pone los bancos 0/1/2,
 B 0x4011 inicializa video y sonido (p01), arranca la tarea 0 y se queda esperando: a
