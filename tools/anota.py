@@ -44,10 +44,10 @@ RE_INS = re.compile(r"^\t([a-z].*?)\s*;([0-9a-f]{4})(?:\s+;\s*(.*))?$")
 RE_DIR = re.compile(r"\b0([0-9a-f]{4})h\b")
 
 
-def nombres_p00():
-    """{direccion: nombre} de las etiquetas L de las notas del banco 0."""
+def nombres(banco):
+    """{direccion: nombre} de las etiquetas L de las notas de un banco."""
     n = {}
-    ruta = os.path.join(RAIZ, "work", "notas_p00.txt")
+    ruta = os.path.join(RAIZ, "work", "notas_p%02d.txt" % banco)
     if os.path.exists(ruta):
         for ln in open(ruta, encoding="utf-8"):
             if ln.startswith("L "):
@@ -56,7 +56,10 @@ def nombres_p00():
     return n
 
 
-P00 = nombres_p00()
+P00 = nombres(0)
+# El banco que hay en la OTRA ranura mientras corre cada banco de codigo: lo
+# ponen las tareas (p00:56FB bancos 6 y 7, p00:5769 bancos 3 y 4).
+VECINO = {3: 4, 4: 3, 6: 7, 7: 6}
 
 
 def que_es(a):
@@ -79,6 +82,8 @@ def comenta(ins):
     op0 = ins.split(" ")[0]
     if op0 in ("call", "jp") and a in P00:
         return "p00 " + P00[a]
+    if op0 in ("call", "jp") and BANCO in VECINO and a in VECINOS:
+        return "p%02d %s" % (VECINO[BANCO], VECINOS[a])
     if a in MAPPER and ins.startswith("ld (") and ins.endswith(",a"):
         return "registro del mapper: banco A en " + MAPPER[a]
     t = que_es(a)
@@ -121,7 +126,13 @@ def a_mano(p):
     return c
 
 
+BANCO, VECINOS = None, {}
+
+
 def anota(p):
+    global BANCO, VECINOS
+    BANCO = p
+    VECINOS = nombres(VECINO[p]) if p in VECINO else {}
     mano = a_mano(p)
     notas = []
     for a, ins, com in lee_listado(p):

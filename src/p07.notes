@@ -1,18 +1,586 @@
 
+
+
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+B 0x8000 (Sigue de p06:7FF2.) Rastan toca el bloque especial de tipo 1-3: un arma.
+B 0x8000 La coge (D919, bits 0-1 de D905), le da segundos segun la puntuacion, suma
+B 0x8000 puntos y el bloque desaparece.
+L 0x8000 coge_arma
+C 0x8000 fuera de la caja en x: nada
+C 0x8003 fuera en y: nada
+C 0x800C que arma es
+C 0x801B ninguna: arma 0
+L 0x8020 arma_2
+C 0x8020 arma 2, 0x30 puntos
+L 0x8026 arma_1
+C 0x8026 arma 1, 0x20 puntos
+L 0x802C arma_3
+C 0x802C arma 3, sin puntos
+L 0x8030 pon_arma
+C 0x8030 el arma
+C 0x8034 en los bits 0-1 de D905, con el bit 4
+C 0x8040 suceso del bit 3: efecto 6
+C 0x8046 cuanto dura, segun la puntuacion (cifras 5-6):
+C 0x804B 0x10 o mas: 90 segundos
+C 0x8051 6 o mas: 80
+C 0x8057 3 o mas: 70
+C 0x805D 1 o mas: 60
+C 0x8061 menos: 50
+L 0x8063 pon_segundos
+C 0x8063 apuntado
+C 0x8067 los puntos del arma...
+C 0x806F ...a la puntuacion
+C 0x8072 ya no hay bloque especial...
+C 0x8076 ...y se repinta el fondo
+B 0x807C Puntos por matar un actor: la palabra de su tipo en p07:8096.
+L 0x807C puntos_por_actor
+C 0x807F tipo * 2...
+C 0x8085 ...en la tabla (que empieza en el tipo 1)
+C 0x808C sumados
+L 0x8094 vuelve_807c
+D 0x8096 0x80C6 puntos_por_tipo  Los puntos de cada tipo de actor (1-24), palabras BCD
+F 0x8096 w8
+D 0x80C6 0x80E6 fuerza_por_arma  La fuerza del golpe por arma: 8 bytes por arma, los 4 primeros en el suelo y los 4 de despues en el aire (p06:7C80)
+F 0x80C6 8
+L 0x80E6 clase_en
+C 0x80E6 la fila de (y - 0x20)...
+C 0x80F0 ...la columna de x...
+C 0x80FB ...en D774...
+C 0x80FF ...el byte alto...
+C 0x8100 ...solo el nibble de la clase
+B 0x8104 Los choques de Rastan con todo, cada cuadro: los 8 enemigos de DA20, las
+B 0x8104 casillas de salida, y si no esta tocado, el cuerpo y los ataques de los
+B 0x8104 actores.
+L 0x8104 choques_jugador
+C 0x8104 HL = (x, y) de Rastan
+C 0x810C los 8 de DA20, uno a uno
+C 0x8144 la salida de la fase (p07:85F6)
+C 0x8147 p07:8BC6
+C 0x814A ya tocado o sin mandos: nada mas
+C 0x8153 D910 bit 1: nada mas
+C 0x8159 D910 bit 6: p07:918C
+C 0x815E agachado: la caja 13 pixeles mas abajo
+L 0x816B choques_actores
+C 0x816B contra el cuerpo de los actores
+C 0x816E contra sus ataques
+B 0x8172 Los ataques de los actores: segun su tipo (tabla de p07:8404, 3 bytes:
+B 0x8172 dano y rutina), si estan en su pose de ataque (bits 1-3 = 2) y en el
+B 0x8172 cuadro bueno, una caja delante de ellos. El dano se suma en C.
+L 0x8172 ataques_actores
+C 0x8172 los 3 actores de D933
+C 0x8178 C = dano acumulado
+L 0x817A ataque_actor
+C 0x817B el tipo: 0, hueco
+C 0x8183 0x18 o mas: sin ataque
+C 0x8188 sin vida: nada
+C 0x818F tipo * 3 + p07:8404:
+C 0x8198 D = el dano...
+C 0x8199 ...y la rutina de su caja
+L 0x81A0 caja_ataque_a
+C 0x81A0 pose de ataque?
+C 0x81AB cuadro 3 en adelante
+C 0x81B3 y dentro de 0x1F
+C 0x81BE mirando a la derecha: x delante
+L 0x81D0 caja_ataque_a_izq
+L 0x81DE caja_ataque_b
+L 0x8206 caja_ataque_b_izq
+L 0x8214 caja_ataque_c
+L 0x8244 caja_ataque_c_izq
+L 0x8250 caja_ataque_d
+L 0x8280 caja_ataque_d_izq
+L 0x828E caja_ataque_e
+L 0x82BE caja_ataque_e_izq
+B 0x82CA Huerfana (ninguna entrada de la tabla la elige): segun la pose, una caja
+B 0x82CA y un dano; con las poses 0-1 ademas le quita el arma y el escudo.
+L 0x82CA huerfana_ataque_f
+L 0x8310 ataque_f_0
+C 0x8310 dano 0x0C
+L 0x8314 ataque_f_2
+C 0x8314 dano 0x18
+L 0x8316 ataque_f_caja
+C 0x832C ya le dio este ataque
+C 0x8330 le quita el arma: sin segundos...
+C 0x833A ...sin bits 0-1 en D905...
+C 0x8342 ...arma 0
+L 0x8346 ataque_f_escudo
+C 0x8346 y los golpes que le quedaban al escudo
+L 0x8354 ataque_f_6
+C 0x836E dano 0x10
+L 0x8373 ataque_f_a
+C 0x838D dano 0x18
+L 0x8392 ataque_f_c
+C 0x83AC dano 8
+L 0x83B1 ataque_f_e
+C 0x83CB dano 0x10
+B 0x83D0 Le alcanza: con escudo (D91B) el dano va a la mitad y el escudo pierde un
+B 0x83D0 golpe (D926); al acabarse se quitan los bits 2, 3 y 6 de D905.
+L 0x83D0 le_alcanza
+C 0x83D0 lleva escudo?
+C 0x83D6 un golpe menos...
+C 0x83DD ...ninguno: sin escudo...
+C 0x83E2 ...ni sus iconos
+L 0x83EA medio_dano
+C 0x83EA dano / 2
+L 0x83EC suma_dano
+C 0x83EC C + dano
+C 0x83F0 suceso del bit 7: efecto 1
+L 0x83F6 siguiente_ataque
+C 0x83F6 el siguiente actor
+C 0x8400 sin dano: nada
+C 0x8402 D = todo el dano junto...
+C 0x8403 ...a la vida (p06:7818)
+D 0x8407 0x844C ataque_por_tipo  Por cada tipo de actor (1-23): el dano de su ataque y la rutina de su caja (p07:819E)
+F 0x8407 3
+B 0x844C El cuerpo de los actores: tocarlos hace el dano de la tabla de p07:8592
+B 0x844C (4 bytes: dano, -, rutina de la caja), a la mitad con escudo.
+L 0x844C cuerpo_actores
+C 0x844C los 3 actores
+L 0x8454 cuerpo_actor
+C 0x8455 hueco
+C 0x845D 0x18 o mas: no hacen dano
+C 0x8462 sin vida: no
+C 0x8469 tipo * 4 + p07:8592
+C 0x8473 D = el dano...
+C 0x8476 ...y la rutina de su caja
+L 0x847C caja_cuerpo_a
+L 0x8495 caja_cuerpo_b
+L 0x84B0 caja_cuerpo_b2
+L 0x84BE caja_cuerpo_c
+L 0x84D9 caja_cuerpo_c2
+L 0x84E7 caja_cuerpo_d
+L 0x8500 caja_cuerpo_e
+L 0x8519 caja_cuerpo_f
+L 0x8532 caja_cuerpo_g
+L 0x854B caja_cuerpo_h
+L 0x8564 le_toca
+C 0x8564 lleva escudo?
+C 0x856A un golpe menos al escudo...
+C 0x8573 ...y si se acaba, fuera
+L 0x857E medio_dano_cuerpo
+L 0x8580 suma_dano_cuerpo
+L 0x8583 siguiente_cuerpo
+C 0x858D sin dano: nada
+C 0x858F todo junto a la vida
+D 0x8596 0x85F2 cuerpo_por_tipo  Por cada tipo de actor (1-23): el dano de tocarlo, un byte a 0 y la rutina de su caja (p07:847A)
+F 0x8596 4
+D 0x85F2 0x85F6 cuerpo_tipo_24  la entrada del tipo 24, que no se usa
+B 0x85F6 La salida de la fase: si debajo de los pies de Rastan hay casillas de la
+B 0x85F6 clase 0xB0, D910 bit 0 (p00:5303 pasa a la fase siguiente).
+L 0x85F6 mira_salida
+C 0x85F7 E = x
+C 0x85F8 (x + 5, y + 0x18): los pies
+C 0x8601 la clase de la casilla
+C 0x8605 0xB0?
+C 0x8609 y la de al lado
+C 0x8612 cerca del borde de la casilla, tambien la tercera
+L 0x8624 en_la_salida
+C 0x8624 D910 bit 0: fase acabada
+L 0x862B no_salida
+C 0x862B D910 bit 0 a 0
+B 0x8632 Un enemigo de DA20 contra Rastan: los tipos 0x17-0x24 tienen su rutina
+B 0x8632 en la tabla de p07:864C.
+L 0x8632 choque_enemigo
+C 0x8632 tipo 0x17...
+C 0x8638 ...a 0x24
+C 0x863E * 2 + p07:864C
+C 0x864A a su rutina
+D 0x864C 0x8668 choque_por_tipo  La rutina de choque de los tipos 0x17-0x24 de DA20 (14 palabras)
+F 0x864C w7
+B 0x8668 Tipo 0x19: algo que gira (+2 = el giro, 0-17) y de cuatro formas (+1);
+B 0x8668 solo hace dano en ciertos giros (de 2 en adelante): 0x10 en la primera
+B 0x8668 mitad de la vuelta y 8 en la segunda.
+L 0x8668 choque_tipo_19
+C 0x8668 la forma: 0, 1 o 2-3
+L 0x867E giro_forma_0
+C 0x867E giros 9-17 son los 0-8 al reves
+L 0x868B giro_forma_0_b
+C 0x868B giros 0-1: nada
+C 0x868E de 5 en adelante: p07:86A8
+C 0x8692 una caja que crece 4 pixeles por giro
+L 0x86A8 giro_forma_0_c
+L 0x86BD dano_giro
+C 0x86BD dano 0x10...
+C 0x86BF ...en la primera mitad
+C 0x86C7 dano 8 en la segunda
+L 0x86CC giro_forma_1
+L 0x86D9 giro_forma_1_b
+L 0x86FA giro_forma_1_c
+L 0x8713 dano_giro_1
+L 0x8722 giro_forma_2
+L 0x872F giro_forma_2_b
+L 0x8752 giro_forma_2_c
+L 0x876E choque_tipo_1a
+C 0x876E tipo 0x1A: solo con la pose 0...
+C 0x8773 ...y dentro de su caja...
+C 0x8785 ...8 de dano
+L 0x878B choque_tipo_1b
+C 0x878B tipo 0x1B: igual con otra caja
+B 0x87A8 Tipo 0x1C: otro que gira (+2, 16 giros en ida y vuelta); la caja baja 4
+B 0x87A8 pixeles por giro; dano 0x10 o 8 segun la mitad de la vuelta (0x0E de mas
+B 0x87A8 de alto si Rastan esta agachado).
+L 0x87A8 choque_tipo_1c
+C 0x87A8 D = 0 de pie...
+C 0x87B3 ...0x0E agachado
+L 0x87B5 giro_1c
+C 0x87B5 el giro (0x0F cuenta como 0)
+L 0x87BF giro_1c_b
+C 0x87BF de 8 en adelante, al reves
+L 0x87CD caja_1c
+C 0x87CD 4 pixeles por giro
+C 0x87D6 fuera en y: nada
+C 0x87D9 fuera en x: nada
+C 0x87E2 dano 0x10 o 8
+B 0x87F1 Tipo 0x1D: como el 0x19 con la caja en vertical.
+L 0x87F1 choque_tipo_1d
+C 0x87F1 giros 9-17, al reves
+L 0x87FE giro_1d
+C 0x87FE 0-1: nada
+L 0x8821 giro_1d_b
+B 0x883D Tipos 0x17, 0x1E y 0x1F: tocarlos quita 8.
+L 0x883D choque_contacto
+C 0x883D dentro de la caja...
+C 0x884F ...8 de dano
+D 0x8855 0x8856 resto_8855  un `ret` que nadie ejecuta
+L 0x8856 choque_tipo_20
+C 0x8856 tipo 0x20: solo con la pose 0, caja 0x1B x 0x23, dano 8
+L 0x8873 choque_tipo_21
+C 0x8873 tipos 0x21 y 0x23: solo con la pose 1, una caja alta (0x3E), dano 8
+L 0x8891 choque_tipo_24
+C 0x8891 tipo 0x24: nada
+B 0x8892 Tipo 0x22: una plataforma que sube y baja con su giro (+2). Si Rastan
+B 0x8892 cae encima, se queda sobre ella (D90F bit 2, D914 = la plataforma) y su y
+B 0x8892 la sigue; si se sale por los lados, cae.
+L 0x8892 plataforma
+C 0x8892 ya esta encima: p07:88F0
+C 0x889A bajando de un salto...
+C 0x88A1 ...o cayendo: puede subirse
+L 0x88A7 plataforma_altura
+C 0x88A7 E = y de la plataforma
+C 0x88AB su giro + 1: de 0x10 en adelante, nada
+C 0x88B2 de 9 en adelante, al reves
+L 0x88BC plataforma_y
+C 0x88BC la altura: y + (8 - giro) * 4 - 0x20
+C 0x88C6 los pies de Rastan a menos de 3 pixeles?
+C 0x88CC y dentro en x?
+C 0x88D5 se sube: y = la de la plataforma
+C 0x88DA D914 = la plataforma
+C 0x88DF D90F bit 2: encima
+C 0x88E4 D90D = 0: de pie
+C 0x88E9 D90F bit 0 a 0
+L 0x88F0 sobre_plataforma
+C 0x88F0 es esta plataforma?
+C 0x88FD la altura de ahora...
+C 0x8904 ...giro + 1, fuera de 0x10: se cae
+C 0x891E fuera en x: se cae
+C 0x8929 la y de Rastan sigue a la plataforma
+L 0x892F cae_de_plataforma
+C 0x8930 ya no esta encima
+C 0x8935 D90D bits 7 y 1: cayendo
+B 0x893E Tipo 0x18: algo que gira y a lo que Rastan se agarra (D90F bit 3, D914).
+B 0x893E Su x sale de la tabla de su forma (+1) en el banco 7, como en p06:6B1B.
+L 0x893E agarradero
+C 0x893E ya agarrado: nada
+C 0x8944 es al que esta agarrado: nada
+C 0x8951 el giro: 10-19 son 0-9 al reves
+L 0x8960 agarradero_giro
+C 0x8960 C = giro
+C 0x8961 la forma: 0, 1, 2 o 3
+C 0x8971 forma 3: B = distancia en y...
+C 0x8976 ...de 4 a 0x1C
+C 0x897B giro * 8...
+C 0x8983 ...en p07:90EC...
+C 0x8987 ...+ distancia / 2
+C 0x898D la x relativa + x del actor - 16
+C 0x8995 Rastan a menos de 4 pixeles?
+C 0x899B se agarra (D90F bit 3)...
+C 0x89A3 ...en esa x...
+C 0x89A7 ...D914 = el agarradero
+C 0x89AB D90F bit 0 a 0
+C 0x89B3 D916 = el giro
+C 0x89BB la y de agarre segun el giro:
+L 0x89EB agarre_y_a
+C 0x89EB un pixel mas abajo por cada umbral
+L 0x8A00 agarre_y_b
+L 0x8A1A agarre_y_c
+L 0x8A25 agarre_y_d
+L 0x8A2E guarda_agarre
+C 0x8A2E D917 = la y de agarre
+L 0x8A33 agarradero_forma_2
+C 0x8A33 forma 2: distancia en y de 4 a 0x2C
+C 0x8A3D giro * 24...
+C 0x8A47 ...en p07:8FFC
+C 0x8A51 la x
+C 0x8A59 a menos de 4?
+C 0x8A5F se agarra
+C 0x8A6B D914
+C 0x8A77 D916 = el giro
+L 0x8AA1 agarre2_y_a
+L 0x8AAC agarre2_y_b
+L 0x8ABC agarre2_y_c
+L 0x8AC5 guarda_agarre_2
+C 0x8AC5 D917
+L 0x8ACA agarradero_forma_1
+C 0x8ACA forma 1: distancia en y de 4 a 0x3C
+C 0x8AD4 giro * 32...
+C 0x8ADE ...en p07:8EBC
+C 0x8AE8 la x
+C 0x8AF0 a menos de 4?
+C 0x8AF6 se agarra
+C 0x8B02 D914
+C 0x8B0E D916 = el giro
+L 0x8B2C agarre1_y_a
+L 0x8B37 agarre1_y_b
+L 0x8B45 guarda_agarre_1
+C 0x8B45 D917
+L 0x8B4A agarradero_forma_0
+C 0x8B4A forma 0: distancia en y de 4 a 0x4C
+C 0x8B54 giro * 40...
+C 0x8B5F ...en p07:8D2C
+C 0x8B69 la x
+C 0x8B71 a menos de 4?
+C 0x8B77 se agarra
+C 0x8B83 D914
+C 0x8B8F D916 = el giro
+L 0x8BAD agarre0_y_a
+L 0x8BB8 agarre0_y_b
+L 0x8BC1 guarda_agarre_0
+C 0x8BC1 D917
+B 0x8BC6 LOS OBJETOS: el bloque especial de tipo 4-0x12. Si Rastan lo toca,
+B 0x8BC6 desaparece, suma los puntos de p07:8C31 y hace lo que diga la tabla de
+B 0x8BC6 p07:8C13 (efecto 7).
+L 0x8BC6 coge_objeto
+C 0x8BC6 tipo 0x13 o mas: no es un objeto
+C 0x8BCC tipo 0-3: tampoco (las armas, p07:8000)
+C 0x8BD0 dentro de su caja en x...
+C 0x8BD9 ...y en y
+C 0x8BE3 se repinta el fondo encima
+C 0x8BE6 (tipo - 4) * 2
+C 0x8BF0 suceso del bit 2: efecto 7
+C 0x8BF6 sus puntos...
+C 0x8C01 ...sumados
+C 0x8C05 su rutina...
+C 0x8C0D ...ya no hay bloque especial...
+C 0x8C11 ...y a la rutina
+D 0x8C13 0x8C31 objeto_rutina  Lo que hace cada objeto (tipos 4-0x12): 4-6 nada, 7 y 8 vida, 9 y 0x0A dano, 0x0B vida llena, 0x0C mata a todos, 0x0D y 0x0E doblan arma y escudo, 0x0F puntos dobles, 0x10-0x12 escudo
+F 0x8C13 w5
+D 0x8C31 0x8C4F objeto_puntos  Los puntos de cada objeto (palabras BCD): 0x100, 0x200, 0x300, 0x100, 0x200, 0x1000, 0x2000, 0x100, 0, 0x100, 0x500, 0x300, 0x100, 0x150, 0x200
+F 0x8C31 w5
+L 0x8C4F objeto_vida_10
+C 0x8C4F objeto 7: 0x10 de vida
+L 0x8C53 objeto_vida_20
+C 0x8C53 objeto 8: 0x20 de vida
+L 0x8C57 objeto_vida_llena
+C 0x8C57 objeto 0x0B: la vida al maximo
+L 0x8C5E suma_vida
+C 0x8C5E vida + C...
+C 0x8C63 ...sin pasar del maximo
+L 0x8C6A guarda_vida
+L 0x8C6F objeto_dano_4
+C 0x8C6F objeto 9: quita 4
+L 0x8C73 objeto_dano_8
+C 0x8C73 objeto 0x0A: quita 8
+L 0x8C77 objeto_dano
+C 0x8C77 p06:7818
+L 0x8C7A objeto_escudo_1
+C 0x8C7A objeto 0x10: escudo 1
+L 0x8C7E objeto_escudo_2
+C 0x8C7E objeto 0x11: escudo 2
+L 0x8C82 objeto_escudo_3
+C 0x8C82 objeto 0x12: escudo 3
+L 0x8C84 pon_escudo
+C 0x8C84 D91B = el escudo
+C 0x8C88 en los bits 2-3 de D905 (su icono)
+C 0x8C94 cuantos golpes aguanta, segun la puntuacion:
+C 0x8C97 0x10 o mas: 9
+C 0x8C9D 6 o mas: 8
+C 0x8CA3 3 o mas: 7
+C 0x8CA9 1 o mas: 6
+C 0x8CAF menos: 5
+L 0x8CB1 guarda_golpes
+C 0x8CB1 D926
+L 0x8CB6 objeto_mata_todos
+C 0x8CB6 objeto 0x0C: los 3 actores...
+L 0x8CBF mata_actor
+C 0x8CBF ...sin vida
+L 0x8CC8 objeto_dobla_arma
+C 0x8CC8 objeto 0x0D: con arma...
+C 0x8CCD ...el doble de segundos (hasta 255)...
+C 0x8CD8 ...y el icono del bit 7
+L 0x8CE1 objeto_dobla_escudo
+C 0x8CE1 objeto 0x0E: con escudo...
+C 0x8CE6 ...el doble de golpes (hasta 31)...
+C 0x8CF3 ...y el icono del bit 6
+L 0x8CFC objeto_puntos_dobles
+C 0x8CFC objeto 0x0F: D905 bit 5...
+C 0x8D04 ...durante 60 segundos
+L 0x8D0A objeto_nada
+C 0x8D0A objetos 4, 5 y 6: solo puntos
+B 0x8D0B Suma BCDE a la puntuacion (4 bytes BCD desde D91E) y marca que ha
+B 0x8D0B cambiado (bit 7 del ultimo). Con D905 bit 5 se suma dos veces.
+L 0x8D0B suma_puntos
+C 0x8D0B puntos dobles?
+C 0x8D10 si: una vez de mas
+L 0x8D13 suma_una_vez
+C 0x8D13 E + byte 1
+C 0x8D1A D + byte 2, con acarreo
+C 0x8D1F C + byte 3
+C 0x8D24 B + byte 4...
+C 0x8D28 ...con la marca de cambio
+D 0x8D2C 0x8EBC agarre_x_forma0  Forma 0 de los agarraderos: la x relativa de agarre por giro (10 giros x 40 distancias en y, de 2 en 2)
+F 0x8D2C 20
+D 0x8EBC 0x8FFC agarre_x_forma1  Forma 1: 10 giros x 32 distancias
+F 0x8EBC 16
+D 0x8FFC 0x90EC agarre_x_forma2  Forma 2: 10 giros x 24 distancias
+F 0x8FFC 12
+D 0x90EC 0x918C agarre_x_forma3  Forma 3: 10 giros x 16 distancias
+F 0x90EC 8
+B 0x918C EL JEFE CONTRA RASTAN (D910 bit 6). El jefe es el actor 0 (D933): su tipo
+B 0x918C (1-5) elige la rutina de la tabla p07:91C5, que mira cajas segun su pose
+B 0x918C (D934) y su cuadro (D935) y hace dano con escudo a la mitad.
+L 0x918C choque_jefe
+C 0x918C D969: la vida del jefe; 0, ya no esta
+C 0x9192 H, L = Rastan
+C 0x919A agachado: 14 pixeles mas abajo
+L 0x91A7 jefe_xy
+C 0x91A7 D, E = el jefe (x, y)
+C 0x91B0 su tipo: 6 o mas, nada
+C 0x91B6 * 2 en p07:91C5...
+C 0x91C2 ...y a la rutina
+L 0x91C4 jefe_nada
+C 0x91C4 tipo 0: nada
+D 0x91C5 0x91D1 choque_por_jefe  La rutina de choque de cada jefe (tipos 0-5)
+F 0x91C5 w6
+B 0x91D1 EL ATAQUE DE RASTAN CONTRA EL JEFE: la rutina de su tipo en p07:9200
+B 0x91D1 decide si el punto del golpe (H, L) cae en el.
+L 0x91D1 golpe_a_jefe
+C 0x91D1 sin disparo del arma 3
+C 0x91D5 el jefe ya no esta: nada
+C 0x91DC ya le dio este golpe: nada
+C 0x91E2 D, E = el jefe
+C 0x91EB su tipo
+C 0x91F1 * 2 en p07:9200...
+C 0x91FD ...y a la rutina
+D 0x9200 0x920C golpe_por_jefe  La caja de golpe de cada jefe (tipos 0-5)
+F 0x9200 w6
+L 0x920C choque_jefe_1
+C 0x920C jefe 1: dano 0x0C...
+C 0x920E ...si Rastan cae en su cuerpo
+C 0x921F si no, segun su pose (D934 & 7) en p07:9235
+C 0x9233 a la rutina de la pose
+D 0x9235 0x9245 choque_jefe_1_pose  Jefe 1: la rutina de cada pose (8 palabras)
+F 0x9235 w8
+L 0x9245 jefe_1_pose_0
+C 0x9245 una caja a la izquierda
+L 0x9256 jefe_1_pose_1
+C 0x9256 una caja a la derecha
+L 0x9267 jefe_1_pose_2
+C 0x9267 dano 0x10
+C 0x9269 en y
+C 0x9270 D935 bit 7: nada
+C 0x9276 segun el cuadro (1, 2 o el resto), una caja de ancho distinto
+L 0x9288 jefe_1_pose_2_c1
+L 0x9292 jefe_1_pose_2_c2
+L 0x929C jefe_1_pose_3
+C 0x929C lo mismo hacia el otro lado
+L 0x92BD jefe_1_pose_3_c1
+L 0x92C7 jefe_1_pose_3_c2
+L 0x92D1 jefe_1_pose_nada
+C 0x92D1 poses 4-7: nada
+L 0x92D2 choque_jefe_2
+C 0x92D2 jefe 2: la pose...
+C 0x92D8 ...2 o 3 en el cuadro 3: dano 0x10 delante
+L 0x92E1 jefe_2_ataque
+C 0x92F4 el lado al que mira
+L 0x9304 jefe_2_ataque_der
+L 0x930E jefe_2_cuerpo
+C 0x930E si no, dano 0x0C con el cuerpo
+C 0x9310 poses 6 en adelante: otra caja
+L 0x9326 jefe_2_cuerpo_b
+L 0x9336 choque_jefe_3
+C 0x9336 jefe 3: dano 0x24 por arriba o por el cuerpo
+C 0x934C dano 0x24
+L 0x9351 jefe_3_arriba
+C 0x9358 dano 0x24
+L 0x935D choque_jefe_4
+C 0x935D jefe 4: dano 0x18 con sus ataques (poses 2 y 3, cuadros 2 y 3)
+L 0x938A jefe_4_c2
+L 0x939F jefe_4_pose_2
+L 0x93BE jefe_4_pose_2_c2
+L 0x93D3 jefe_4_cuerpo
+C 0x93D3 el cuerpo: dano 0x0C
+L 0x93E6 choque_jefe_5
+C 0x93E6 jefe 5: dano 0x10 segun la pose (0-7)
+L 0x9407 jefe_5_p5
+L 0x941C jefe_5_p4
+L 0x9431 jefe_5_p3
+L 0x9446 jefe_5_p2
+L 0x945B jefe_5_p7
+L 0x9470 jefe_5_p6
+L 0x9485 jefe_5_cuerpo
+C 0x9485 el cuerpo: dano 0x0C
+C 0x9498 pose 8: p07:94DC; si no, p07:94CB
+D 0x949F 0x94CB resto_949F  44 bytes de codigo que nadie ejecuta (mas cajas del jefe 5)
+L 0x94CB jefe_5_caja_a
+L 0x94DC jefe_5_caja_b
+L 0x94ED dano_jefe_cuerpo
+C 0x94ED con escudo...
+C 0x94F3 ...un golpe menos...
+C 0x94FC ...y si se acaba, fuera
+L 0x9507 dano_jefe_mitad
+C 0x9507 dano / 2
+L 0x9509 dano_jefe
+C 0x9509 a la vida de Rastan
+L 0x950D dano_jefe_ataque
+C 0x950D lo mismo para los ataques
+L 0x9527 dano_jefe_ataque_mitad
+L 0x9529 dano_jefe_ataque_b
+L 0x952D golpe_jefe_1
+C 0x952D jefe 1: una caja de 0x38 x 0x2B
+L 0x953E golpe_jefe_2
+C 0x953E jefe 2: poses 0-7, una caja...
+L 0x9556 golpe_jefe_2_b
+C 0x9556 ...de la 8 en adelante, dos
+L 0x9567 golpe_jefe_2_c
+L 0x9577 golpe_jefe_3
+L 0x9588 golpe_jefe_4
+C 0x9588 jefe 4: mas ancha (0x48)
+L 0x9599 golpe_jefe_5
+C 0x9599 jefe 5: segun la pose, una caja distinta
+L 0x95D8 golpe_jefe_5_b
+L 0x95ED golpe_jefe_5_c
+L 0x9607 golpe_jefe_5_d
+L 0x961C golpe_jefe_5_e
+L 0x962D golpe_jefe_5_f
+L 0x963E golpe_jefe_5_g
+L 0x964F golpe_jefe_5_h
+L 0x965F golpe_jefe_5_i
+L 0x9670 golpe_jefe_5_j
+L 0x9681 golpe_jefe_5_k
+L 0x9692 golpe_jefe_5_l
+L 0x96A3 golpe_jefe_5_m
+L 0x96B4 golpe_jefe_5_n
+B 0x96C5 Le da al jefe: efecto 2, su vida (D969) baja la fuerza del golpe (C); a 0,
+B 0x96C5 suma los puntos de su tipo (p07:9709). Marca el golpe (actor 0 +25 bit 7).
+L 0x96C5 le_da_al_jefe
+C 0x96C6 suceso del bit 6: efecto 2
+C 0x96CB vida - fuerza
+C 0x96D3 0 o menos: muere
+L 0x96D7 muere_jefe
+C 0x96D7 su tipo 1-5...
+C 0x96E2 ...* 2 + p07:9707...
+C 0x96ED ...sus puntos, sumados
+C 0x96F4 vida 0
+L 0x96F7 guarda_vida_jefe
+C 0x96F7 la vida que le queda
+C 0x96FA D96B = 1
+C 0x96FF marcado: este golpe ya le dio
+# --- fin de las notas por tandas ---
+
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
-C 0x8003 a = y del bloque especial
-C 0x800c a = cual es el bloque especial
-C 0x8030 el arma que lleva = a
-C 0x8034 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x803c lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
-C 0x8040 hl -> sucesos del jugador en este cuadro: cada bit, un efecto
-C 0x8046 a = puntuacion, cifras 5-6
+C 0x803c lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 C 0x8064 segundos que le quedan al arma = a
 C 0x8073 cual es el bloque especial = a
-C 0x80fb bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x8104 a = la x de Rastan
 C 0x8108 a = la y de Rastan
-C 0x810c ix -> los 8 enemigos de la pantalla
 C 0x8113 ix -> enemigo 1
 C 0x811a ix -> enemigo 2
 C 0x8121 ix -> enemigo 3
@@ -20,86 +588,92 @@ C 0x8128 ix -> enemigo 4
 C 0x812f ix -> enemigo 5
 C 0x8136 ix -> enemigo 6
 C 0x813d ix -> enemigo 7
-C 0x814a a = bit 7 muerto, bit 4 un rato sin mandos
-C 0x815e a = la pose de Rastan
-C 0x8172 ix -> los 6 actores de la pantalla
-C 0x8330 a = segundos que le quedan al arma
 C 0x8337 segundos que le quedan al arma = a
-C 0x833a a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x833f lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x833f lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 C 0x8343 el arma que lleva = a
-C 0x83e2 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x83e7 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
-C 0x83f0 hl -> sucesos del jugador en este cuadro: cada bit, un efecto
-C 0x844c ix -> los 6 actores de la pantalla
-C 0x8576 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x857b lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x834e los golpes que le quedan al escudo = a
+C 0x83da los golpes que le quedan al escudo = a
+C 0x83df el escudo que lleva = a
+C 0x83e7 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x856e los golpes que le quedan al escudo = a
+C 0x8576 a = lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble
+C 0x857b lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x8591 p06 dano
+C 0x86c4 p06 dano
+C 0x86c9 p06 dano
+C 0x871a p06 dano
+C 0x871f p06 dano
+C 0x8787 p06 dano
+C 0x87a4 p06 dano
 C 0x87aa a = la pose de Rastan
-C 0x8892 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x87e9 p06 dano
+C 0x87ee p06 dano
+C 0x8851 p06 dano
+C 0x886f p06 dano
+C 0x888d p06 dano
 C 0x88d7 la y de Rastan = a
-C 0x88df hl -> bit 7 muerto, bit 4 un rato sin mandos
-C 0x88e9 hl -> bit 7 muerto, bit 4 un rato sin mandos
 C 0x892b la y de Rastan = a
-C 0x8930 hl -> bit 7 muerto, bit 4 un rato sin mandos
-C 0x893e a = bit 7 muerto, bit 4 un rato sin mandos
-C 0x899b a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x89a0 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x89a4 la x de Rastan = a
-C 0x89ab a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x89b0 bit 7 muerto, bit 4 un rato sin mandos = a
-C 0x8a5f a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x89b8 el giro del actor al que esta agarrado = a
+C 0x8a2f la y de agarre = a
 C 0x8a64 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8a68 la x de Rastan = a
 C 0x8a6f a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x8a74 bit 7 muerto, bit 4 un rato sin mandos = a
-C 0x8af6 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8a7c el giro del actor al que esta agarrado = a
+C 0x8ac6 la y de agarre = a
 C 0x8afb bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8aff la x de Rastan = a
 C 0x8b06 a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x8b0b bit 7 muerto, bit 4 un rato sin mandos = a
-C 0x8b77 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8b13 el giro del actor al que esta agarrado = a
+C 0x8b46 la y de agarre = a
 C 0x8b7c bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8b80 la x de Rastan = a
 C 0x8b87 a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x8b8c bit 7 muerto, bit 4 un rato sin mandos = a
-C 0x8bc6 a = cual es el bloque especial
-C 0x8bd0 a = x del bloque especial de la pantalla
-C 0x8bd9 a = y del bloque especial
-C 0x8be6 a = cual es el bloque especial
-C 0x8bf0 hl -> sucesos del jugador en este cuadro: cada bit, un efecto
+C 0x8b94 el giro del actor al que esta agarrado = a
+C 0x8bc2 la y de agarre = a
 C 0x8c0e cual es el bloque especial = a
-C 0x8c57 a = el largo total de la barra
 C 0x8c5a la vida de Rastan = a
-C 0x8c5e a = la vida de Rastan
-C 0x8c63 a = el largo total de la barra
 C 0x8c6b la vida de Rastan = a
-C 0x8c8b a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x8c91 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
-C 0x8c94 a = puntuacion, cifras 5-6
+C 0x8c85 el escudo que lleva = a
+C 0x8c8b a = lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble
+C 0x8c91 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x8cb2 los golpes que le quedan al escudo = a
 C 0x8cbb ix -> los 6 actores de la pantalla
-C 0x8cc8 a = el arma que lleva
-C 0x8ccd a = segundos que le quedan al arma
 C 0x8cd5 segundos que le quedan al arma = a
-C 0x8cd8 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x8cdd lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
-C 0x8cf3 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x8cf8 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
-C 0x8cfc a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x8d01 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
-C 0x8d06 segundos que le quedan al bit 5 de D905 = a
-C 0x8d0b a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
-C 0x8d14 hl -> la puntuacion, tres bytes BCD
-C 0x918c hl = actor 1, byte +10
-C 0x9192 a = la x de Rastan
+C 0x8cdd lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x8cf0 los golpes que le quedan al escudo = a
+C 0x8cf8 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x8d01 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x8d06 segundos que le quedan a los puntos dobles = a
+C 0x8d14 hl -> la puntuacion, cuatro bytes BCD
 C 0x9196 a = la y de Rastan
-C 0x919a a = la pose de Rastan
-C 0x91a7 a = actor 0, byte +7
 C 0x91ab a = actor 0, byte +6
-C 0x91b0 a = los 6 actores de la pantalla
 C 0x91d2 bit 7: el jugador usa la ficha 10 = a
-C 0x91d5 de = actor 1, byte +10
-C 0x91dc a = actor 0, byte +25
-C 0x91e2 a = actor 0, byte +7
 C 0x91e6 a = actor 0, byte +6
-C 0x91eb a = los 6 actores de la pantalla
+C 0x9224 a = actor 0, byte +1
+C 0x92a5 a = actor 0, byte +2
+C 0x92e3 a = actor 0, byte +2
+C 0x935f a = actor 0, byte +1
+C 0x936b a = actor 0, byte +2
+C 0x939f a = actor 0, byte +2
+C 0x93e8 a = actor 0, byte +1
+C 0x94f7 los golpes que le quedan al escudo = a
+C 0x94ff a = lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble
+C 0x9504 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x950a p06 dano
+C 0x9513 a = los golpes que le quedan al escudo
+C 0x9517 los golpes que le quedan al escudo = a
+C 0x951c el escudo que lleva = a
+C 0x951f a = lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble
+C 0x9524 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
+C 0x952a p06 dano
+C 0x95be a = actor 0, byte +2
+C 0x95ed a = actor 0, byte +2
+C 0x96fc actor 1, byte +12 = a
+C 0x9704 actor 0, byte +25 = a
 # --- fin de anota ---

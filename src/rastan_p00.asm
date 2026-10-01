@@ -2147,17 +2147,17 @@ DATA_texto_game_over:
 	ld (0d17ah),a		;4eb9   ; musica pedida, para p01:640F = a
 	xor a			;4ebc   ; la partida a cero (lo mismo que p00:4FE0)
 	ld (0d17dh),a		;4ebd   ; bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-	ld (0d905h),a		;4ec0   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+	ld (0d905h),a		;4ec0   ; lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 	ld (0d919h),a		;4ec3   ; el arma que lleva = a
-	ld (0d926h),a		;4ec6
-	ld (0d91eh),a		;4ec9   ; la puntuacion, tres bytes BCD = a
+	ld (0d926h),a		;4ec6   ; los golpes que le quedan al escudo = a
+	ld (0d91eh),a		;4ec9   ; la puntuacion, cuatro bytes BCD = a
 	ld (0d91fh),a		;4ecc   ; puntuacion, cifras 3-4 = a
 	ld (0d920h),a		;4ecf   ; puntuacion, cifras 5-6 = a
-	ld (0d921h),a		;4ed2   ; bit 7: la puntuacion ha cambiado = a
+	ld (0d921h),a		;4ed2   ; puntuacion, byte 4; bit 7: ha cambiado = a
 	ld (0d90dh),a		;4ed5
 	ld (0d90eh),a		;4ed8
 	ld (0d90fh),a		;4edb   ; bit 7 muerto, bit 4 un rato sin mandos = a
-	ld (0d910h),a		;4ede
+	ld (0d910h),a		;4ede   ; bits: 0 en la salida, 6 jefe, 7 no pierde vida = a
 	exx			;4ee1
 	ld b,000h		;4ee2
 	exx			;4ee4
@@ -2330,17 +2330,17 @@ pantalla_titulo:
 	ld (0d17ah),a		;4fe7   ; musica pedida, para p01:640F = a
 	xor a			;4fea   ; D17D, D905, D919, D926, D91E-D921 y D90D-D910 a 0
 	ld (0d17dh),a		;4feb   ; bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-	ld (0d905h),a		;4fee   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+	ld (0d905h),a		;4fee   ; lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 	ld (0d919h),a		;4ff1   ; el arma que lleva = a
-	ld (0d926h),a		;4ff4
-	ld (0d91eh),a		;4ff7   ; la puntuacion, tres bytes BCD = a
+	ld (0d926h),a		;4ff4   ; los golpes que le quedan al escudo = a
+	ld (0d91eh),a		;4ff7   ; la puntuacion, cuatro bytes BCD = a
 	ld (0d91fh),a		;4ffa   ; puntuacion, cifras 3-4 = a
 	ld (0d920h),a		;4ffd   ; puntuacion, cifras 5-6 = a
-	ld (0d921h),a		;5000   ; bit 7: la puntuacion ha cambiado = a
+	ld (0d921h),a		;5000   ; puntuacion, byte 4; bit 7: ha cambiado = a
 	ld (0d90dh),a		;5003
 	ld (0d90eh),a		;5006
 	ld (0d90fh),a		;5009   ; bit 7 muerto, bit 4 un rato sin mandos = a
-	ld (0d910h),a		;500c
+	ld (0d910h),a		;500c   ; bits: 0 en la salida, 6 jefe, 7 no pierde vida = a
 	call limpia_fichas_sprite		;500f   ; sprites a cero y ocultos
 	ld ix,0d413h		;5012   ; ix -> las 32 fichas de sprite
 	ld b,020h		;5016
@@ -2619,13 +2619,13 @@ tarea_partida:
 	ld (0d90dh),a		;5299
 	ld (0d90eh),a		;529c
 	ld (0d90fh),a		;529f   ; bit 7 muerto, bit 4 un rato sin mandos = a
-	ld (0d910h),a		;52a2
+	ld (0d910h),a		;52a2   ; bits: 0 en la salida, 6 jefe, 7 no pierde vida = a
 	ld (0d925h),a		;52a5   ; la vida que muestra la barra = a
 	ld (0d924h),a		;52a8   ; bit 7: el jugador usa la ficha 10 = a
-	ld (0d91eh),a		;52ab   ; la puntuacion, tres bytes BCD = a
+	ld (0d91eh),a		;52ab   ; la puntuacion, cuatro bytes BCD = a
 	ld (0d91fh),a		;52ae   ; puntuacion, cifras 3-4 = a
 	ld (0d920h),a		;52b1   ; puntuacion, cifras 5-6 = a
-	ld (0d921h),a		;52b4   ; bit 7: la puntuacion ha cambiado = a
+	ld (0d921h),a		;52b4   ; puntuacion, byte 4; bit 7: ha cambiado = a
 	ld a,001h		;52b7   ; DA1F = 1
 	ld (0da1fh),a		;52b9
 	ld hl,0da20h		;52bc   ; DA1D = DA20

@@ -1,96 +1,594 @@
 
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+D 0x8000 0x8002 cruce_8000  los dos ultimos bytes del `ld (nn),hl` que empieza en p03:7FFF (ld (0xD189),hl)
+B 0x8002 (Sigue de p03:7FDA, con HL = 0x0130 ya guardado en D189.)
+L 0x8002 fin_cruce
+B 0x8003 JEFE MUERTO (actor 0 de tipo 7): su animacion y una cuenta atras de D189
+B 0x8003 cuadros; al acabar, la fase se da por acabada (D17D bit 0).
+L 0x8003 jefe_muerto
+C 0x8003 un paso de su animacion
+C 0x8006 D189 - 1
+C 0x800D aun no: nada
+C 0x8010 se acaba la fase
+B 0x8016 JEFE DE LA FASE 2 (tipo 1). La primera vez se coloca en (0x96, 0x40) con
+B 0x8016 0x140 de vida; luego anda hacia Rastan, se para delante de las paredes y
+B 0x8016 a veces salta (la lista de alturas de p04:81B8).
+L 0x8016 jefe_fase_2
+C 0x8016 IX = el actor 0
+C 0x801A ya muerto (tipo 7): p03:7FDA
+C 0x8022 x = 0: aun no ha salido
+C 0x802A 0x140 de vida
+C 0x8030 en y = 0x40...
+C 0x8034 ...x = 0x96
+C 0x8038 tipo 1, pose 1
+C 0x8042 su animacion desde el principio
+L 0x804A jefe_1_mueve
+C 0x804A tipo 1
+C 0x804E D910 bit 6: pelea con un jefe
+C 0x8053 sin vida: muere (p03:7FDA)
+C 0x805E +10 bit 0: saltando (p04:8160)
+C 0x8065 +10 bit 2: el otro salto (p04:8219)
+C 0x806C poses de ataque fuera
+C 0x8074 nada debajo (p04:811A)...
+C 0x8077 ...cae
+C 0x807C de cara a Rastan
+C 0x8083 las casillas: la de delante
+C 0x8086 clase 0x20 (pared)...
+C 0x808C ...+10 bit 4: p04:80E0
+C 0x8092 cerca de Rastan (0x30): salta
+L 0x809A jefe_1_anda
+C 0x809A un paso hacia donde mira
+C 0x809D lejos (0x30 o mas): solo la animacion
+L 0x80A7 jefe_1_cerca
+C 0x80A7 en los bordes, da la vuelta
+C 0x80B4 un paso atras
+C 0x80B7 en los bordes: salta
+C 0x80C4 animacion
+L 0x80C7 huerfana_jefe_1_x20
+C 0x80C7 nadie llega aqui: x = 0x20 y salta
+D 0x80CE 0x80E0 resto_80CE  18 bytes que nadie ejecuta
+L 0x80E0 jefe_1_pared
+C 0x80E0 a menos de 0x18 de Rastan...
+C 0x80E7 ...si no, anda 2
+L 0x80ED jefe_1_ataca
+C 0x80ED su animacion no ha acabado: pose del bit 1
+L 0x80FA jefe_1_ataques
+C 0x80FA +11 cuenta los ataques: uno
+L 0x8107 jefe_1_fin_ataque
+C 0x8107 fuera el bit 4 de +10 y las poses
+L 0x811A jefe_1_suelo
+C 0x811A las casillas
+C 0x811D la de +23 (debajo) es clase 0x20?
+C 0x8126 si: A = 0
+L 0x8129 jefe_1_sin_suelo
+C 0x8129 no: A = 0xFF
+L 0x812C jefe_paso
+C 0x812C mirando a la izquierda: x - 1
+C 0x8132 a la derecha: fuera las poses y x + 1
+L 0x8142 jefe_paso_izq
+L 0x8146 jefe_paso_atras
+C 0x8146 lo contrario
+L 0x815C jefe_paso_atras_izq
+B 0x8160 El salto del jefe: sube y baja siguiendo la lista de alturas de p04:81B8
+B 0x8160 (+14/+15 apuntan por donde va) hasta un 0xFF, avanzando 2 cada cuadro.
+L 0x8160 jefe_1_salta
+C 0x8160 en los bordes, da la vuelta
+C 0x816D pose del bit 2 y +10 bits 4 y 0: saltando
+C 0x817D la lista desde el principio...
+C 0x8180 ...o por donde iba
+C 0x8187 0xFF: se acabo
+C 0x818D y - el paso
+C 0x8196 +10 bit 1: el salto ya empezo
+C 0x819A apunta por donde va
+C 0x81A0 2 pixeles hacia donde mira
+L 0x81A6 jefe_1_sigue_salto
+C 0x81A6 HL = por donde iba
+L 0x81AD jefe_1_fin_salto
+C 0x81AD +10 = 0x10: aterriza
+D 0x81B8 0x8219 jefe_1_salto  Las alturas del salto del jefe de la fase 2: un byte por cuadro (lo que sube; negativo baja) y 0xFF
+L 0x8219 jefe_1_salta_b
+C 0x8219 el otro salto (+10 bit 2): la misma lista con la pose del bit 2
+C 0x822E +10 bit 3
+L 0x825B jefe_1_sigue_salto_b
+B 0x8262 JEFE DE LA FASE 5 (tipo 2): como el de la fase 2, con efecto 9 al salir,
+B 0x8262 su lista de alturas en p04:83E6 y tres ataques seguidos.
+L 0x8262 jefe_fase_5
+C 0x8266 ya muerto: p03:7FDA
+C 0x826E aun no ha salido...
+C 0x8276 ...0x140 de vida...
+C 0x827C ...en (0x96, 0x40)...
+C 0x8284 ...pelea con un jefe...
+C 0x8289 ...tipo 2, pose 1
+C 0x8293 animacion desde el principio
+C 0x8298 efecto 9
+L 0x82A0 jefe_2_mueve
+C 0x82A4 pelea con un jefe
+C 0x82A9 sin vida: muere
+C 0x82B4 saltando
+C 0x82BB el otro salto
+C 0x82C2 fuera las poses 1-3
+C 0x82CE nada debajo: cae (p04:8479)
+C 0x82D6 de cara a Rastan
+C 0x82DD la casilla de delante
+C 0x82E6 pared y +10 bit 4: p04:833A
+C 0x82EC cerca: salta
+L 0x82F4 jefe_2_anda
+L 0x8301 jefe_2_cerca
+L 0x8321 huerfana_jefe_2_x20
+C 0x8321 nadie llega aqui
+D 0x8328 0x833A resto_8328  18 bytes que nadie ejecuta
+L 0x833A jefe_2_pared
+C 0x833A a menos de 8 de Rastan: ataca
+C 0x8341 si no, cada tres cuadros...
+C 0x834F ...anda 2
+L 0x8359 jefe_2_ataca
+L 0x8366 jefe_2_ataques
+C 0x8366 tres ataques (+11 hasta 2)
+L 0x8373 jefe_2_fin_ataque
+L 0x8386 jefe_2_salta
+C 0x8386 de cara a Rastan y efecto 9
+L 0x8392 jefe_2_saltando
+C 0x839F pose del bit 3
+C 0x83AB la lista de p04:83E6
+L 0x83D4 jefe_2_sigue_salto
+L 0x83DB jefe_2_fin_salto
+D 0x83E6 0x8434 jefe_2_salto  Las alturas del salto del jefe de la fase 5, hasta 0xFF
+L 0x8434 jefe_2_salta_b
+L 0x8472 jefe_2_sigue_salto_b
+L 0x8479 jefe_2_cae
+C 0x8479 2 pixeles abajo
+C 0x8481 pose de caer (bit 3)
+C 0x848B un paso de su animacion
+B 0x848E JEFE DE LA FASE 8 (tipo 3): 0xA0 de vida. Lanza un proyectil (el actor 4)
+B 0x848E y, al llegar a ciertas x (0x14, 0x40, 0xA8, 0xC8), desaparece con el
+B 0x848E efecto 8 y vuelve a salir en otro sitio elegido al azar.
+L 0x848E jefe_fase_8
+C 0x8492 ya muerto: p03:7FDA
+C 0x849A aun no ha salido...
+C 0x84A2 ...0xA0 de vida...
+C 0x84A8 ...en (0x96, 0x30)...
+C 0x84B0 ...pelea con un jefe...
+C 0x84B5 ...tipo 3, pose 1
+C 0x84BF animacion desde el principio
+L 0x84C7 jefe_3_mueve
+C 0x84CB pelea con un jefe
+C 0x84D0 sin vida: muere
+C 0x84DB D96B: le acaban de dar (p07:96FA)
+L 0x84E2 jefe_3_proyectil
+C 0x84E2 su proyectil en vuelo...
+C 0x84E8 ...se mueve...
+C 0x84EC ...y nada mas
+C 0x84EF lanzando: el proyectil
+C 0x84F6 nada debajo...
+C 0x84FB ...+12 bit 0...
+C 0x84FE ...y cae
+C 0x8501 de cara a Rastan
+C 0x8508 +12 bit 0: va a lanzar (p04:858B)
+C 0x850F lanzando: p04:85AD
+C 0x8516 +14 bit 7 a 0
+L 0x851A jefe_3_donde
+C 0x851A en x < 0x14: salta a otro sitio
+C 0x8522 en 0x40: tambien
+C 0x8527 en 0xA8: tambien
+C 0x852C de 0xC8 en adelante: tambien
+C 0x8531 lejos de Rastan (0x30): se aleja
+C 0x853B animacion
+L 0x853E jefe_3_cerca
+C 0x853E cerca: se acerca un pixel
+D 0x8546 0x855C resto_8546  22 bytes que nadie ejecuta
+L 0x855C jefe_acerca_1
+C 0x855C mirando a la izquierda: x + 1
+L 0x8566 jefe_acerca_1_izq
+L 0x856A jefe_aleja_1
+C 0x856A lo contrario
+L 0x8574 jefe_aleja_1_der
+D 0x8578 0x858B resto_8578  19 bytes que nadie ejecuta
+L 0x858B jefe_3_lanza
+C 0x858B ya hay proyectil: p04:8767
+C 0x8593 pose de lanzar, +12 bit 0 a 0, +10 bit 0
+C 0x85A1 un paso de animacion
+C 0x85A6 sin proyectil: sale
+L 0x85AD jefe_3_lanzando
+C 0x85AD la animacion de lanzar no ha acabado
+L 0x85B6 jefe_3_lanzado
+C 0x85B6 una vez
+L 0x85C4 jefe_3_fin_lanzar
+C 0x85C4 fuera +10 bit 0 y la pose
+L 0x85D3 jefe_3_salta_14
+C 0x85D3 efecto 8...
+C 0x85DC ...y al azar a (0xC7, 0x32)...
+L 0x85ED jefe_3_a_a7
+C 0x85ED ...o a (0xA7, 0x32)
+L 0x85F8 jefe_3_salta_40
+C 0x85F8 efecto 8 y a 0xA7 o 0xC7
+L 0x8612 jefe_3_a_c7
+L 0x861D jefe_3_salta_a8
+C 0x861D efecto 8 y a 0xA7 o 0x15 (aqui sin llamar al azar: decide la paridad que ya habia)
+L 0x8634 jefe_3_a_15
+L 0x863F jefe_3_salta_c8
+C 0x863F efecto 8 y al azar...
+C 0x864E ...a x = 0x15 (y la y = 0x32 se escribe en la x: se queda en 0x32)...
+L 0x8659 jefe_3_a_41
+C 0x8659 ...o a (0x41, 0x32)
+L 0x8664 jefe_3_va_a_lanzar
+C 0x8664 +12 bit 0
+L 0x8669 proyectil_jefe_3
+C 0x8669 IY = el jefe, IX = el actor 4
+C 0x8673 +15 = 0: aun no ha salido
+C 0x867B 0x0F: en vuelo
+C 0x867F si no, acabando
+L 0x8682 lanza_proyectil_jefe_3
+C 0x8682 la animacion de lanzar ha acabado?
+C 0x8689 en vuelo
+C 0x868D se coloca
+C 0x8690 alta y pintado
+L 0x8696 proyectil_jefe_3_fin
+L 0x8699 sigue_proyectil_jefe_3
+L 0x869C proyectil_jefe_3_pinta
+L 0x86A2 huerfana_acaba_jefe_3
+C 0x86A2 nadie llega aqui
+L 0x86AC coloca_proyectil_jefe_3
+C 0x86AC pose 0x0D
+C 0x86B0 +13 = el lado del jefe
+C 0x86B6 a la izquierda: x - 8
+L 0x86CA coloca_jefe_3_der
+C 0x86CA a la derecha: x + 0x18
+L 0x86D6 coloca_jefe_3_y
+C 0x86D6 y + 0x10, tipo 0x16
+L 0x86E4 mueve_proyectil_jefe_3
+C 0x86E4 las casillas
+C 0x86E7 toca una de clase 0x20: se acaba
+C 0x86F1 C = x de Rastan + 0x18
+C 0x86F7 hacia la izquierda: si da a Rastan (p03:6AFF), se acaba
+C 0x8704 2 a la izquierda, hasta 4
+L 0x8713 mueve_proyectil_jefe_3_der
+C 0x8713 hacia la derecha (p03:6B2C)
+C 0x871E 2 a la derecha, hasta 0xF0
+L 0x872B proyectil_jefe_3_sigue
+L 0x872E choca_proyectil_jefe_3
+C 0x872E al chocar: +15 = 0xF1, pintado y baja
+L 0x8743 acaba_proyectil_jefe_3
+C 0x8743 su animacion de choque no ha acabado
+L 0x8756 fin_proyectil_jefe_3
+C 0x8756 acabada: ya no hay
+L 0x8767 jefe_3_ya_lanzo
+C 0x8767 fuera la pose de lanzar
+D 0x876E 0x877F resto_876E  17 bytes que nadie ejecuta
+L 0x877F jefe_3_tocado
+C 0x877F D96B a 0
+C 0x8783 +15 + 1: el primer golpe...
+C 0x878C ...sigue como siempre
+L 0x8792 jefe_3_tocado_salta
+C 0x8792 si no, a cambiar de sitio
+B 0x8799 JEFE DE LA FASE 0x0B (tipo 4): 0x140 de vida; como el de la fase 2, con
+B 0x8799 su salto en p04:8915 y otro salto si Rastan ataca (pose bit 5).
+L 0x8799 jefe_fase_0b
+C 0x879D ya muerto: p03:7FDA
+C 0x87A5 aun no ha salido: 0x140 de vida, en (0x96, 0x30), tipo 4
+L 0x87D2 jefe_4_mueve
+C 0x87D6 pelea con un jefe
+C 0x87DB sin vida: muere
+C 0x87E6 saltando
+C 0x87ED el otro salto
+C 0x87F4 fuera las poses de ataque
+C 0x87FC nada debajo: cae
+C 0x8804 de cara a Rastan
+C 0x880B la casilla de delante
+C 0x8814 pared y +10 bit 4: p04:8861
+C 0x881A cerca de Rastan: salta
+L 0x8822 jefe_4_anda
+L 0x882F jefe_4_cerca
+C 0x8842 en los bordes: p04:88AD
+L 0x884F huerfana_jefe_4_x20
+C 0x884F nadie llega aqui
+D 0x8856 0x8861 resto_8856  11 bytes que nadie ejecuta
+L 0x8861 jefe_4_pared
+C 0x8861 a menos de 0x10: ataca
+C 0x8868 si no, un paso cada tres cuadros
+L 0x8876 jefe_4_paso
+L 0x8880 jefe_4_ataca
+L 0x888D jefe_4_ataques
+C 0x888D tres ataques
+L 0x889A jefe_4_fin_ataque
+L 0x88AD jefe_4_borde
+C 0x88AD Rastan atacando: el otro salto (p04:8963)
+L 0x88B5 jefe_4_salta
+C 0x88C2 pose del bit 2, +10 bits 4 y 0
+C 0x88D2 la lista de p04:8915
+C 0x88DC 0xFF: aterriza
+C 0x88E2 y - el paso
+C 0x88F5 en el borde izquierdo: p04:89C7
+C 0x88FD 2 pixeles
+L 0x8903 jefe_4_sigue_salto
+L 0x890A jefe_4_fin_salto
+D 0x8915 0x8963 jefe_4_salto  Las alturas del salto del jefe de la fase 0x0B, hasta 0xFF
+L 0x8963 jefe_4_esquiva
+C 0x8963 +10: bits 2 y 4, fuera el 0 y el 1
+L 0x8976 jefe_4_salta_b
+C 0x8976 en los bordes, da la vuelta
+C 0x8983 pose del bit 2 y +10 bit 3
+C 0x898F la lista de p04:81B8 (la del jefe de la fase 2)
+C 0x8999 0xFF: aterriza
+C 0x899F y - el paso
+C 0x89B2 en el borde izquierdo da la vuelta
+C 0x89BA 2 pixeles
+L 0x89C0 jefe_4_sigue_salto_b
+L 0x89C7 jefe_4_borde_izq
+C 0x89C7 x = 0x11
+B 0x89CE JEFE DE LA FASE 0x0E (tipo 5): 0x190 de vida, en (0x96, 0x50). Va y viene
+B 0x89CE entre x = 0x20 y 0xB4 y, a 0x48 de Rastan, lanza un proyectil (el actor
+B 0x89CE 3, con la lista de pasos de p04:8BCF) con los efectos 0x0F y 0x0E.
+L 0x89CE jefe_fase_0e
+C 0x89D2 ya muerto: p03:7FDA
+C 0x89DA aun no ha salido...
+C 0x89E1 ...0x190 de vida...
+C 0x89E7 ...en (0x96, 0x50)...
+C 0x89EF ...pelea con un jefe...
+C 0x89F4 ...tipo 5, pose 1
+L 0x8A06 jefe_5_mueve
+C 0x8A0A pelea con un jefe
+C 0x8A0F sin vida: muere
+C 0x8A1A su proyectil en vuelo: se mueve
+C 0x8A22 sin la pose del bit 2: tambien
+C 0x8A29 nada debajo: cae
+C 0x8A31 le acaban de dar: p04:8B55
+C 0x8A38 en x < 0x20 o >= 0xB4: da la vuelta
+C 0x8A45 a cuanto esta de Rastan (p04:8B19)
+C 0x8A48 justo 0x48: lanza
+C 0x8A4D solo el bit del lado en la pose
+C 0x8A55 un pixel hacia atras
+L 0x8A5B jefe_5_lanza
+C 0x8A5B ya hay proyectil: nada
+C 0x8A63 efecto 0x0F
+C 0x8A68 pose 2 con el lado
+C 0x8A72 +10 bit 0
+C 0x8A78 un paso de animacion
+C 0x8A7D sin proyectil: sale
+C 0x8A84 efecto 0x0E
+C 0x8A89 pose 6 con el lado
+C 0x8A93 +10 bit 1
+D 0x8A9A 0x8B19 resto_8A9A  127 bytes de codigo que nadie ejecuta (otra version del jefe 5)
+L 0x8B19 distancia_jefe_5
+C 0x8B19 B = x de Rastan + 0x10
+C 0x8B1F C = x del jefe + 0x18
+C 0x8B25 mirando a la izquierda: C - B
+L 0x8B2E distancia_jefe_5_der
+C 0x8B2E a la derecha: B - C
+D 0x8B31 0x8B55 resto_8B31  36 bytes que nadie ejecuta
+L 0x8B55 jefe_5_tocado
+C 0x8B55 efecto 0x0E
+C 0x8B5A D96B a 0
+C 0x8B5E pose 6 con el lado
+L 0x8B6B proyectil_jefe_5
+C 0x8B6B IY = el jefe, IX = el actor 3
+C 0x8B75 +15 = 0: aun no ha salido
+C 0x8B7B en vuelo: lo mueve p03:6A29 (el del tipo 3)
+L 0x8B80 lanza_proyectil_jefe_5
+C 0x8B80 la animacion de lanzar ha acabado?
+C 0x8B87 en vuelo
+C 0x8B8B se coloca
+C 0x8B8E la lista de pasos de p04:8BCF
+C 0x8B96 alta y pintado
+L 0x8BA1 coloca_proyectil_jefe_5
+C 0x8BA1 el mismo lado que el jefe
+C 0x8BA7 a la izquierda: x - 0x20
+L 0x8BB7 coloca_jefe_5_der
+C 0x8BB7 a la derecha: x + 0x40
+L 0x8BBF coloca_jefe_5_y
+C 0x8BBF la misma y, tipo 0x16, pose bit 3
+D 0x8BCF 0x8BF4 pasos_proyectil_jefe  Los pasos (x, y) del proyectil del tipo 3 y del jefe 5, hasta 0xFF
+B 0x8BF4 Las fases 0x12-0x16 repiten los cinco jefes, cada uno en una pantalla
+B 0x8BF4 concreta; en las demas pantallas, los actores de siempre (p03:6021...).
+L 0x8BF4 jefe_fase_12
+C 0x8BF4 columna 5, fila 0: el jefe de la fase 2
+L 0x8C06 jefe_fase_13
+C 0x8C06 columna 4, fila 0: el de la fase 5
+L 0x8C18 jefe_fase_14
+C 0x8C18 columna 5, fila 0: el de la fase 8
+L 0x8C2A jefe_fase_15
+C 0x8C2A columna 5, fila 1: el de la fase 0x0B
+L 0x8C3C jefe_fase_16
+C 0x8C3C columna 3, fila 0: el de la fase 0x0E
+B 0x8C4E EL FINAL (fase 0x17). Musica 5, la pantalla en blanco y el texto de
+B 0x8C4E p04:8D01 subiendo linea a linea con el desplazamiento vertical; al acabar,
+B 0x8C4E el rotulo de Taito, y el juego se queda ahi para siempre.
+L 0x8C4E final
+C 0x8C4E la musica 5
+C 0x8C53 VRAM a 0
+C 0x8C56 D933, D934 y D935: la linea, el texto y el fin
+C 0x8C60 R#8 = 0x2A
+L 0x8C67 final_linea
+C 0x8C67 una espera de 8000 vueltas
+C 0x8C6F una linea mas de desplazamiento
+C 0x8C72 y si toca, la linea de texto siguiente
+C 0x8C75 pantalla encendida
+C 0x8C78 hasta el 0xFF de la lista
+C 0x8C7F el rotulo de Taito (p00:5227)...
+C 0x8C89 ...en (0x58, 0xAA)
+L 0x8C9A fin_del_juego
+C 0x8C9A bucle infinito: aqui se acaba
+L 0x8C9D sube_una_linea
+C 0x8C9E espera al VDP
+C 0x8CA1 una linea mas
+C 0x8CA9 R#23 = la linea
+C 0x8CB6 y la linea que entra por abajo, borrada (HMMV de 0 a 0xFE de ancho)
+L 0x8CC4 linea_de_texto
+C 0x8CC4 cada 16 lineas...
+C 0x8CCA ...el texto siguiente de p04:8D01
+C 0x8CDE 0xFE: linea en blanco
+C 0x8CE2 0xFF: se acabo
+L 0x8CEA escribe_linea_final
+C 0x8CEA la x de la linea
+C 0x8CEC y la y, 16 por encima de la que entra
+L 0x8CF6 letra_final
+C 0x8CF6 hasta el 0
+C 0x8CFA una letra
+D 0x8D01 0x8D6D final_lineas  Las 54 lineas del final: la direccion de cada una
+F 0x8D01 w8
+D 0x8D6D 0x8EB5 final_textos  Los textos del final (x y cadena, 0xFE en blanco, 0xFF fin): CONGRATURATIONS, STAFF, PROGRAMMER N SANTA SATOU, TED AONO, M M ATSUJI, K H KUME, CONVERT DESIGN S IWABUCHI, CHARACTOR S IWABUCHI, MR NISHIMURA, SOUND SPRATTER AIZAWA, YAG YAGISHITA, PRODUCER S TAKAHASHI, SPETIAL THANKS TO TMR WIN, PRODUCED BY @ TAITO CORPORATION 1988, ALL RIGHTS RESERVED
+# --- fin de las notas por tandas ---
+
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
-C 0x8010 hl -> bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
-C 0x8016 ix -> los 6 actores de la pantalla
+C 0x801f p03 actor0_a_tipo7
 C 0x802d actor 1, byte +10 = hl
-C 0x8053 a = actor 1, byte +10
+C 0x8047 p03 anima_actor0
 C 0x8057 a = actor 1, byte +11
+C 0x805b p03 actor0_a_tipo7
+C 0x8079 p03 cae_2_especial
+C 0x8080 p03 da_la_vuelta
+C 0x80a4 p03 anima_actor0
+C 0x80ac p03 da_la_vuelta
+C 0x80b1 p03 da_la_vuelta
+C 0x80ea p03 anima_actor0
+C 0x80f7 p03 anima_actor0
+C 0x8104 p03 anima_actor0
+C 0x8117 p03 anima_actor0
+C 0x8165 p03 da_la_vuelta
+C 0x816a p03 da_la_vuelta
+C 0x81a3 p03 anima_actor0
+C 0x81b5 p03 anima_actor0
+C 0x821e p03 da_la_vuelta
+C 0x8223 p03 da_la_vuelta
+C 0x8255 p03 anda
+C 0x8258 p03 anima_actor0
 C 0x8262 ix -> los 6 actores de la pantalla
+C 0x826b p03 actor0_a_tipo7
 C 0x8279 actor 1, byte +10 = hl
 C 0x829a efecto pedido, para p01:63E1 = a
-C 0x82a9 a = actor 1, byte +10
+C 0x829d p03 anima_actor0
 C 0x82ad a = actor 1, byte +11
+C 0x82b1 p03 actor0_a_tipo7
+C 0x82da p03 da_la_vuelta
+C 0x82f7 p03 distancia_x
+C 0x82fe p03 anima_actor0
+C 0x8306 p03 da_la_vuelta
+C 0x830b p03 da_la_vuelta
+C 0x831e p03 anima_actor0
+C 0x834c p03 anima_actor0
+C 0x8353 p03 anda
+C 0x8356 p03 anima_actor0
+C 0x8363 p03 anima_actor0
+C 0x8370 p03 anima_actor0
+C 0x8383 p03 anima_actor0
+C 0x838a p03 da_la_vuelta
 C 0x838f efecto pedido, para p01:63E1 = a
+C 0x8397 p03 da_la_vuelta
+C 0x839c p03 da_la_vuelta
+C 0x83ce p03 anda
+C 0x83d1 p03 anima_actor0
+C 0x83e3 p03 anima_actor0
+C 0x8439 p03 da_la_vuelta
+C 0x843e p03 da_la_vuelta
+C 0x846c p03 anda
+C 0x846f p03 anima_actor0
 C 0x848e ix -> los 6 actores de la pantalla
+C 0x8497 p03 actor0_a_tipo7
 C 0x84a5 actor 1, byte +10 = hl
-C 0x84d0 a = actor 1, byte +10
+C 0x84c4 p03 anima_actor0
 C 0x84d4 a = actor 1, byte +11
-C 0x84db a = actor 1, byte +12
-C 0x84e2 a = actor 4, byte +15
-C 0x858b a = actor 4, byte +15
-C 0x85a6 a = actor 4, byte +15
+C 0x84d8 p03 actor0_a_tipo7
+C 0x8505 p03 da_la_vuelta
+C 0x8543 p03 anima_actor0
+C 0x85b3 p03 anima_actor0
+C 0x85c1 p03 anima_actor0
+C 0x85d0 p03 anima_actor0
 C 0x85d9 efecto pedido, para p01:63E1 = a
-C 0x85dc p00 azar
+C 0x85ea p03 anima_actor0
+C 0x85f5 p03 anima_actor0
 C 0x85fe efecto pedido, para p01:63E1 = a
 C 0x8601 p00 azar
+C 0x860f p03 anima_actor0
+C 0x861a p03 anima_actor0
 C 0x8623 efecto pedido, para p01:63E1 = a
+C 0x8631 p03 anima_actor0
+C 0x863c p03 anima_actor0
 C 0x8645 efecto pedido, para p01:63E1 = a
 C 0x8648 p00 azar
+C 0x8656 p03 anima_actor0
+C 0x8661 p03 anima_actor0
 C 0x866f ix -> actor 4
-C 0x8690 p00 alta_actor
 C 0x8693 p00 pinta_actor
 C 0x869c p00 pinta_actor
 C 0x86a6 p00 baja_actor
-C 0x86f1 a = la x de Rastan
-C 0x872e ix -> actor 4
+C 0x86fd p03 proyectil_choca_izq
+C 0x8717 p03 proyectil_choca_der
 C 0x8738 p00 pinta_actor
 C 0x873d p00 baja_actor
 C 0x874b p00 pinta_actor
 C 0x8750 p00 baja_actor
 C 0x875c p00 pinta_actor
 C 0x8761 p00 baja_actor
+C 0x876b p03 anima_actor0
 C 0x8780 actor 1, byte +12 = a
 C 0x8799 ix -> los 6 actores de la pantalla
+C 0x87a2 p03 actor0_a_tipo7
 C 0x87b0 actor 1, byte +10 = hl
-C 0x87db a = actor 1, byte +10
+C 0x87bb hl -> bits: 0 en la salida, 6 jefe, 7 no pierde vida
+C 0x87ca p03 anima_actor0_desde_cero
+C 0x87cf p03 anima_actor0
 C 0x87df a = actor 1, byte +11
-C 0x88ad a = la pose de Rastan para la animacion
+C 0x87e3 p03 actor0_a_tipo7
+C 0x8801 p03 cae_2_especial
+C 0x8808 p03 da_la_vuelta
+C 0x8825 p03 distancia_x
+C 0x882c p03 anima_actor0
+C 0x8834 p03 da_la_vuelta
+C 0x8839 p03 da_la_vuelta
+C 0x884c p03 anima_actor0
+C 0x8873 p03 anima_actor0
+C 0x887a p03 anda
+C 0x887d p03 anima_actor0
+C 0x888a p03 anima_actor0
+C 0x8897 p03 anima_actor0
+C 0x88aa p03 anima_actor0
+C 0x88ba p03 da_la_vuelta
+C 0x88bf p03 da_la_vuelta
+C 0x8900 p03 anima_actor0
+C 0x8912 p03 anima_actor0
+C 0x897b p03 da_la_vuelta
+C 0x8980 p03 da_la_vuelta
+C 0x89b7 p03 da_la_vuelta
+C 0x89bd p03 anima_actor0
+C 0x89cb p03 anima_actor0
 C 0x89ce ix -> los 6 actores de la pantalla
+C 0x89d7 p03 actor0_a_tipo7
 C 0x89e4 actor 1, byte +10 = hl
-C 0x8a0f a = actor 1, byte +10
+C 0x89fe p03 anima_actor0_desde_cero
+C 0x8a03 p03 anima_actor0
 C 0x8a13 a = actor 1, byte +11
-C 0x8a1a a = actor 3, byte +15
-C 0x8a31 a = actor 1, byte +12
-C 0x8a5b a = actor 3, byte +15
+C 0x8a17 p03 actor0_a_tipo7
+C 0x8a2e p03 cae_2_especial
+C 0x8a3d p03 da_la_vuelta
+C 0x8a42 p03 da_la_vuelta
+C 0x8a58 p03 anima_actor0
+C 0x8a60 p03 anima_actor0
 C 0x8a65 efecto pedido, para p01:63E1 = a
-C 0x8a7d a = actor 3, byte +15
 C 0x8a86 efecto pedido, para p01:63E1 = a
-C 0x8b19 a = la x de Rastan
+C 0x8a97 p03 anima_actor0
 C 0x8b57 efecto pedido, para p01:63E1 = a
 C 0x8b5b actor 1, byte +12 = a
+C 0x8b68 p03 anima_actor0
 C 0x8b71 ix -> actor 3
+C 0x8b7d p03 mueve_proyectil_03
+C 0x8b84 p03 proyectil_03_fin
 C 0x8b91 actor 3, byte +10 = hl
-C 0x8b96 p00 alta_actor
 C 0x8b9b p00 pinta_actor
-C 0x8bf4 a = la columna de la pantalla en que se esta
 C 0x8bfc a = la fila de la pantalla en que se esta
-C 0x8c06 a = la columna de la pantalla en que se esta
 C 0x8c0e a = la fila de la pantalla en que se esta
-C 0x8c18 a = la columna de la pantalla en que se esta
 C 0x8c20 a = la fila de la pantalla en que se esta
-C 0x8c2a a = la columna de la pantalla en que se esta
 C 0x8c32 a = la fila de la pantalla en que se esta
-C 0x8c3c a = la columna de la pantalla en que se esta
 C 0x8c44 a = la fila de la pantalla en que se esta
 C 0x8c50 musica pedida, para p01:640F = a
-C 0x8c53 p00 borra_vram
 C 0x8c57 los 6 actores de la pantalla = a
 C 0x8c5a actor 0, byte +1 = a
 C 0x8c5d actor 0, byte +2 = a
-C 0x8c78 a = actor 0, byte +2
 C 0x8c8b y donde se pinta = a
 C 0x8c90 x donde se pinta = a
 C 0x8c97 p00 pinta_bloque_tiles
-C 0x8c9e p00 espera_vdp
-C 0x8ca1 a = los 6 actores de la pantalla
 C 0x8ca5 los 6 actores de la pantalla = a
-C 0x8cb6 a = los 6 actores de la pantalla
 C 0x8cc0 p00 rellena_vram
-C 0x8cc4 a = los 6 actores de la pantalla
 C 0x8ccd a = actor 0, byte +1
 C 0x8cd1 actor 0, byte +1 = a
 C 0x8ce6 actor 0, byte +2 = a
-C 0x8cec a = los 6 actores de la pantalla
 C 0x8cf2 la lista o la cadena que se esta pintando = bc
-C 0x8cfa p00 escribe_letra
 # --- fin de anota ---

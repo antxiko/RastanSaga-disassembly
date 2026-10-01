@@ -24,32 +24,32 @@
 actores:
 	ld a,(0d5e5h)		;6000   ; la fase...
 	cp 002h		;6003   ; ...2: el jefe de p04:8016
-	jp z,08016h		;6005
+	jp z,08016h		;6005   ; p04 jefe_fase_2
 	cp 005h		;6008   ; 5: p04:8262
-	jp z,08262h		;600a
+	jp z,08262h		;600a   ; p04 jefe_fase_5
 	cp 008h		;600d   ; 8: p04:848E
-	jp z,0848eh		;600f
+	jp z,0848eh		;600f   ; p04 jefe_fase_8
 	cp 00bh		;6012   ; 0x0B: p04:8799
-	jp z,08799h		;6014
+	jp z,08799h		;6014   ; p04 jefe_fase_0b
 	cp 00eh		;6017   ; 0x0E: p04:89CE
-	jp z,089ceh		;6019
+	jp z,089ceh		;6019   ; p04 jefe_fase_0e
 	cp 012h		;601c   ; 0x12: p04:8BF4
-	jp z,08bf4h		;601e
+	jp z,08bf4h		;601e   ; p04 jefe_fase_12
 L_6021:
 	cp 013h		;6021   ; 0x13: p04:8C06
-	jp z,08c06h		;6023
+	jp z,08c06h		;6023   ; p04 jefe_fase_13
 L_6026:
 	cp 014h		;6026   ; 0x14: p04:8C18
-	jp z,08c18h		;6028
+	jp z,08c18h		;6028   ; p04 jefe_fase_14
 L_602B:
 	cp 015h		;602b   ; 0x15: p04:8C2A
-	jp z,08c2ah		;602d
+	jp z,08c2ah		;602d   ; p04 jefe_fase_15
 L_6030:
 	cp 016h		;6030   ; 0x16: p04:8C3C
-	jp z,08c3ch		;6032
+	jp z,08c3ch		;6032   ; p04 jefe_fase_16
 L_6035:
 	cp 017h		;6035   ; 0x17: p04:8C4E
-	jp z,08c4eh		;6037
+	jp z,08c4eh		;6037   ; p04 final
 	ld ix,(0da1ah)		;603a   ; el actor al que le toca
 	ld a,(ix+000h)		;603e   ; su tipo: 0, hueco
 	and a			;6041

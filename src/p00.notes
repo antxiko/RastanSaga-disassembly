@@ -5,6 +5,9 @@
 
 
 
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x4011 INIT: limpia la RAM, desactiva los ganchos de la BIOS, pone los bancos 0/1/2,
 B 0x4011 inicializa video y sonido (p01), arranca la tarea 0 y se queda esperando: a
@@ -1119,13 +1122,15 @@ C 0x4ea5 musica pedida, para p01:640F = a
 C 0x4eaa musica pedida, para p01:640F = a
 C 0x4eb9 musica pedida, para p01:640F = a
 C 0x4ebd bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-C 0x4ec0 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x4ec0 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 C 0x4ec3 el arma que lleva = a
-C 0x4ec9 la puntuacion, tres bytes BCD = a
+C 0x4ec6 los golpes que le quedan al escudo = a
+C 0x4ec9 la puntuacion, cuatro bytes BCD = a
 C 0x4ecc puntuacion, cifras 3-4 = a
 C 0x4ecf puntuacion, cifras 5-6 = a
-C 0x4ed2 bit 7: la puntuacion ha cambiado = a
+C 0x4ed2 puntuacion, byte 4; bit 7: ha cambiado = a
 C 0x4edb bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x4ede bits: 0 en la salida, 6 jefe, 7 no pierde vida = a
 C 0x4fa1 copia del registro del mapper de 0x6000 = a
 C 0x4fa4 registro del mapper: banco A en 0x6000
 C 0x4fa9 copia del registro del mapper de 0x8000 = a
@@ -1139,13 +1144,15 @@ C 0x4fd1 registro del mapper: banco A en 0x8000
 C 0x4fe2 efecto pedido, para p01:63E1 = a
 C 0x4fe7 musica pedida, para p01:640F = a
 C 0x4feb bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-C 0x4fee lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x4fee lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 C 0x4ff1 el arma que lleva = a
-C 0x4ff7 la puntuacion, tres bytes BCD = a
+C 0x4ff4 los golpes que le quedan al escudo = a
+C 0x4ff7 la puntuacion, cuatro bytes BCD = a
 C 0x4ffa puntuacion, cifras 3-4 = a
 C 0x4ffd puntuacion, cifras 5-6 = a
-C 0x5000 bit 7: la puntuacion ha cambiado = a
+C 0x5000 puntuacion, byte 4; bit 7: ha cambiado = a
 C 0x5009 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x500c bits: 0 en la salida, 6 jefe, 7 no pierde vida = a
 C 0x5012 ix -> las 32 fichas de sprite
 C 0x501c 5 = la demo ha terminado = a
 C 0x5031 y donde se pinta = a
@@ -1165,12 +1172,13 @@ C 0x5260 x donde se pinta = a
 C 0x5288 el largo total de la barra = a
 C 0x528b la vida de Rastan = a
 C 0x529f bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x52a2 bits: 0 en la salida, 6 jefe, 7 no pierde vida = a
 C 0x52a5 la vida que muestra la barra = a
 C 0x52a8 bit 7: el jugador usa la ficha 10 = a
-C 0x52ab la puntuacion, tres bytes BCD = a
+C 0x52ab la puntuacion, cuatro bytes BCD = a
 C 0x52ae puntuacion, cifras 3-4 = a
 C 0x52b1 puntuacion, cifras 5-6 = a
-C 0x52b4 bit 7: la puntuacion ha cambiado = a
+C 0x52b4 puntuacion, byte 4; bit 7: ha cambiado = a
 C 0x52fb 0xFF = el juego corre, 0 = pausa = a
 C 0x532d hl -> la fase
 C 0x536a x donde aparece el jugador en la pantalla nueva = a

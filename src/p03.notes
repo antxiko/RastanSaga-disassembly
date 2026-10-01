@@ -1,5 +1,8 @@
 
 
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 LOS ACTORES (tarea 3, cada cuadro). En las fases de jefe (2, 5, 8, 0x0B,
 B 0x6000 0x0E y 0x12-0x17) salta a la rutina del jefe en p04. Si no, mueve UN actor
@@ -1320,6 +1323,17 @@ D 0x7FFF 0x8000 cruce_7FFF  el primer byte de `ld (nn),hl` (0x22): la instruccio
 # --- fin de las notas por tandas ---
 
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x6005 p04 jefe_fase_2
+C 0x600a p04 jefe_fase_5
+C 0x600f p04 jefe_fase_8
+C 0x6014 p04 jefe_fase_0b
+C 0x6019 p04 jefe_fase_0e
+C 0x601e p04 jefe_fase_12
+C 0x6023 p04 jefe_fase_13
+C 0x6028 p04 jefe_fase_14
+C 0x602d p04 jefe_fase_15
+C 0x6032 p04 jefe_fase_16
+C 0x6037 p04 final
 C 0x609c x del bloque especial de la pantalla = a
 C 0x60a6 y del bloque especial = a
 C 0x6131 p00 pinta_actor

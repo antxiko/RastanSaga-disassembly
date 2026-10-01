@@ -903,7 +903,7 @@ cuenta_segundos:
 	jr nz,L_6912		;68ff
 	ld a,(0d905h)		;6901   ; ...y si se acaba: D905 sin los bits 0-1...
 	and 0fch		;6904
-	ld (0d905h),a		;6906   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+	ld (0d905h),a		;6906   ; lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 	xor a			;6909   ; ...ni arma...
 	ld (0d919h),a		;690a   ; el arma que lleva = a
 	ld hl,0d905h		;690d   ; ...ni el bit 7
@@ -915,7 +915,7 @@ L_6912:
 	jr z,mira_actores		;6917
 	dec (hl)			;6919
 	jr nz,mira_actores		;691a
-	ld hl,0d905h		;691c   ; hl -> lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+	ld hl,0d905h		;691c   ; hl -> lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble
 	res 5,(hl)		;691f
 mira_actores:
 	xor a			;6921   ; los sucesos de este cuadro, a cero
@@ -2484,7 +2484,7 @@ fin_subida:
 	res 0,a		;738f
 	ld (0d90eh),a		;7391
 	ld de,00000h		;7394   ; ya no esta agarrado a nada (D914 = 0)
-	ld (0d914h),de		;7397
+	ld (0d914h),de		;7397   ; el actor al que esta agarrado o encima = de
 	jp coloca_jugador		;739b
 
 ; ----------------------------------------------------------------------
@@ -2781,7 +2781,7 @@ mira_actor_debajo:
 	add a,010h		;75c4
 	ld h,a			;75c6
 	ld a,004h		;75c7   ; hay un actor ahi? (p07:80E6)
-	call 080e6h		;75c9
+	call 080e6h		;75c9   ; p07 clase_en
 	or a			;75cc   ; 0: no
 	jr z,mira_casillas_debajo		;75cd
 	cp 020h		;75cf   ; menos de 0x20: se queda encima
@@ -3880,7 +3880,7 @@ L_7C8D:
 	pop hl			;7c8f
 	ld a,(0d910h)		;7c90   ; D910 bit 6: p07:91D1
 	bit 6,a		;7c93
-	jp nz,091d1h		;7c95
+	jp nz,091d1h		;7c95   ; p07 golpe_a_jefe
 	call toca_especial		;7c98   ; el bloque especial (p06:7FF2)
 	ld b,003h		;7c9b   ; los 3 objetos de D933
 	ld de,00026h		;7c9d
@@ -4096,7 +4096,7 @@ le_da:
 	jr z,L_7E71		;7e6d   ; 0 o menos: p07:807C (se acaba)...
 	jr nc,L_7E75		;7e6f
 L_7E71:
-	call 0807ch		;7e71
+	call 0807ch		;7e71   ; p07 puntos_por_actor
 	xor a			;7e74   ; ...y vida 0
 L_7E75:
 	ld (ix+00fh),a		;7e75   ; la vida que le queda
@@ -4153,7 +4153,7 @@ rompe_bloque:
 	push hl			;7ed8
 	ld l,(ix+011h)		;7ed9
 	ld h,(ix+010h)		;7edc
-	call 080e6h		;7edf
+	call 080e6h		;7edf   ; p07 clase_en
 	ld a,(hl)			;7ee2   ; ...se les borra la clase (nibble alto): arriba a la izquierda...
 	and 00fh		;7ee3
 	ld (hl),a			;7ee5

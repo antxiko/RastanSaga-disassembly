@@ -49,6 +49,12 @@ TABLAS = {
     # p07:8C05: BC es el desplazamiento en bytes; la tabla de p07:8C13 acaba
     # donde empieza la siguiente, p07:8C31 (la que lee p07:8BF6): 15 palabras
     (7, 0x8C11): _tabla(7, 0x8000, 0x8C13, 15),
+    # p07:918C y p07:91D1: el tipo del actor 0 (D933, 0-5) indexa las tablas
+    # de 6 palabras de p07:91C5 y p07:9200 (`push hl / exx / ret`)
+    (7, 0x91C2): _tabla(7, 0x8000, 0x91C5, 6),
+    (7, 0x91FD): _tabla(7, 0x8000, 0x9200, 6),
+    # p07:9221: (D934 & 7) * 2 en la tabla de 8 palabras de p07:9235
+    (7, 0x9233): _tabla(7, 0x8000, 0x9235, 8),
     # p03:604B: indice (ix+0)-1 en la tabla de 32 palabras de p03:60C9; la
     # entrada 33 ya no apunta a codigo (0xDDC9) y detras empieza p03:6109
     (3, 0x605B): sorted({0x645E, 0x6109, 0x67BA, 0x668D, 0x6B59, 0x717D,
@@ -81,6 +87,9 @@ ZONAS_TABLA = [
     (7, 0x8596, 0x85F2, "tabla de 4 bytes que salta p07:847A (entradas 1-23)"),
     (7, 0x864C, 0x8668, "tabla de 14 palabras que salta p07:864A"),
     (7, 0x8C13, 0x8C31, "tabla de 15 palabras que salta p07:8C11"),
+    (7, 0x91C5, 0x91D1, "tabla de 6 palabras que salta p07:91C2"),
+    (7, 0x9200, 0x920C, "tabla de 6 palabras que salta p07:91FD"),
+    (7, 0x9235, 0x9245, "tabla de 8 palabras que salta p07:9233"),
 ]
 
 # RUTINAS HUERFANAS: codigo que ningun call, jp ni tabla alcanza (no hay ni un

@@ -3,6 +3,9 @@
 
 
 
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 RASTAN, el jugador: lo que la tarea 2 (p00:56F2) hace cada cuadro. Si esta
 B 0x6000 muriendo (D90F bit 7) solo cuenta y al final avisa; si no, p06:68A7, la
@@ -1223,9 +1226,9 @@ C 0x68cf cuenta del estado del jugador = a
 C 0x68db bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x68e3 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x68e9 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
-C 0x6906 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x6906 lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble = a
 C 0x690a el arma que lleva = a
-C 0x691c hl -> lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x691c hl -> lo que lleva Rastan: bits 0-1 arma, 2-3 escudo, 5 puntos dobles, 6 escudo doble, 7 arma doble
 C 0x6922 sucesos del jugador en este cuadro: cada bit, un efecto = a
 C 0x692d ix -> actor 0, byte +1
 C 0x6958 hl -> bit 7 muerto, bit 4 un rato sin mandos
@@ -1248,7 +1251,9 @@ C 0x6b25 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x6d10 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 C 0x6d23 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x6d26 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x7397 el actor al que esta agarrado o encima = de
 C 0x75b7 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x75c9 p07 clase_en
 C 0x7696 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x76df a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x76e4 bit 7 muerto, bit 4 un rato sin mandos = a
@@ -1274,9 +1279,12 @@ C 0x7c44 la y de la ficha 10 del jugador = hl
 C 0x7c49 bit 7: el jugador usa la ficha 10 = a
 C 0x7c68 la y de la ficha 10 del jugador = hl
 C 0x7c6d bit 7: el jugador usa la ficha 10 = a
+C 0x7c95 p07 golpe_a_jefe
 C 0x7ca0 ix -> los 6 actores de la pantalla
+C 0x7e71 p07 puntos_por_actor
 C 0x7e8b a = la pose de Rastan
 C 0x7e9b ix -> los 8 enemigos de la pantalla
+C 0x7edf p07 clase_en
 C 0x7f5c bit 7: el jugador usa la ficha 10 = a
 C 0x7f67 ix -> los 6 actores de la pantalla
 C 0x7fcf la y de la ficha 10 del jugador = hl

@@ -45,4 +45,20 @@
 0x8ce1   # tabla de p07:8C11
 0x8cfc   # tabla de p07:8C11
 0x8d0a   # tabla de p07:8C11
+0x91c4   # tabla de p07:91FD
 0x91d1   # jp cc desde p06:7C95
+0x920c   # tabla de p07:91C2
+0x9245   # tabla de p07:9233
+0x9256   # tabla de p07:9233
+0x9267   # tabla de p07:9233
+0x929c   # tabla de p07:9233
+0x92d1   # tabla de p07:9233
+0x92d2   # tabla de p07:91C2
+0x9336   # tabla de p07:91C2
+0x935d   # tabla de p07:91C2
+0x93e6   # tabla de p07:91C2
+0x952d   # tabla de p07:91FD
+0x953e   # tabla de p07:91FD
+0x9577   # tabla de p07:91FD
+0x9588   # tabla de p07:91FD
+0x9599   # tabla de p07:91FD

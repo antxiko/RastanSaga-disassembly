@@ -260,14 +260,19 @@ class Cartucho:
                 # `ex (sp),hl / ret` y `push rr / ret` son saltos indirectos
                 # disfrazados de vuelta: se apuntan como puntos ciegos
                 prev = self.lee(pc - 1, ranuras)
-                if prev in (0xE3, 0xE5, 0xD5, 0xC5) and (banco, pc - 1) in self.inicios_abs:
-                    if (banco, pc - 1) in TABLAS:
-                        for t in TABLAS[(banco, pc - 1)]:
-                            salta(t, "tabla de %s" % self.nom(banco, pc - 1), ranuras, copia, None)
-                    else:
-                        self.ciegos.add((banco, pc - 1, "%s / ret" % {
-                            0xE3: "ex (sp),hl", 0xE5: "push hl", 0xD5: "push de",
-                            0xC5: "push bc"}[prev]))
+                if prev == 0xD9 and self.lee(pc - 2, ranuras) in (0xE5, 0xD5, 0xC5):
+                    # `push rr / exx / ret`: el mismo salto con los registros cambiados
+                    pc -= 1
+                    prev = self.lee(pc - 1, ranuras)
+                if (banco, pc - 1) in TABLAS:
+                    # una tabla conocida: se sigue aunque este `ret` se haya
+                    # visitado antes por otro camino (el `visto` no lo distingue)
+                    for t in TABLAS[(banco, pc - 1)]:
+                        salta(t, "tabla de %s" % self.nom(banco, pc - 1), ranuras, copia, None)
+                elif prev in (0xE3, 0xE5, 0xD5, 0xC5) and (banco, pc - 1) in self.inicios_abs:
+                    self.ciegos.add((banco, pc - 1, "%s / ret" % {
+                        0xE3: "ex (sp),hl", 0xE5: "push hl", 0xD5: "push de",
+                        0xC5: "push bc"}[prev]))
                 return
             elif op == 0xE9 or (op in (0xDD, 0xFD) and b[1] == 0xE9):
                 clave_t = (banco, pc)

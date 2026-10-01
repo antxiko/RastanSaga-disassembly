@@ -4,3 +4,6 @@
 0x8596 0x85f2   tabla de 4 bytes que salta p07:847A (entradas 1-23)
 0x864c 0x8668   tabla de 14 palabras que salta p07:864A
 0x8c13 0x8c31   tabla de 15 palabras que salta p07:8C11
+0x91c5 0x91d1   tabla de 6 palabras que salta p07:91C2
+0x9200 0x920c   tabla de 6 palabras que salta p07:91FD
+0x9235 0x9245   tabla de 8 palabras que salta p07:9233
