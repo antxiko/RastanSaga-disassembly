@@ -15,7 +15,7 @@ DATA_8000:
 	defb 089h,0d1h	; 8000
 
 ; ======================================================================
-; CODIGO 0x8002..0x80c7  (197 bytes)
+; CODIGO 0x8002..0x80ce  (204 bytes)
 ; ======================================================================
 
 
@@ -29,11 +29,11 @@ L_8003:
 	ld a,h			;800d
 	or l			;800e
 	ret nz			;800f
-	ld hl,0d17dh		;8010
+	ld hl,0d17dh		;8010   ; hl -> bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
 	set 0,(hl)		;8013
 	ret			;8015
 L_8016:
-	ld ix,0d933h		;8016
+	ld ix,0d933h		;8016   ; ix -> los 6 actores de la pantalla
 	ld a,(ix+000h)		;801a
 	cp 007h		;801d
 	jp z,07fdah		;801f
@@ -41,7 +41,7 @@ L_8016:
 	cp 000h		;8025
 	jp nz,L_804A		;8027
 	ld hl,00140h		;802a
-	ld (0d969h),hl		;802d
+	ld (0d969h),hl		;802d   ; actor 1, byte +10 = hl
 	ld (ix+007h),040h		;8030
 	ld (ix+006h),096h		;8034
 	ld (ix+000h),001h		;8038
@@ -54,9 +54,9 @@ L_804A:
 	ld (ix+000h),001h		;804a
 	ld hl,0d910h		;804e
 	set 6,(hl)		;8051
-	ld a,(0d969h)		;8053
+	ld a,(0d969h)		;8053   ; a = actor 1, byte +10
 	ld b,a			;8056
-	ld a,(0d96ah)		;8057
+	ld a,(0d96ah)		;8057   ; a = actor 1, byte +11
 	or b			;805a
 	jp z,07fdah		;805b
 	bit 0,(ix+010h)		;805e
@@ -99,12 +99,15 @@ L_80A7:
 	cp 0dch		;80bf
 	jp nc,L_8160		;80c1
 	jp 07f3eh		;80c4
+L_80C7:
+	ld (ix+006h),020h		;80c7
+	jp L_8160		;80cb
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x80c7..0x80e0  (25 bytes)
-DATA_80C7:
-	defb 0ddh,036h,006h,020h,0c3h,060h,081h,0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h	; 80c7  .6. .`..........
-	defb 03eh,07fh,0ddh,036h,006h,0dch,0c3h,060h,081h	; 80d7  >..6...`.
+; DATOS sin identificar  0x80ce..0x80e0  (18 bytes)
+DATA_80CE:
+	defb 0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h,03eh,07fh,0ddh,036h,006h,0dch,0c3h	; 80ce  .........>..6...
+	defb 060h,081h	; 80de
 
 ; ======================================================================
 ; CODIGO 0x80e0..0x81b8  (216 bytes)
@@ -214,7 +217,7 @@ DATA_81B8:
 	defb 006h	; 8218
 
 ; ======================================================================
-; CODIGO 0x8219..0x8321  (264 bytes)
+; CODIGO 0x8219..0x8328  (271 bytes)
 ; ======================================================================
 
 
@@ -248,7 +251,7 @@ L_825B:
 	ld l,(ix+014h)		;825e
 	ret			;8261
 L_8262:
-	ld ix,0d933h		;8262
+	ld ix,0d933h		;8262   ; ix -> los 6 actores de la pantalla
 	ld a,(ix+000h)		;8266
 	cp 007h		;8269
 	jp z,07fdah		;826b
@@ -256,7 +259,7 @@ L_8262:
 	cp 000h		;8271
 	jp nz,L_82A0		;8273
 	ld hl,00140h		;8276
-	ld (0d969h),hl		;8279
+	ld (0d969h),hl		;8279   ; actor 1, byte +10 = hl
 	ld (ix+007h),040h		;827c
 	ld (ix+006h),096h		;8280
 	ld hl,0d910h		;8284
@@ -267,15 +270,15 @@ L_8262:
 	call 07f1fh		;8293
 	pop ix		;8296
 	ld a,009h		;8298
-	ld (0d178h),a		;829a
+	ld (0d178h),a		;829a   ; peticion de sonido para p01:63E1 = a
 	jp 07f3eh		;829d
 L_82A0:
 	ld (ix+000h),002h		;82a0
 	ld hl,0d910h		;82a4
 	set 6,(hl)		;82a7
-	ld a,(0d969h)		;82a9
+	ld a,(0d969h)		;82a9   ; a = actor 1, byte +10
 	ld b,a			;82ac
-	ld a,(0d96ah)		;82ad
+	ld a,(0d96ah)		;82ad   ; a = actor 1, byte +11
 	or b			;82b0
 	jp z,07fdah		;82b1
 	bit 0,(ix+010h)		;82b4
@@ -319,12 +322,15 @@ L_8301:
 	cp 0dch		;8319
 	jp nc,L_8386		;831b
 	jp 07f3eh		;831e
+L_8321:
+	ld (ix+006h),020h		;8321
+	jp L_8386		;8325
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x8321..0x833a  (25 bytes)
-DATA_8321:
-	defb 0ddh,036h,006h,020h,0c3h,086h,083h,0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h	; 8321  .6. ............
-	defb 03eh,07fh,0ddh,036h,006h,0dch,0c3h,086h,083h	; 8331  >..6.....
+; DATOS sin identificar  0x8328..0x833a  (18 bytes)
+DATA_8328:
+	defb 0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h,03eh,07fh,0ddh,036h,006h,0dch,0c3h	; 8328  .........>..6...
+	defb 086h,083h	; 8338
 
 ; ======================================================================
 ; CODIGO 0x833a..0x83e6  (172 bytes)
@@ -367,7 +373,7 @@ L_8386:
 	and a			;8389
 	call z,07e18h		;838a
 	ld a,009h		;838d
-	ld (0d178h),a		;838f
+	ld (0d178h),a		;838f   ; peticion de sonido para p01:63E1 = a
 L_8392:
 	ld a,(ix+006h)		;8392
 	cp 010h		;8395
@@ -455,7 +461,7 @@ L_8479:
 	ld (ix+001h),a		;8488
 	jp 07f3eh		;848b
 L_848E:
-	ld ix,0d933h		;848e
+	ld ix,0d933h		;848e   ; ix -> los 6 actores de la pantalla
 	ld a,(ix+000h)		;8492
 	cp 007h		;8495
 	jp z,07fdah		;8497
@@ -463,7 +469,7 @@ L_848E:
 	cp 000h		;849d
 	jp nz,L_84C7		;849f
 	ld hl,000a0h		;84a2
-	ld (0d969h),hl		;84a5
+	ld (0d969h),hl		;84a5   ; actor 1, byte +10 = hl
 	ld (ix+007h),030h		;84a8
 	ld (ix+006h),096h		;84ac
 	ld hl,0d910h		;84b0
@@ -478,16 +484,16 @@ L_84C7:
 	ld (ix+000h),003h		;84c7
 	ld hl,0d910h		;84cb
 	set 6,(hl)		;84ce
-	ld a,(0d969h)		;84d0
+	ld a,(0d969h)		;84d0   ; a = actor 1, byte +10
 	ld b,a			;84d3
-	ld a,(0d96ah)		;84d4
+	ld a,(0d96ah)		;84d4   ; a = actor 1, byte +11
 	or b			;84d7
 	jp z,07fdah		;84d8
-	ld a,(0d96bh)		;84db
+	ld a,(0d96bh)		;84db   ; a = actor 1, byte +12
 	and a			;84de
 	jp nz,L_877F		;84df
 L_84E2:
-	ld a,(0d9e0h)		;84e2
+	ld a,(0d9e0h)		;84e2   ; a = actor 4, byte +15
 	cp 00fh		;84e5
 	push af			;84e7
 	call z,L_8669		;84e8
@@ -562,12 +568,12 @@ DATA_8578:
 	defb 03eh,0ffh,0c9h	; 8588
 
 ; ======================================================================
-; CODIGO 0x858b..0x86a2  (279 bytes)
+; CODIGO 0x858b..0x876e  (483 bytes)
 ; ======================================================================
 
 
 L_858B:
-	ld a,(0d9e0h)		;858b
+	ld a,(0d9e0h)		;858b   ; a = actor 4, byte +15
 	cp 00fh		;858e
 	jp z,L_8767		;8590
 	set 1,(ix+001h)		;8593
@@ -576,7 +582,7 @@ L_858B:
 	push ix		;859f
 	call 07f3eh		;85a1
 	pop ix		;85a4
-	ld a,(0d9e0h)		;85a6
+	ld a,(0d9e0h)		;85a6   ; a = actor 4, byte +15
 	and a			;85a9
 	jp z,L_8669		;85aa
 L_85AD:
@@ -598,7 +604,7 @@ L_85C4:
 L_85D3:
 	ld (ix+014h),000h		;85d3
 	ld a,008h		;85d7
-	ld (0d178h),a		;85d9
+	ld (0d178h),a		;85d9   ; peticion de sonido para p01:63E1 = a
 	call 044deh		;85dc
 	jp po,L_85ED		;85df
 	ld (ix+006h),0c7h		;85e2
@@ -611,7 +617,7 @@ L_85ED:
 L_85F8:
 	ld (ix+014h),000h		;85f8
 	ld a,008h		;85fc
-	ld (0d178h),a		;85fe
+	ld (0d178h),a		;85fe   ; peticion de sonido para p01:63E1 = a
 	call 044deh		;8601
 	jp po,L_8612		;8604
 	ld (ix+006h),0a7h		;8607
@@ -624,7 +630,7 @@ L_8612:
 L_861D:
 	ld (ix+014h),000h		;861d
 	ld a,008h		;8621
-	ld (0d178h),a		;8623
+	ld (0d178h),a		;8623   ; peticion de sonido para p01:63E1 = a
 	jp po,L_8634		;8626
 	ld (ix+006h),0a7h		;8629
 	ld (ix+007h),032h		;862d
@@ -636,7 +642,7 @@ L_8634:
 L_863F:
 	ld (ix+014h),000h		;863f
 	ld a,008h		;8643
-	ld (0d178h),a		;8645
+	ld (0d178h),a		;8645   ; peticion de sonido para p01:63E1 = a
 	call 044deh		;8648
 	jp po,L_8659		;864b
 	ld (ix+006h),015h		;864e
@@ -653,7 +659,7 @@ L_8669:
 	push ix		;8669
 	push ix		;866b
 	pop iy		;866d
-	ld ix,0d9cbh		;866f
+	ld ix,0d9cbh		;866f   ; ix -> actor 4
 	ld a,(ix+015h)		;8673
 	cp 000h		;8676
 	jp z,L_8682		;8678
@@ -676,17 +682,11 @@ L_869C:
 	call 04a8bh		;869c
 	pop ix		;869f
 	ret			;86a1
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x86a2..0x86ac  (10 bytes)
-DATA_86A2:
-	defb 0ddh,036h,015h,000h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 86a2  .6....K...
-
-; ======================================================================
-; CODIGO 0x86ac..0x876e  (194 bytes)
-; ======================================================================
-
-
+L_86A2:
+	ld (ix+015h),000h		;86a2
+	call 04b10h		;86a6
+	pop ix		;86a9
+	ret			;86ab
 L_86AC:
 	ld (ix+001h),00dh		;86ac
 	ld a,(iy+001h)		;86b0
@@ -716,7 +716,7 @@ L_86E4:
 	and 0f0h		;86ea
 	cp 020h		;86ec
 	jp z,L_872E		;86ee
-	ld a,(0d8fch)		;86f1
+	ld a,(0d8fch)		;86f1   ; a = la x de Rastan
 	add a,018h		;86f4
 	ld c,a			;86f6
 	bit 0,(ix+013h)		;86f7
@@ -745,7 +745,7 @@ L_8713:
 L_872B:
 	jp L_869C		;872b
 L_872E:
-	ld ix,0d9cbh		;872e
+	ld ix,0d9cbh		;872e   ; ix -> actor 4
 	ld (ix+015h),0f1h		;8732
 	push ix		;8736
 	call 04a8bh		;8738
@@ -781,13 +781,13 @@ DATA_876E:
 	defb 0c9h	; 877e
 
 ; ======================================================================
-; CODIGO 0x877f..0x884f  (208 bytes)
+; CODIGO 0x877f..0x8856  (215 bytes)
 ; ======================================================================
 
 
 L_877F:
 	xor a			;877f
-	ld (0d96bh),a		;8780
+	ld (0d96bh),a		;8780   ; actor 1, byte +12 = a
 	ld a,(ix+015h)		;8783
 	inc a			;8786
 	cp 001h		;8787
@@ -799,7 +799,7 @@ L_8792:
 	ld (ix+015h),a		;8793
 	jp L_851A		;8796
 L_8799:
-	ld ix,0d933h		;8799
+	ld ix,0d933h		;8799   ; ix -> los 6 actores de la pantalla
 	ld a,(ix+000h)		;879d
 	cp 007h		;87a0
 	jp z,07fdah		;87a2
@@ -807,7 +807,7 @@ L_8799:
 	cp 000h		;87a8
 	jp nz,L_87D2		;87aa
 	ld hl,00140h		;87ad
-	ld (0d969h),hl		;87b0
+	ld (0d969h),hl		;87b0   ; actor 1, byte +10 = hl
 	ld (ix+007h),030h		;87b3
 	ld (ix+006h),096h		;87b7
 	ld hl,0d910h		;87bb
@@ -822,9 +822,9 @@ L_87D2:
 	ld (ix+000h),004h		;87d2
 	ld hl,0d910h		;87d6
 	set 6,(hl)		;87d9
-	ld a,(0d969h)		;87db
+	ld a,(0d969h)		;87db   ; a = actor 1, byte +10
 	ld b,a			;87de
-	ld a,(0d96ah)		;87df
+	ld a,(0d96ah)		;87df   ; a = actor 1, byte +11
 	or b			;87e2
 	jp z,07fdah		;87e3
 	bit 0,(ix+010h)		;87e6
@@ -867,12 +867,14 @@ L_882F:
 	cp 0dch		;8847
 	jp nc,L_88AD		;8849
 	jp 07f3eh		;884c
+L_884F:
+	ld (ix+006h),020h		;884f
+	jp L_88AD		;8853
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x884f..0x8861  (18 bytes)
-DATA_884F:
-	defb 0ddh,036h,006h,020h,0c3h,0adh,088h,0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h	; 884f  .6. ............
-	defb 03eh,07fh	; 885f
+; DATOS sin identificar  0x8856..0x8861  (11 bytes)
+DATA_8856:
+	defb 0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h,03eh,07fh	; 8856  .........>.
 
 ; ======================================================================
 ; CODIGO 0x8861..0x8915  (180 bytes)
@@ -1008,7 +1010,7 @@ L_89C7:
 	ld (ix+006h),011h		;89c7
 	jp 07f3eh		;89cb
 L_89CE:
-	ld ix,0d933h		;89ce
+	ld ix,0d933h		;89ce   ; ix -> los 6 actores de la pantalla
 	ld a,(ix+000h)		;89d2
 	cp 007h		;89d5
 	jp z,07fdah		;89d7
@@ -1016,7 +1018,7 @@ L_89CE:
 	and a			;89dd
 	jp nz,L_8A06		;89de
 	ld hl,00190h		;89e1
-	ld (0d969h),hl		;89e4
+	ld (0d969h),hl		;89e4   ; actor 1, byte +10 = hl
 	ld (ix+007h),050h		;89e7
 	ld (ix+006h),096h		;89eb
 	ld hl,0d910h		;89ef
@@ -1031,12 +1033,12 @@ L_8A06:
 	ld (ix+000h),005h		;8a06
 	ld hl,0d910h		;8a0a
 	set 6,(hl)		;8a0d
-	ld a,(0d969h)		;8a0f
+	ld a,(0d969h)		;8a0f   ; a = actor 1, byte +10
 	ld b,a			;8a12
-	ld a,(0d96ah)		;8a13
+	ld a,(0d96ah)		;8a13   ; a = actor 1, byte +11
 	or b			;8a16
 	jp z,07fdah		;8a17
-	ld a,(0d9bah)		;8a1a
+	ld a,(0d9bah)		;8a1a   ; a = actor 3, byte +15
 	cp 00fh		;8a1d
 	call z,L_8B6B		;8a1f
 	bit 2,(ix+001h)		;8a22
@@ -1044,7 +1046,7 @@ L_8A06:
 	call L_811A		;8a29
 	cp 0ffh		;8a2c
 	jp z,07e5ah		;8a2e
-	ld a,(0d96bh)		;8a31
+	ld a,(0d96bh)		;8a31   ; a = actor 1, byte +12
 	and a			;8a34
 	jp nz,L_8B55		;8a35
 	ld a,(ix+006h)		;8a38
@@ -1061,11 +1063,11 @@ L_8A06:
 	call L_856A		;8a55
 	jp 07f3eh		;8a58
 L_8A5B:
-	ld a,(0d9bah)		;8a5b
+	ld a,(0d9bah)		;8a5b   ; a = actor 3, byte +15
 	cp 00fh		;8a5e
 	jp z,07f3eh		;8a60
 	ld a,00fh		;8a63
-	ld (0d178h),a		;8a65
+	ld (0d178h),a		;8a65   ; peticion de sonido para p01:63E1 = a
 	ld a,(ix+001h)		;8a68
 	and 001h		;8a6b
 	or 002h		;8a6d
@@ -1074,11 +1076,11 @@ L_8A5B:
 	push ix		;8a76
 	call 07f3eh		;8a78
 	pop ix		;8a7b
-	ld a,(0d9bah)		;8a7d
+	ld a,(0d9bah)		;8a7d   ; a = actor 3, byte +15
 	and a			;8a80
 	jp z,L_8B6B		;8a81
 	ld a,00eh		;8a84
-	ld (0d178h),a		;8a86
+	ld (0d178h),a		;8a86   ; peticion de sonido para p01:63E1 = a
 	ld a,(ix+001h)		;8a89
 	and 001h		;8a8c
 	or 006h		;8a8e
@@ -1104,7 +1106,7 @@ DATA_8A9A:
 
 
 L_8B19:
-	ld a,(0d8fch)		;8b19
+	ld a,(0d8fch)		;8b19   ; a = la x de Rastan
 	add a,010h		;8b1c
 	ld b,a			;8b1e
 	ld a,(ix+006h)		;8b1f
@@ -1134,9 +1136,9 @@ DATA_8B31:
 
 L_8B55:
 	ld a,00eh		;8b55
-	ld (0d178h),a		;8b57
+	ld (0d178h),a		;8b57   ; peticion de sonido para p01:63E1 = a
 	xor a			;8b5a
-	ld (0d96bh),a		;8b5b
+	ld (0d96bh),a		;8b5b   ; actor 1, byte +12 = a
 	ld a,(ix+001h)		;8b5e
 	and 001h		;8b61
 	or 006h		;8b63
@@ -1146,7 +1148,7 @@ L_8B6B:
 	push ix		;8b6b
 	push ix		;8b6d
 	pop iy		;8b6f
-	ld ix,0d9a5h		;8b71
+	ld ix,0d9a5h		;8b71   ; ix -> actor 3
 	ld a,(ix+015h)		;8b75
 	and a			;8b78
 	jr z,L_8B80		;8b79
@@ -1158,7 +1160,7 @@ L_8B80:
 	ld (ix+015h),00fh		;8b87
 	call L_8BA1		;8b8b
 	ld hl,08bcfh		;8b8e
-	ld (0d9b5h),hl		;8b91
+	ld (0d9b5h),hl		;8b91   ; actor 3, byte +10 = hl
 	push ix		;8b94
 	call 048f9h		;8b96
 	pop ix		;8b99
@@ -1199,53 +1201,53 @@ DATA_8BCF:
 
 
 L_8BF4:
-	ld a,(0d5f0h)		;8bf4
+	ld a,(0d5f0h)		;8bf4   ; a = la columna de la pantalla en que se esta
 	cp 005h		;8bf7
 	jp nz,06021h		;8bf9
-	ld a,(0d5f1h)		;8bfc
+	ld a,(0d5f1h)		;8bfc   ; a = la fila de la pantalla en que se esta
 	and a			;8bff
 	jp nz,06021h		;8c00
 	jp L_8016		;8c03
 L_8C06:
-	ld a,(0d5f0h)		;8c06
+	ld a,(0d5f0h)		;8c06   ; a = la columna de la pantalla en que se esta
 	cp 004h		;8c09
 	jp nz,06026h		;8c0b
-	ld a,(0d5f1h)		;8c0e
+	ld a,(0d5f1h)		;8c0e   ; a = la fila de la pantalla en que se esta
 	and a			;8c11
 	jp nz,06026h		;8c12
 	jp L_8262		;8c15
 L_8C18:
-	ld a,(0d5f0h)		;8c18
+	ld a,(0d5f0h)		;8c18   ; a = la columna de la pantalla en que se esta
 	cp 005h		;8c1b
 	jp nz,0602bh		;8c1d
-	ld a,(0d5f1h)		;8c20
+	ld a,(0d5f1h)		;8c20   ; a = la fila de la pantalla en que se esta
 	and a			;8c23
 	jp nz,0602bh		;8c24
 	jp L_848E		;8c27
 L_8C2A:
-	ld a,(0d5f0h)		;8c2a
+	ld a,(0d5f0h)		;8c2a   ; a = la columna de la pantalla en que se esta
 	cp 005h		;8c2d
 	jp nz,06030h		;8c2f
-	ld a,(0d5f1h)		;8c32
+	ld a,(0d5f1h)		;8c32   ; a = la fila de la pantalla en que se esta
 	dec a			;8c35
 	jp nz,06030h		;8c36
 	jp L_8799		;8c39
 L_8C3C:
-	ld a,(0d5f0h)		;8c3c
+	ld a,(0d5f0h)		;8c3c   ; a = la columna de la pantalla en que se esta
 	cp 003h		;8c3f
 	jp nz,06035h		;8c41
-	ld a,(0d5f1h)		;8c44
+	ld a,(0d5f1h)		;8c44   ; a = la fila de la pantalla en que se esta
 	and a			;8c47
 	jp nz,06035h		;8c48
 	jp L_89CE		;8c4b
 L_8C4E:
 	ld a,005h		;8c4e
-	ld (0d17ah),a		;8c50
+	ld (0d17ah),a		;8c50   ; peticion de sonido para p01:640F = a
 	call 0431fh		;8c53
 	xor a			;8c56
-	ld (0d933h),a		;8c57
-	ld (0d934h),a		;8c5a
-	ld (0d935h),a		;8c5d
+	ld (0d933h),a		;8c57   ; los 6 actores de la pantalla = a
+	ld (0d934h),a		;8c5a   ; actor 0, byte +1 = a
+	ld (0d935h),a		;8c5d   ; actor 0, byte +2 = a
 	ld c,008h		;8c60
 	ld b,02ah		;8c62
 	call 00047h		;8c64   ; BIOS WRTVDP - Writes data in the VDP-register
@@ -1259,7 +1261,7 @@ L_8C6A:
 	call L_8C9D		;8c6f
 	call L_8CC4		;8c72
 	call 00044h		;8c75   ; BIOS ENASCR - Displays the screen
-	ld a,(0d935h)		;8c78
+	ld a,(0d935h)		;8c78   ; a = actor 0, byte +2
 	cp 0ffh		;8c7b
 	jr nz,L_8C67		;8c7d
 	ld hl,05227h		;8c7f
@@ -1267,9 +1269,9 @@ L_8C6A:
 	ld b,010h		;8c85
 	ld c,050h		;8c87
 	ld a,0aah		;8c89
-	ld (0d5d7h),a		;8c8b
+	ld (0d5d7h),a		;8c8b   ; y donde se pinta = a
 	ld a,058h		;8c8e
-	ld (0d5d6h),a		;8c90
+	ld (0d5d6h),a		;8c90   ; x donde se pinta = a
 	exx			;8c93
 	ld b,000h		;8c94
 	exx			;8c96
@@ -1279,9 +1281,9 @@ L_8C9A:
 L_8C9D:
 	di			;8c9d
 	call 0445dh		;8c9e
-	ld a,(0d933h)		;8ca1
+	ld a,(0d933h)		;8ca1   ; a = los 6 actores de la pantalla
 	inc a			;8ca4
-	ld (0d933h),a		;8ca5
+	ld (0d933h),a		;8ca5   ; los 6 actores de la pantalla = a
 	ld b,a			;8ca8
 	ld a,(00007h)		;8ca9
 	inc a			;8cac
@@ -1291,7 +1293,7 @@ L_8C9D:
 	ld a,097h		;8cb1
 	out (c),a		;8cb3
 	ei			;8cb5
-	ld a,(0d933h)		;8cb6
+	ld a,(0d933h)		;8cb6   ; a = los 6 actores de la pantalla
 	ld l,a			;8cb9
 	ld e,a			;8cba
 	ld h,000h		;8cbb
@@ -1300,13 +1302,13 @@ L_8C9D:
 	call 0440eh		;8cc0
 	ret			;8cc3
 L_8CC4:
-	ld a,(0d933h)		;8cc4
+	ld a,(0d933h)		;8cc4   ; a = los 6 actores de la pantalla
 	and 00fh		;8cc7
 	ret nz			;8cc9
 	ld hl,08d01h		;8cca
-	ld a,(0d934h)		;8ccd
+	ld a,(0d934h)		;8ccd   ; a = actor 0, byte +1
 	inc a			;8cd0
-	ld (0d934h),a		;8cd1
+	ld (0d934h),a		;8cd1   ; actor 0, byte +1 = a
 	dec a			;8cd4
 	add a,a			;8cd5
 	ld e,a			;8cd6
@@ -1321,15 +1323,15 @@ L_8CC4:
 	ret z			;8ce1
 	cp 0ffh		;8ce2
 	jr nz,L_8CEA		;8ce4
-	ld (0d935h),a		;8ce6
+	ld (0d935h),a		;8ce6   ; actor 0, byte +2 = a
 	ret			;8ce9
 L_8CEA:
 	ld c,a			;8cea
 	inc hl			;8ceb
-	ld a,(0d933h)		;8cec
+	ld a,(0d933h)		;8cec   ; a = los 6 actores de la pantalla
 	sub 010h		;8cef
 	ld b,a			;8cf1
-	ld (0d5dbh),bc		;8cf2
+	ld (0d5dbh),bc		;8cf2   ; la lista o la cadena que se esta pintando = bc
 L_8CF6:
 	ld a,(hl)			;8cf6
 	and a			;8cf7

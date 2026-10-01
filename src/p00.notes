@@ -1,0 +1,1259 @@
+
+
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+B 0x4011 INIT: limpia la RAM, desactiva los ganchos de la BIOS, pone los bancos 0/1/2,
+B 0x4011 inicializa video y sonido (p01), arranca la tarea 0 y se queda esperando: a
+B 0x4011 partir de aqui TODO el juego corre dentro de la interrupcion (p00:406C).
+L 0x4011 init
+C 0x4011 sin interrupciones mientras se prepara todo
+C 0x4012 modo 1: la interrupcion va a 0x0038 y de ahi a H.TIMI
+C 0x4014 borra C000-F37F (13184 bytes) con ldir
+C 0x401D el byte de partida es 0
+C 0x4021 la pila arriba del todo de la RAM del juego
+C 0x4024 0xC9 = ret: anula los ganchos H.TIMI (FD9A), FD9B-FD9C y FD9F-FDA1
+C 0x4038 banco 0 en 0x4000 (y su copia en D18F)
+C 0x4040 banco 1 en 0x6000 (copia en D190)
+C 0x4048 banco 2 en 0x8000 (copia en D191)
+C 0x4050 p01:6000, p01:6020 y p01:6077: preparan el VDP y el sonido
+C 0x4059 tarea 0 = p00:4E14 (la tabla de p00:429A)
+C 0x405E H.TIMI = jp 0x406C: la interrupcion pasa a ser el motor del juego
+C 0x4069 ya con interrupciones...
+C 0x406A ...espera para siempre: el resto lo hacen las tareas
+B 0x406C INTERRUPCION (H.TIMI). Guarda todos los registros, mira si es el retrazo
+B 0x406C vertical y, si lo es: musica (bancos 1 y 2), cinco contadores de cuadros,
+B 0x406C sprites y paleta al VDP, y un turno del planificador de tareas.
+L 0x406C interrupcion
+C 0x406C guarda los registros normales...
+C 0x4074 ...y los alternativos
+C 0x407C puerto de escritura del VDP (BIOS 0x0007, +1 = puerto de registros)
+C 0x4081 R#15 = 0: el siguiente `in` lee el registro de estado S#0
+C 0x4089 B = S#0
+C 0x408B y vuelve a dejar R#15 = 0 (lo que espera la BIOS)
+C 0x4093 bit 7 de S#0: interrupcion de retrazo vertical
+C 0x4095 si no lo es (otra interrupcion del V9938), sale sin hacer nada
+C 0x4098 bancos 1 y 2 en 0x6000/0x8000 SIN tocar la copia: el sonido vive ahi
+C 0x40A1 p01:6153: un paso de la musica y los efectos
+C 0x40A4 arranca las peticiones de sonido pendientes
+C 0x40A7 devuelve los bancos que tenia la tarea interrumpida, leidos de la copia
+C 0x40B3 HL = 0x4000 + SP: si SP ha bajado de 0xC000 hay acarreo...
+C 0x40B8 ...y si no, la pila se ha desbordado: se cuelga a proposito (p00:413E)
+C 0x40BB cinco contadores de 16 bits en D17E-D187, +1 cada cuadro
+C 0x40C5 primer contador +1
+C 0x40D6 segundo
+C 0x40E7 tercero
+C 0x40F8 cuarto
+C 0x4109 quinto
+C 0x4114 D032 = "ya estoy dentro": si el cuadro anterior no acabo...
+C 0x4118 ...este se salta el trabajo (no se reentra)
+C 0x411B marca que se esta dentro
+C 0x4120 sprites de RAM a VRAM, rotando cual va primero
+C 0x4123 copia una franja de 256x8 de la pagina 1 (p00:41D9)
+C 0x4126 un turno del planificador: corre las tareas que toque
+C 0x4129 trabajo del cuadro hecho
+C 0x412D devuelve los registros alternativos...
+C 0x4135 ...y los normales
+C 0x413D vuelve a la BIOS, que acaba la interrupcion
+L 0x413E pila_desbordada
+C 0x413E sin interrupciones y bucle infinito: el juego se para aqui
+L 0x4141 arranca_sonidos
+C 0x4141 D17A: efecto pedido (0xFF = ninguno)
+C 0x4148 p01:640F lo arranca...
+C 0x414B ...y se borra la peticion
+C 0x4150 D178: musica pedida (0xFF = ninguna)
+C 0x4157 p01:63E1 la arranca...
+C 0x415A ...y se borra la peticion
+B 0x4160 Los 32 sprites de RAM al VDP. La tabla de atributos (D193, 4 bytes por
+B 0x4160 sprite) va a VRAM 0x8600 y la de colores (D213, 16 bytes por sprite) a
+B 0x4160 0x8400. Cada cuadro se empieza por un sprite distinto (+14 de 32): asi,
+B 0x4160 cuando hay mas de 8 en una linea, el que no se ve no es siempre el mismo y
+B 0x4160 parpadean en vez de desaparecer.
+L 0x4160 sprites_a_vram
+C 0x4160 D18C: el primer sprite de este cuadro
+C 0x4164 avanza 14...
+C 0x4166 ...modulo 32
+C 0x416D A = primer sprite * 4 (bytes de atributos)
+C 0x4173 HL = D193 + primer*4
+C 0x4177 se guarda primer*4 en A'
+C 0x4178 BC = 128 - primer*4: lo que va desde el primero hasta el final
+C 0x417E apuntado en D18D
+C 0x4182 a VRAM 0x8600, el principio de la tabla de atributos
+C 0x4185 copia la primera parte
+C 0x418B si el primero era el 0, ya esta
+C 0x4191 DE = 0x8600 + lo ya copiado
+C 0x419A y el resto desde el principio de D193
+C 0x419D copia la segunda parte
+C 0x41A0 ahora los colores: E = primer*4
+C 0x41A3 (128 - primer*4) * 4 = (32 - primer) * 16 bytes
+C 0x41B0 HL = D213 + primer*16
+C 0x41B9 a VRAM 0x8400, la tabla de colores de los sprites
+C 0x41BC primera parte
+C 0x41BF si el primero era el 0, ya esta
+C 0x41C2 primer*16 bytes...
+C 0x41C9 ...detras de lo ya copiado...
+C 0x41D2 ...desde el principio de D213
+L 0x41D9 copia_franja
+C 0x41D9 origen x=0 y=64, destino x=0 y=16...
+C 0x41DF ...256 x 8 pixeles...
+C 0x41E2 ...los dos en la pagina 1
+C 0x41E8 HMMM
+L 0x41EC huerfana_vdp_r32
+C 0x41EC nadie la llama: espera a que el VDP acabe el comando anterior...
+C 0x41EF ...y apunta a R#32 con autoincremento (R#17 = 0x20)
+C 0x41FE 15 registros de comando (R#32-R#46) desde p00:4206
+C 0x4203 los manda por el puerto 3 del VDP
+D 0x4206 0x4215 comando_vdp  Los 15 registros de un comando del VDP (R#32-R#46) que vuelca p00:41EC; nadie lo usa
+L 0x4215 huerfana_tarea_on
+C 0x4215 nadie la llama: pone a 1 el contador de la tarea A (C000+A)
+L 0x421D apaga_tareas
+C 0x421D los 16 contadores C000-C00F a 0: ninguna tarea corre
+B 0x4228 EL PLANIFICADOR. Hay 16 tareas; la i tiene su contador en C000+i (0 =
+B 0x4228 parada, n = corre dentro de n cuadros), su SP guardado en C010+2i y su pila
+B 0x4228 de 256 bytes por debajo de C12E+256i. Una tarea cede con p00:4255 (vuelve al
+B 0x4228 cuadro siguiente) o p00:4257 (dentro de A cuadros), y la interrupcion la
+B 0x4228 retoma donde se quedo con `ld sp,hl / ret`.
+L 0x4228 crea_tarea
+C 0x4228 C000+A = 1: la tarea A corre en el proximo cuadro
+C 0x422D DE = C12E + A*256: la cima de su pila
+C 0x4235 H = A (el numero de tarea, tras el ex de,hl)
+C 0x4236 C = 2A, el desplazamiento en las tablas de palabras
+C 0x4238 HL = C010 + 2A: donde se guarda su SP
+C 0x423D su SP = la cima de su pila
+C 0x4240 la direccion de arranque de la tarea, de la tabla p00:429A
+C 0x424A se deja en la cima de su pila: el primer `ret` del planificador salta ahi
+L 0x424E para_tarea_y_cede
+C 0x424E C000+A = 0: la tarea A ya no corre...
+C 0x4254 ...y la que llama cede su turno
+L 0x4255 cede
+C 0x4255 vuelve en el cuadro siguiente
+L 0x4257 duerme
+C 0x4257 D030 apunta al contador de la tarea que corre...
+C 0x425A ...que vale A: dentro de A cuadros vuelve a correr
+C 0x425B HL = C010 + 2*tarea
+C 0x4260 su SP (con la vuelta de este call encima)...
+C 0x4268 ...queda guardado para retomarla
+C 0x426B y el planificador sigue con la tarea siguiente
+L 0x426E planificador
+C 0x426E HL recorre los 16 contadores
+C 0x4271 el SP de la interrupcion, para volver a el al final
+C 0x4275 contador 0: tarea parada, se salta
+C 0x427A uno menos; si no llega a 0, aun no le toca
+C 0x427D le toca: D030 = su contador
+C 0x4280 HL = C010 + 2*tarea
+C 0x4285 su SP guardado...
+C 0x4289 ...y `ret` la retoma justo detras de su ultimo `call 4255/4257`
+L 0x428B siguiente_tarea
+C 0x428B la que acaba de ceder
+C 0x428E la siguiente...
+C 0x4290 ...hasta la 15
+C 0x4295 todas vistas: vuelve a la pila de la interrupcion
+D 0x429A 0x42BA arranque_tareas  Direccion de arranque de cada tarea (16 palabras; solo las 5 primeras usadas: 4E14 524F 56F2 5760 5799)
+F 0x429A w8
+B 0x42BA Los mandos, a D573: bit 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4
+B 0x42BA boton 1 (ESPACIO, CAPS o gatillo A del joystick) y 5 boton 2 (GRAPH o
+B 0x42BA gatillo B). Teclado y joystick del puerto 1 se suman.
+L 0x42BA lee_mandos
+C 0x42BA el joystick, ya con los bits del juego...
+C 0x42BD ...en B
+C 0x42BF fila 8 del teclado: espacio y cursores (0 = pulsada)
+C 0x42C5 ESPACIO -> boton 1
+C 0x42CB derecha -> bit 3
+C 0x42D1 izquierda -> bit 2
+C 0x42D7 abajo -> bit 1
+C 0x42DD arriba -> bit 0
+C 0x42E3 (ESPACIO otra vez, repetido)
+C 0x42EA fila 6: SHIFT, CTRL, GRAPH, CAPS, CODE
+C 0x42F0 CAPS -> boton 1
+C 0x42F6 GRAPH -> boton 2
+C 0x42FC el resultado, para todo el juego
+L 0x4301 lee_joystick
+C 0x4301 R#15 del PSG = 0x8F: puerto de joystick 1 y salidas en alto
+C 0x4309 R#14: las patas del joystick (0 = pulsada)
+C 0x430E invertidas: 1 = pulsada; bits 0-3 direcciones, 4-5 gatillos
+L 0x4313 multiplica_h_por_e
+C 0x4313 nadie la llama: HL = H * E, por sumas y desplazamientos
+C 0x4316 ocho bits
+C 0x4318 HL*2; si salia un 1 de H...
+C 0x431B ...se suma E
+L 0x431F borra_vram
+C 0x431F pantalla apagada mientras...
+C 0x4323 ...se llenan de 0 los primeros 32 KB de VRAM
+C 0x432E pantalla encendida
+B 0x4332 Huerfana: un rectangulo de bytes de la CPU a la VRAM con el comando HMMC
+B 0x4332 del V9938. HL = esquina de destino, DE = la otra esquina, A' = pagina, IX =
+B 0x4332 los bytes.
+L 0x4332 huerfana_hmmc
+C 0x4332 espera al VDP
+C 0x4336 R#17 = 36 con autoincremento: DX, DY, NX, NY, CLR, ARG, CMD
+C 0x4346 DX = L
+C 0x434A DY = H, pagina A'
+C 0x4350 ancho: |H - D|, y el sentido en D (DIY)...
+C 0x435C ...alto: |L - E|, y el sentido en E (DIX)
+C 0x4368 los dos +1
+C 0x436B NX y NY
+C 0x4373 CLR = el primer byte
+C 0x4378 ARG = los dos sentidos
+C 0x437C CMD 0xF0 = HMMC
+C 0x4380 R#17 = 44 sin autoincremento: los demas bytes van todos a CLR
+C 0x438F S#2: CE (bit 0) = aun trabajando, TR (bit 7) = quiere otro byte
+C 0x4394 acabado
+C 0x4399 aun no lo quiere
+C 0x439E el siguiente byte
+C 0x43A8 R#15 = 0 otra vez
+B 0x43AF Copia un rectangulo de VRAM a VRAM con HMMM: HL = origen (pagina A), DE =
+B 0x43AF la esquina opuesta, la pila trae el destino y A' su pagina.
+L 0x43AF copia_vram_vram
+C 0x43B2 espera al VDP
+C 0x43BC R#17 = 32 con autoincremento: SX, SY, DX, DY...
+C 0x43C6 SX = L, SY = H, pagina B
+C 0x43CF ancho y sentido, como en p00:4332
+C 0x43EC DX, DY y pagina A'
+C 0x4408 CMD 0xD0 = HMMM
+L 0x440E rellena_vram
+C 0x440E rellena un rectangulo con el byte A (HMMV): DE..HL las esquinas
+C 0x441B R#17 = 36: DX, DY, NX, NY, CLR...
+C 0x4426 NX, NY = HL - DE + 1
+C 0x442B DX = D, DY = E (pagina 0)
+C 0x4433 NX = H, NY = L
+C 0x443B CLR = el byte de relleno
+C 0x443F CMD 0xC0 = HMMV
+L 0x4445 lee_estado_vdp
+C 0x4445 R#15 = A...
+C 0x4451 ...B = S#A...
+C 0x4453 ...y R#15 = 0 otra vez
+L 0x445D espera_vdp
+C 0x445D S#2 bit 0 (CE): el comando anterior aun no ha acabado
+C 0x4467 R#15 = 0
+B 0x446C La paleta: copia los 32 bytes de HL a D5B4 y los manda al VDP (R#16 = 0 y
+B 0x446C luego dos bytes por color al puerto 2).
+L 0x446C pon_paleta
+C 0x446C copia en D5B4
+C 0x4478 espera al VDP
+C 0x447D puerto de registros
+C 0x4482 R#16 = 0: empieza por el color 0
+C 0x4489 puerto 2, el de la paleta
+C 0x448A rojo y azul...
+C 0x448E ...y verde
+C 0x4492 16 colores
+B 0x449B Huerfana: un fundido. Los 48 componentes de D574 (16 colores x R,G,B) se
+B 0x449B acercan un paso a los de DE, y los colores marcados en D5A4 se mandan con
+B 0x449B p00:4445... que no escribe la paleta sino que lee un estado: sin terminar.
+L 0x449B huerfana_fundido
+C 0x44A0 si aun no ha llegado...
+C 0x44A4 ...un paso mas
+C 0x44B3 color marcado en D5A4?
+C 0x44BA rojo en el nibble alto...
+C 0x44C5 ...con el verde: D
+C 0x44C9 azul: E
+C 0x44CF A = numero de color: aqui haria falta escribir la paleta
+L 0x44DE azar
+C 0x44DE semilla en D5D4
+C 0x44E3 semilla * 9 + 1
+C 0x44E8 este `ld a,r / xor l` no sirve: A se pisa mas abajo
+C 0x44EB nueva semilla
+C 0x44EE devuelve el byte alto
+B 0x44F1 Copia un rectangulo de VRAM a VRAM (HMMM): HL = origen y A su pagina, BC
+B 0x44F1 (por la pila) = destino y A' su pagina, E+1 = ancho, D = alto.
+L 0x44F1 copia_bloque
+C 0x44F4 espera al VDP
+C 0x44FE R#17 = 32 con autoincremento
+C 0x4508 SX = L, SY = H, pagina B (la A de entrada)
+C 0x4511 el destino
+C 0x4512 DX = L, DY = H, pagina A'
+C 0x451C NX = E + 1 (hasta 256)
+C 0x4526 NY = D
+C 0x452E CMD 0xD0 = HMMM
+B 0x4534 Los patrones de un sprite a VRAM, solo si han cambiado. IX = ficha de
+B 0x4534 sprite: +0/1 patron que toca, +4/5 el ultimo cargado, +8 juego de graficos
+B 0x4534 (bits 7-6 = bancos), +9 sprite, +0A sitio en la tabla de patrones.
+L 0x4534 carga_patron_sprite
+C 0x4534 el patron que toca...
+C 0x453B ...contra el que ya hay
+C 0x4547 el mismo: nada que hacer
+C 0x454A apunta el nuevo
+C 0x4550 0xFFFF = ninguno
+C 0x4557 destino: 0xA000 + (ix+0A) * 32, la tabla de patrones de sprites
+C 0x4567 32 bytes, un patron de 16x16
+C 0x456D (ix+8) bit 7 = 0: bancos 14 y 15 en 0x6000/0x8000
+C 0x4586 bits 7 y 6 = 10: bancos 11, 12 y 13 en 0x6000/0x8000/0xA000
+C 0x45A4 bits 7 y 6 = 11: bancos 8, 9 y 10
+C 0x45BC el patron a VRAM
+C 0x45C0 los colores: (ix+8) sin los bits de banco...
+C 0x45CA ...indexa la tabla de colores de p00:4DF4
+C 0x45CF destino: D213 + sprite*16, sus colores en RAM
+C 0x45E0 los 16 colores de lineas iguales:
+C 0x45E3 el primero...
+C 0x45E9 ...y se copia sobre los otros 15
+D 0x45EC 0x45EE resto_45EC  `pop hl / ret` sueltos que nadie ejecuta
+B 0x45EE Un tile de 8x8 a la pantalla: HL = numero de tile, DE = destino (E = x,
+B 0x45EE D = y). Los tiles estan en VRAM a partir de la pagina 1 (tile + 512, 32 por
+B 0x45EE fila). B' bit 0 = 0 lo copia entero (HMMM), = 1 con el color 0
+B 0x45EE transparente (LMMM con TIMP).
+L 0x45EE pinta_tile
+C 0x45EF HL = (tile + 512) * 8
+C 0x45F6 B = x de origen
+C 0x45F7 H*8...
+C 0x45FD ...A = pagina de origen
+C 0x4602 8x8
+C 0x4605 destino en la pagina 0
+C 0x4609 opaco o transparente?
+L 0x4612 escribe_texto
+B 0x4612 Escribe la cadena que va pegada DETRAS del `call` (acaba en 0) a partir de
+B 0x4612 DE, 8 pixeles por letra, y vuelve detras del 0.
+C 0x4612 HL = la cadena (la direccion de vuelta)
+C 0x4616 la letra...
+C 0x461B ...se pinta
+C 0x461F 8 pixeles a la derecha
+C 0x4624 la siguiente
+C 0x462B el 0 acaba
+C 0x4630 vuelve detras del 0
+L 0x4633 escribe_letra
+C 0x4633 en la posicion de D5DB
+C 0x4639 opaca
+C 0x4640 y la posicion avanza 8
+L 0x4649 pinta_letra
+C 0x4649 ASCII -> tile: espacio = 0
+C 0x4652 '0'-'9' -> 2-11
+C 0x4654 'A'... -> 12...
+C 0x465D +2
+L 0x4663 escribe_bcd
+C 0x4663 A = dos cifras BCD; la de las decenas...
+C 0x466D ...si es 0 sale un espacio
+C 0x4676 decenas
+C 0x467B 8 pixeles a la derecha
+C 0x4683 unidades
+L 0x468B copia_transparente
+C 0x468B como p00:44F1 pero con LMMM y TIMP: el color 0 no se copia
+C 0x468E espera al VDP
+C 0x46A2 SX, SY, pagina
+C 0x46AC DX, DY, pagina A'
+C 0x46B7 NX = E, NY = D
+C 0x46C3 CMD 0x98 = LMMM con TIMP
+B 0x46C9 Pinta un bloque de tiles: HL = lista de palabras (una por tile), DE = lo
+B 0x46C9 que se suma a cada una, C x B = ancho y alto en pixeles, desde D5D6/D5D7.
+L 0x46C9 pinta_bloque_tiles
+C 0x46C9 x de partida (se guarda en D5DA)
+C 0x46CF C = x final
+C 0x46D1 B = y final
+C 0x46D6 D5DB = la lista
+C 0x46DC el tile siguiente...
+C 0x46E8 ...+ DE
+C 0x46E9 en (D5D6, D5D7)
+C 0x46F2 8 pixeles a la derecha
+C 0x46FE fila acabada: x al principio...
+C 0x4704 ...y 8 pixeles abajo
+B 0x4711 Pinta un bloque de bloques de 16x16 (p00:4777): HL = lista de palabras
+B 0x4711 (0xFFxx = hueco), C x B = columnas y filas, desde D5D6/D5D7.
+L 0x4711 pinta_bloque_16
+C 0x4711 x de partida
+C 0x471A columna y fila a 0
+C 0x4724 el bloque siguiente
+C 0x472F 0xFF: hueco, no se pinta
+C 0x4736 numero - 1 + DE
+C 0x4741 se pinta
+C 0x4746 16 pixeles a la derecha
+C 0x474E columna + 1
+C 0x4759 fila acabada: x al principio...
+C 0x4763 ...16 abajo
+C 0x476B fila + 1
+B 0x4777 Un bloque de 16x16: cuatro tiles de 8x8 sacados de la tabla de bloques
+B 0x4777 (D5EA, en el banco 27, que se pone en 0xA000).
+L 0x4777 pinta_bloque
+C 0x4777 banco 27 en 0xA000
+C 0x4783 (bloque & 7) * 4...
+C 0x478E ...+ (bloque & 0xF8) * 8: 8 bytes por bloque
+C 0x4799 + la tabla de la fase (D5EA)
+C 0x47A2 tile de arriba a la izquierda
+C 0x47AD 8 a la derecha
+C 0x47B3 arriba a la derecha
+C 0x47BD la fila de abajo: 8 lineas mas abajo y 8 a la izquierda
+C 0x47C3 los tiles de abajo van 32 bytes mas alla (filas de 8 bloques)
+C 0x47C8 abajo a la izquierda
+C 0x47D7 abajo a la derecha
+C 0x47E0 banco 0 otra vez en 0xA000
+B 0x47E9 Las 32 fichas de sprite de D413 (11 bytes cada una): +0/1 patron, +2 x,
+B 0x47E9 +3 y (0xFF = oculto), +4/5 el ultimo patron cargado, +7, +8 juego de
+B 0x47E9 graficos, +9 numero de sprite, +0A sitio en la tabla de patrones.
+L 0x47E9 limpia_fichas_sprite
+C 0x47E9 la primera...
+C 0x47ED ...de 32
+C 0x47F0 A = numero de ficha (0-31)
+C 0x47F3 sin patron
+C 0x47FB sprite y sitio de patron = el suyo
+C 0x4805 y = 0xFF: oculto
+C 0x4809 la siguiente, 11 bytes mas alla
+L 0x4823 vacia_fichas_sprite
+C 0x4823 B fichas desde IX: sin patron y ocultas
+C 0x4834 la siguiente
+B 0x484E B fichas de sprite desde IX a la tabla de atributos de RAM (D193): carga
+B 0x484E su patron si ha cambiado y escribe y, x, patron y el cuarto byte.
+L 0x484E fichas_a_atributos
+C 0x484F el patron, si ha cambiado
+C 0x4852 HL = D193 + sprite * 4
+C 0x485E y = 0xFF: se esconde en y = 0xE0
+C 0x4865 y + desplazamiento vertical del actor (D5DE)
+C 0x486A atributo 0: y
+C 0x486C x + desplazamiento horizontal (D5DD)
+C 0x4872 atributo 1: x
+C 0x4874 atributo 2: patron = sitio * 4 (sprites de 16x16)
+C 0x487B atributo 3: lo que diga +8
+C 0x487F la ficha siguiente
+L 0x4899 sprite_oculto
+C 0x4899 y = 0xE0, fuera de la pantalla
+L 0x489E pon_scroll_vertical
+C 0x48A0 espera al VDP
+C 0x48A3 D5E0: el desplazamiento vertical de la pantalla
+C 0x48AC a R#23 (0x80 + 23 = 0x97)
+B 0x48B6 Pinta un bloque de 16x16 con la tabla de bloques de p00:5BC3 en vez de la
+B 0x48B6 de la fase, en (D92B, D92C): el bloque lo elige D92D por la tabla de
+B 0x48B6 p00:48E7. Con el color 0 transparente.
+L 0x48B6 pinta_bloque_especial
+C 0x48B6 guarda la tabla de bloques de la fase...
+C 0x48BC ...y pone la de p00:5BC3
+C 0x48C2 D92D - 1 indexa p00:48E7
+C 0x48D1 x
+C 0x48D5 y
+C 0x48D9 transparente
+C 0x48E0 devuelve la tabla de la fase
+D 0x48E7 0x48F9 bloque_especial  Que bloque de p00:5BC3 pinta p00:48B6 segun D92D (18 valores)
+B 0x48F9 Da de alta un actor (IX): segun su tipo (+0) le reserva sprites en uno de
+B 0x48F9 los grupos (DA17 de dos en dos bits, DA18 de uno en uno), apunta sus fichas
+B 0x48F9 de sprite en +3/4 y cuantas son en +5, y lo pinta (p00:4A1B).
+L 0x48F9 alta_actor
+C 0x48F9 tipo 0: hueco libre, nada que hacer
+C 0x48FE tipos 0x0A, 0x1A y 0x1B: grupo de dos sprites (p00:4967)
+C 0x4910 tipos 0x16, 0x1F, 0x0B, 0x0C, 0x17, 0x1E y 0x25: un sprite (p00:49EB)
+C 0x4933 los demas: un grupo libre de DA17 con los bits 00
+C 0x4938 no hay: no sale
+C 0x493B se marca ocupado (11)
+C 0x4940 +0E = grupo con el bit 4: "cinco sprites"
+C 0x4948 primera ficha: 0x10 + (grupo - 1) * 5
+C 0x494F 11 bytes por ficha
+C 0x4959 +3/4 = sus fichas
+C 0x495F +5 = cinco sprites
+L 0x4967 alta_actor_dos
+C 0x4967 un grupo con 01...
+C 0x4971 ...o con 10...
+C 0x497B ...o libre (00)
+C 0x4983 libre: se marca 10
+C 0x4988 +0E = grupo con el bit 7
+C 0x4990 primera ficha: 0x10 + (grupo - 1) * 5
+C 0x49A7 dos sprites
+C 0x49AF tenia 01: pasa a 11 (el grupo lleno)
+C 0x49B7 tenia 10: la segunda mitad del grupo
+C 0x49CC primera ficha: 0x12 + (grupo - 1) * 5
+L 0x49EB alta_actor_uno
+C 0x49EB un sitio libre de DA18
+C 0x49F1 se marca ocupado
+C 0x49F6 +0E = sitio con el bit 5
+C 0x49FE ficha 0x0A + sitio
+C 0x4A11 un sprite
+D 0x4A19 0x4A1B resto_4A19  dos `ret` sueltos que nadie ejecuta
+B 0x4A1B Pinta un actor recien dado de alta: busca la definicion de su pose (tipo
+B 0x4A1B +0, pose +1, en el banco 30 o 26 en 0x8000), la convierte en fichas de
+B 0x4A1B sprite (p00:5AA5) y las pasa a la tabla de atributos.
+L 0x4A1B pinta_actor_nuevo
+C 0x4A1D su x y su y, como desplazamiento de sus sprites
+C 0x4A29 tipos menores que 0x18: definiciones en el banco 30...
+C 0x4A3A ...los demas en el banco 26
+C 0x4A42 IY = IX + 0x0A
+C 0x4A4C DE = definicion de la pose
+C 0x4A4F apuntada en +0C/0D
+C 0x4A55 HL = sus fichas de sprite
+C 0x4A5E A' = 2: alta
+C 0x4A62 rellena las fichas
+C 0x4A69 y las pasa a atributos
+C 0x4A7A bancos 3 y 4 otra vez, los del juego
+L 0x4A8B pinta_actor
+C 0x4A8B lo mismo para un actor ya dado de alta: la definicion de su pose...
+C 0x4A94 ...su x y su y...
+C 0x4AA2 ...el banco de las definiciones...
+C 0x4AD5 A' = 0: solo cambia la pose
+C 0x4AD8 rellena las fichas
+C 0x4ADF +2 = +0A con el bit 7 de A' (la orientacion)
+C 0x4AFA y las pasa a atributos
+C 0x4AFF bancos 3 y 4 otra vez
+B 0x4B10 Da de baja un actor: devuelve sus sprites al grupo, los esconde y borra
+B 0x4B10 sus 38 bytes.
+L 0x4B10 baja_actor
+C 0x4B10 sin fichas: no estaba dado de alta
+C 0x4B15 +0E: de que grupo eran sus sprites
+C 0x4B2C cinco sprites: el grupo vuelve a 00
+C 0x4B35 sus fichas
+C 0x4B48 se vacian...
+C 0x4B4E ...y se esconden
+C 0x4B53 los 38 bytes del actor a 0
+C 0x4B5D ya hay sitio para otro (DA19 bit 0)
+C 0x4B64 bancos 3 y 4 otra vez
+L 0x4B75 baja_actor_uno
+C 0x4B75 un sprite: su sitio de DA18 vuelve a libre
+L 0x4B7F baja_actor_dos_b
+C 0x4B7F la segunda mitad de un grupo de dos
+L 0x4B86 baja_actor_dos_a
+C 0x4B86 la primera mitad
+C 0x4B8C DA17: se borra el bit del grupo B
+C 0x4BB3 se guarda
+L 0x4BBA marca_sitio_uno
+C 0x4BBA DA18: el sitio B (1-6) pasa a valer A
+C 0x4BF2 se guarda
+L 0x4BF7 definicion_pose
+C 0x4BF7 la tabla de poses del tipo (p00:4C68)...
+C 0x4C06 ...y en ella la de la pose +1
+L 0x4C12 busca_sitio_uno
+C 0x4C12 DA18: seis sitios de un sprite
+C 0x4C18 bit 7 a 0: libre; B dice cual
+C 0x4C1C el siguiente
+C 0x4C1F ninguno libre: DA19 bit 1
+L 0x4C25 busca_grupo
+C 0x4C25 DA17: tres grupos de dos bits; busca uno que valga D
+C 0x4C2B los dos bits altos
+C 0x4C2F el siguiente grupo
+C 0x4C34 ninguno: DA19 bit 0
+L 0x4C3A marca_grupo
+C 0x4C3A DA17: el grupo B pasa a valer A
+C 0x4C63 se guarda
+D 0x4C68 0x4CB2 poses_por_tipo  Por cada tipo de actor (1-37), la direccion de su lista de poses
+F 0x4C68 w8
+D 0x4CB2 0x4DF4 poses  Las listas de poses: para cada pose, la direccion de su definicion en el banco 30 o 26 (0x8000)
+F 0x4CB2 w8
+D 0x4DF4 0x4E14 colores_sprite  Color de cada juego de graficos de sprite (p00:45CA): 0x00-0x0F y 0x40-0x4F
+B 0x4E14 TAREA 0: la principal. Presentacion, demo y partida, en bucle.
+L 0x4E14 tarea_principal
+C 0x4E14 sin desplazamiento vertical
+C 0x4E1B D5DF = 0xFF
+C 0x4E20 musica 0 y efecto 0
+C 0x4E2A D067 = 3
+C 0x4E2F prepara la partida (p00:4FE0)
+L 0x4E36 presentacion
+C 0x4E36 VRAM a 0
+C 0x4E39 arranca la tarea 1 (p00:524F)
+C 0x4E3E un cuadro
+C 0x4E41 el byte 0x4010 de la cabecera (vale 0): un interruptor de pruebas...
+C 0x4E48 ...que, encendido, deja cambiar con las teclas 4 y 5 (fila 0)...
+C 0x4E52 ...los bits 5-6 de R#2: la pagina que se ve
+C 0x4E5E WRTVDP R#2
+C 0x4E61 D17D bit 6: la presentacion ha acabado
+C 0x4E68 VRAM a 0
+C 0x4E6B para las tareas 4, 2, 3 y 1
+C 0x4E7F sprites a cero...
+C 0x4E82 ...y los 32 ocultos
+C 0x4E8B VRAM a 0
+B 0x4E8E FIN DE PARTIDA: "GAME OVER" y la cuenta para continuar.
+C 0x4E8E opaco
+C 0x4E92 en x = 0x60, y = 0x60
+D 0x4E99 0x4EA3 texto_game_over  "GAME OVER"
+C 0x4EA3 corta el efecto...
+C 0x4EA8 ...y pide el 8
+C 0x4EAD 200 cuadros...
+C 0x4EB2 ...y otros 200
+C 0x4EB7 efecto 6
+C 0x4EBC la partida a cero (lo mismo que p00:4FE0)
+C 0x4EE5 en (0x30, 0x80)
+D 0x4EEC 0x4EF8 texto_to_continue  "TO CONTINUE"
+C 0x4EFC en (0x30, 0x88)
+D 0x4F03 0x4F17 texto_push_space_1  "     PUSH SPACE KEY"
+C 0x4F1B en (0x30, 0x98)
+D 0x4F22 0x4F2C texto_to_cancel  "TO CANCEL"
+C 0x4F30 en (0x30, 0xA0)
+D 0x4F37 0x4F4B texto_push_graph  "     PUSH GRAPH KEY"
+C 0x4F4B 7200 cuadros (dos minutos a 60 Hz) para decidir
+L 0x4F4E cuenta_continuar
+C 0x4F4F un cuadro
+C 0x4F54 cada 32 cuadros cambia...
+C 0x4F59 ..."GAME OVER" o espacios: parpadea
+D 0x4F68 0x4F72 texto_game_over_2  "GAME OVER" (el parpadeo)
+C 0x4F72 salta los espacios
+L 0x4F74 borra_game_over
+D 0x4F7F 0x4F89 texto_blancos  nueve espacios: borran "GAME OVER"
+L 0x4F89 mira_continuar
+C 0x4F8D boton 1 (ESPACIO): continua en la misma fase
+C 0x4F95 boton 2 (GRAPH): se acaba
+C 0x4F99 un cuadro menos
+C 0x4F9C aun queda tiempo
+L 0x4F9F se_acaba
+C 0x4F9F bancos 1 y 2: el sonido
+C 0x4FAF pantalla apagada mientras...
+C 0x4FB2 ...p01:6077 rehace el VDP
+C 0x4FB8 sin efecto
+C 0x4FBD vuelta a la fase 0...
+C 0x4FC1 ...y a la presentacion desde el principio
+L 0x4FC4 continua
+C 0x4FC4 lo mismo pero sin tocar la fase (D5E5)
+C 0x4FDD a jugar otra vez
+B 0x4FE0 Pone la partida a cero y pinta la pantalla de titulo.
+L 0x4FE0 pantalla_titulo
+C 0x4FE0 sin musica ni efecto
+C 0x4FEA D17D, D905, D919, D926, D91E-D921 y D90D-D910 a 0
+C 0x500F sprites a cero y ocultos
+C 0x501B D181 = 0
+C 0x501F VRAM a 0
+C 0x5022 carga los graficos del titulo (p00:5124)
+C 0x5025 el logotipo: la lista de tiles de p00:5227...
+C 0x502B ...16 de alto por 0x50 de ancho...
+C 0x502F ...desde y = 0xA0...
+C 0x5034 ...x = 0x58
+C 0x5039 opaco
+C 0x503D pintado
+C 0x5044 en (0x20, 0xB8)
+D 0x504B 0x5064 texto_taito  "@ TAITO CORPORATION 1988" (la @ es el tile 12, el de delante de la A)
+C 0x5068 en (0x38, 0xC0)
+D 0x506F 0x5083 texto_derechos  "ALL RIGHTS RESERVED"
+L 0x5083 escribe_push_space
+C 0x5087 en (0x40, 0x88)
+D 0x508E 0x509D texto_push_space_2  "PUSH SPACE KEY"
+C 0x509D medio cuarto de segundo (15 cuadros) con el texto...
+C 0x50A6 ...y otro tanto con espacios encima: parpadea
+D 0x50AD 0x50BC texto_blancos_2  catorce espacios: borran "PUSH SPACE KEY"
+C 0x50BC 15 cuadros
+C 0x50C1 D181 = 5: la demo ha terminado (lo pone la tarea 1)
+C 0x50C8 boton 1...
+C 0x50D0 ...no: sigue parpadeando (p00:5083)
+C 0x50D2 pulsado: a jugar
+L 0x50D3 fin_de_demo
+C 0x50D3 D181 a 0
+C 0x50D7 VRAM a 0
+C 0x50DA D17D = 0x80
+C 0x50E3 en (0x60, 0x70)
+D 0x50EA 0x50F4 texto_game_over_demo  "GAME OVER" (al acabar la demo)
+C 0x50F4 50 cuadros
+C 0x50F9 la tarea 1 otra vez
+L 0x50FE espera_en_demo
+C 0x5101 boton 1 pulsado: se corta
+C 0x510B D181 = 5: la demo acabo sola
+C 0x5112 D17D: bit 1 = 1, bit 7 = 0...
+C 0x5119 ...y otra vez la pantalla de titulo
+L 0x511C corta_demo
+C 0x511C igual, pero vuelve a quien llamo
+B 0x5124 El titulo: para las tareas, apaga la pantalla, pinta el dibujo con bloques
+B 0x5124 de 16x16 de la tabla de p00:5D27, pone su paleta y lo sube desde abajo
+B 0x5124 subiendo el desplazamiento vertical de 0xF0 a 0.
+L 0x5124 pinta_titulo
+C 0x5124 para las tareas 4, 3, 2 y 1
+C 0x5138 sprites a cero y ocultos
+C 0x5144 pantalla apagada
+C 0x5147 desplazamiento vertical 0xF0: el dibujo empieza abajo
+C 0x514C la tabla de bloques del titulo
+C 0x5152 la lista de p00:5189...
+C 0x5158 ...7 filas...
+C 0x515A ...de 9 bloques...
+C 0x515C ...desde y = 0x10...
+C 0x5161 ...x = 0x40
+C 0x5166 transparente
+C 0x516A pintado
+C 0x516D la paleta del titulo (p00:5207)
+C 0x5173 pantalla encendida
+L 0x5176 sube_titulo
+C 0x5176 el desplazamiento al VDP
+C 0x5179 cada 2 cuadros...
+C 0x517E ...hasta llegar a 0...
+C 0x5183 ...una linea mas
+D 0x5189 0x5207 titulo_bloques  El dibujo del titulo: 7 filas x 9 bloques de 16x16 (palabras; 0 = vacio)
+F 0x5189 w9
+D 0x5207 0x5227 titulo_paleta  La paleta del titulo: 16 colores x 2 bytes (0RRR0BBB, 00000GGG)
+F 0x5207 w8
+D 0x5227 0x524F logo_taito  El rotulo de abajo: 2 filas x 10 tiles de 8x8 (palabras)
+F 0x5227 w10
+B 0x524F TAREA 1: la partida. Pinta el marcador, pone a cero al jugador, arranca
+B 0x524F las tareas 2, 3 y 4 y entra en la primera pantalla de la fase.
+L 0x524F tarea_partida
+C 0x524F el marcador: la lista de tiles de p00:584B...
+C 0x5255 ...16 de alto, 0xF0 de ancho...
+C 0x5259 ...en (0, 0)
+C 0x5267 pintado en la pagina 0
+C 0x526A y copiado: 256 x 0x10 lineas de y = 0 a y = 0x28 de la pagina 1
+C 0x527B DB52 y DB53 = 1
+C 0x5283 VRAM a 0
+C 0x5286 D91C y D91D = 0xA0
+C 0x528E D902 = 1, D903 = 0xFE
+C 0x5298 D90D-D910, D924-D925 y D91E-D921 a 0
+C 0x52B7 DA1F = 1
+C 0x52BC DA1D = DA20
+C 0x52C2 DA1C = 1
+C 0x52C7 DA1A = D933, la lista de actores
+C 0x52CD arranca las tareas 2 (p00:56F2), 3 (p00:5760) y 4 (p00:5799)
+C 0x52DC p00:5805
+L 0x52DF entra_en_fase
+C 0x52DF la ficha de la fase (p00:5655)...
+C 0x52E2 ...y su pantalla
+B 0x52E5 El bucle de la partida, cada dos cuadros: pausa, fin de fase, trucos de
+B 0x52E5 pruebas, fin de partida y el paso de una pantalla a otra cuando el
+B 0x52E5 jugador sale por un borde.
+L 0x52E5 bucle_partida
+C 0x52E5 fila 7 del teclado, bit 4: STOP
+C 0x52EE pulsada: se espera a que se suelte...
+C 0x52F7 ...y D5DF cambia: pausa
+L 0x52FE cada_dos_cuadros
+C 0x52FE dos cuadros
+C 0x5303 D910 bit 0: fase acabada
+C 0x530A o D17D bit 0 (se borra al mirarlo)
+L 0x5313 fase_siguiente
+C 0x5313 D5E5 + 1: la fase siguiente
+C 0x5318 la 0x11 no se juega: de la 0x10 se pasa a la 0x12
+L 0x5321 truco_fases
+C 0x5321 con el byte 0x4010 de la cabecera encendido...
+C 0x5328 ...fila 0: tecla 7 = fase siguiente...
+C 0x5336 (7)
+C 0x533A ...tecla 6 = fase anterior
+L 0x5342 mira_fin_partida
+C 0x5342 D17D bit 1: la partida se acaba
+C 0x5349 con el interruptor de pruebas, BS (fila 7 bit 5) tambien la acaba
+L 0x535A acaba_partida
+C 0x535A D17D bit 6: aviso a la tarea 0
+C 0x535F para la tarea 2
+L 0x5367 mira_bordes
+C 0x5367 donde aparecera el jugador: de entrada, donde esta (D8FC = x, D8FD = y)
+C 0x5373 por la izquierda (x < 7)...
+C 0x537A ...aparecera a la derecha (x = 0xDA)
+C 0x537F columna 0: no hay pantalla a la izquierda
+C 0x5386 columna - 1 (D5F0)
+C 0x538A y si estaba arriba del todo...
+C 0x5392 ...baja a y = 0x23
+L 0x539A borde_derecho
+C 0x539A por la derecha (x >= 0xE2)...
+C 0x53A1 ...aparecera a la izquierda (x = 0x0F)
+C 0x53A6 la ultima columna (D5EE)...
+C 0x53AA ...no tiene pantalla a la derecha
+C 0x53B1 columna + 1
+L 0x53C5 borde_inferior
+C 0x53C5 por abajo (y >= 0xAF)...
+C 0x53CD ...aparecera arriba (y = 0x23)
+C 0x53D2 la ultima fila (D5EF)...
+C 0x53DD fila + 1 (D5F1)
+L 0x53E4 borde_superior
+C 0x53E4 por arriba solo si trepa: D90D con los bits 0xC2 a 0x80 o 0x82
+C 0x53F1 y en lo alto (y < 0x19)
+C 0x53F9 aparecera abajo (y = 0xA5)
+C 0x53FE fila 0: no hay pantalla encima
+C 0x5405 fila - 1
+L 0x540C sigue_en_pantalla
+B 0x540F Cambio de pantalla: para las tareas 2-4, pone al jugador quieto, pinta la
+B 0x540F pantalla nueva desde el mapa de la fase y la deja lista.
+L 0x540F nueva_pantalla
+C 0x540F pantalla apagada
+C 0x5412 para las tareas 4, 3 y 2
+C 0x5421 D90D = 0xC0, D90E y D90F = 0
+C 0x5430 D910: se queda el bit 7 y se pone el 4
+C 0x5439 D924 = 0
+C 0x543E D902 = 0xFE, D903 = 1
+C 0x5448 D8F7 y D8F8 = 0xFF
+C 0x5450 D913 = 0x27
+C 0x5455 sprites a cero y ocultos
+C 0x5461 fila 0: el mapa de D5E1; las demas: el de D5E3
+C 0x546D sin mapa: no se pinta fondo
+C 0x5471 la pantalla, desempaquetada en D5F4...
+C 0x5474 ...por p00:557D
+C 0x5477 y pintada: 11 filas x 16 bloques de 16x16...
+C 0x5481 ...desde y = 0x20
+C 0x548B opaca
+B 0x5496 La pantalla de delante: la tabla de pantallas de la fase (D5E7) tiene una
+B 0x5496 palabra por pantalla, fila a fila; si su byte bajo es 0xFF no hay mapa y el
+B 0x5496 alto dice a que columna y fila se salta (un atajo de la fase).
+L 0x5496 pantalla_de_delante
+C 0x5496 la tabla de pantallas
+C 0x549A fila 0: empieza en la primera palabra
+C 0x54A1 (ultima columna + 1) * 2 bytes por fila...
+C 0x54A8 ...por la fila
+L 0x54B0 busca_pantalla
+C 0x54B0 + columna * 2
+C 0x54B7 la tabla esta en el banco 2 (0x8000)
+C 0x54C0 la palabra de esta pantalla
+C 0x54C3 0xFFxx: no es una pantalla sino un salto...
+C 0x54C9 ...nibble alto = columna...
+C 0x54D7 ...nibble bajo = fila...
+C 0x54DD ...y se busca otra vez
+L 0x54E0 pinta_delante
+C 0x54E1 desempaquetada en D774
+C 0x54E7 pintada encima del fondo: 11 filas x 16 bloques desde y = 0x20...
+C 0x54FB ...con el color 0 transparente
+C 0x5506 lo que va detras del mapa: columnas que se alargan (p00:55C5)
+C 0x550C D8D4-D8F3 a 0xFF
+C 0x5519 los actores de la pantalla (p00:58F9)
+C 0x551C sprites a cero
+C 0x551F y las fichas 10-31 a atributos
+C 0x5528 D17D bit 7: la demo
+C 0x552F en (0x60, 0x70), transparente
+D 0x553A 0x5544 texto_game_over_3  "GAME OVER" (encima de la demo)
+L 0x5544 pantalla_lista
+C 0x5544 los 32 sprites a atributos
+C 0x554D el jugador, donde se decidio en p00:5367
+C 0x5559 arranca otra vez las tareas 4, 3 y 2
+C 0x5568 pantalla encendida
+C 0x556B D90D = 0xC0, D90E y D90F = 0
+C 0x557A y al bucle de la partida
+B 0x557D Desempaqueta un mapa (HL) en DE: palabras de bloque, salvo 0xD0nn que
+B 0x557D repite la palabra siguiente nn veces; acaba en una palabra con E & D = 0xEF.
+B 0x557D Los mapas estan en el banco de la ficha de fase (D5E9) y el siguiente.
+L 0x557D desempaqueta_mapa
+C 0x557D banco del mapa en 0x8000...
+C 0x5586 ...y el siguiente en 0xA000
+C 0x558D IX = el mapa, HL = el destino
+L 0x5591 siguiente_palabra
+C 0x5591 la palabra
+C 0x5597 0xEFEF (o cualquiera con E & D = 0xEF): fin
+C 0x559E 0xD0nn: repeticion
+C 0x55A3 nn veces...
+C 0x55A8 ...la palabra que sigue
+C 0x55B4 se saltan las dos palabras
+L 0x55BA copia_palabra
+C 0x55BA una palabra tal cual
+C 0x55BE la siguiente
+B 0x55C5 Lo que va detras del mapa de delante (IX, tras su 0xEFEF): fichas de 6
+B 0x55C5 bytes [casilla, palabra-0x8000, palabra-0x9000, alto], acabadas en 0xFF.
+B 0x55C5 Cada una pone dos palabras en D774 y las copia hacia abajo `alto` filas.
+L 0x55C5 alarga_columnas
+C 0x55C5 los bancos del mapa
+C 0x55D5 se salta el final del mapa
+L 0x55D9 siguiente_columna
+C 0x55D9 0xFF: no hay mas
+C 0x55E1 casilla * 2 + D774
+C 0x55EA primera palabra + 0x8000
+C 0x55FB segunda palabra + 0x9000
+C 0x560B alto: cuantas filas se copia hacia abajo
+L 0x560F copia_fila_abajo
+C 0x5610 los 4 bytes recien puestos...
+C 0x5615 ...a la fila de debajo (16 palabras = 0x20 bytes)
+C 0x5626 la ficha siguiente
+L 0x5635 repinta_delante
+C 0x5637 D774 entera otra vez, transparente
+L 0x5655 ficha_de_fase
+B 0x5655 Lee la ficha de la fase D5E5 (16 bytes en p02:9035), escribe el numero de
+B 0x5655 ronda y pide su musica.
+C 0x5655 banco 2 en 0x8000: las fichas
+C 0x565D fases 0x12 en adelante...
+C 0x5662 (musica 3 por defecto)
+C 0x5667 ...ronda 7 y musica 7
+C 0x566C las demas: B = fase / 3 + 1 (la ronda)...
+C 0x5677 ...y musica 2, 3 o 4 segun el resto
+C 0x567B (un `ld a,a` que no hace nada)
+C 0x567F A = ronda
+C 0x5680 el numero de ronda en (0x30, 0x08)
+C 0x5689 fase * 16 + 0x9035: su ficha
+C 0x5697 +0/1: la tabla de pantallas (D5E7)
+C 0x569F +2/3: la tabla de bloques (D5EA)
+C 0x56A7 +4: la ultima columna (D5EE)
+C 0x56AC +5: la ultima fila (D5EF)
+C 0x56B1 +6: la columna de salida (D5F0)
+C 0x56B6 +7: la fila de salida (D5F1)
+C 0x56BB +8/9: el fondo de la fila 0 (D5E1)
+C 0x56C3 +A/B: el fondo de las demas filas (D5E3)
+C 0x56CB +C/D: la paleta
+C 0x56CF +E: el banco de los mapas (D5E9)
+C 0x56D4 +F: donde sale el jugador; nibble bajo * 16 = x...
+C 0x56E2 ...nibble alto + 0x20 = y
+C 0x56ED la paleta de la fase
+B 0x56F2 TAREA 2: el jugador. Cada cuadro, si el juego no esta en pausa, mueve a
+B 0x56F2 Rastan (p06:6000, bancos 6 y 7) y pasa sus sprites a atributos.
+L 0x56F2 tarea_jugador
+C 0x56F2 un cuadro
+C 0x56F5 D5DF = 0: pausa
+C 0x56FB bancos 6 y 7
+C 0x570B el jugador
+C 0x570E sus 10 fichas de sprite a atributos
+C 0x5717 D924 bit 7: un sprite mas para el jugador (la ficha 11)
+C 0x571F su y y su x como desplazamiento
+C 0x572B la ficha de sprite 11 (D481)...
+C 0x572E ...con los datos del jugador (D902)...
+C 0x5732 ...y la definicion de p26:963A
+C 0x5736 A' = 0
+C 0x5739 banco 26 en 0x8000
+C 0x5741 rellena la ficha
+L 0x5744 ficha_del_arma
+C 0x5744 la ficha 11 a atributos
+L 0x574F sin_arma
+C 0x574F ficha 11 sin patron...
+C 0x5759 ...y oculta
+B 0x5760 TAREA 3: los enemigos. Cada cuadro, si no hay pausa, p03:6000 (bancos 3
+B 0x5760 y 4). En la ultima fase (0x17) espera y...
+L 0x5760 tarea_enemigos
+C 0x5760 un cuadro
+C 0x5763 pausa?
+C 0x5769 bancos 3 y 4
+C 0x5779 los enemigos
+C 0x577C fase 0x17?
+C 0x5783 400 cuadros
+C 0x5792 D17D = 0x42: bits 1 y 6, se acaba la partida
+B 0x5799 TAREA 4: cada cuadro, si no hay pausa, p05:6000 (banco 5 en 0x6000).
+L 0x5799 tarea_4
+C 0x5799 un cuadro
+C 0x579C pausa?
+C 0x57A2 banco 5
+C 0x57AA p05:6000
+L 0x57AF alta_actor_b5
+C 0x57AF alta de un actor y vuelve a dejar el banco 5 (alta_actor pone el 3)
+L 0x57BB pinta_actor_b5
+C 0x57BB lo mismo con pinta_actor
+L 0x57C7 baja_actor_b5
+C 0x57C7 lo mismo con baja_actor
+D 0x57D3 0x5805 enemigo_pose_tipo  Por cada codigo de enemigo de los mapas (1-25): pose y tipo de actor (p00:598A)
+F 0x57D3 2
+B 0x5805 El marcador: SCORE, la puntuacion a 0, ROUND y LIFE.
+L 0x5805 pinta_marcador
+C 0x5809 en (0x08, 0x10)
+D 0x5810 0x5816 texto_score  "SCORE"
+C 0x581A en (0x00, 0x18)
+D 0x5821 0x5829 texto_cero  seis espacios y "0": la puntuacion inicial
+C 0x582D en (0x08, 0x08)
+D 0x5834 0x583A texto_round  "ROUND"
+C 0x583E en (0x50, 0x08)
+D 0x5845 0x584A texto_life  "LIFE"
+D 0x584B 0x58C3 marcador_fondo  La franja de abajo del marcador: 2 filas x 30 tiles (palabras), 0x216/0x217 y 0x226/0x227 alternos
+F 0x584B w15
+B 0x58C3 Rellena y pasa a atributos las fichas de sprite de un actor con su
+B 0x58C3 definicion en el banco 8 (en 0x6000). La orientacion sale de D93D.
+L 0x58C3 pinta_con_banco_8
+C 0x58C3 banco 8 en 0x6000
+C 0x58CD A' = 0
+C 0x58D0 rellena las fichas
+C 0x58D3 D935 = D93D con el bit 7 de A'
+C 0x58E5 y a atributos
+C 0x58E8 bancos 3 y 4 otra vez
+B 0x58F9 Los actores de una pantalla nueva: da de baja los que habia y lee de
+B 0x58F9 detras del mapa (HL) hasta 8 enemigos, 3 objetos y un bloque especial.
+B 0x58F9 Cada posicion es un byte: nibble bajo * 16 = x, nibble alto + 0x20 = y.
+L 0x58F9 actores_de_pantalla
+C 0x58FB los 8 enemigos de DA20 (38 bytes cada uno)...
+C 0x5902 ...los que haya, de baja
+C 0x5914 y los 6 actores de D933
+C 0x592D DA20-DB4F a 0
+C 0x593A D933-DA16 a 0
+C 0x5947 todos los grupos de sprites libres
+C 0x594E la lista de la pantalla
+C 0x594F hasta 8 enemigos
+L 0x5955 lee_enemigo
+C 0x5956 los bancos del mapa
+C 0x5966 0xFF: no hay
+C 0x596B la posicion de salida: x en +10...
+C 0x5975 ...y en +11
+C 0x597E el codigo: con el bit 7, va tal cual al tipo (p00:5A88)
+C 0x5984 si no, la tabla de p00:57D3...
+C 0x598E ...da la pose (+1)...
+C 0x5993 ...y el tipo (+0)
+L 0x5998 siguiente_enemigo
+C 0x5999 38 bytes por enemigo
+C 0x59A1 y hasta 3 objetos en D933
+L 0x59A8 lee_objeto
+C 0x59B9 0xFF: no hay
+C 0x59BE x en +6...
+C 0x59C8 ...y en +7
+C 0x59D0 el tipo
+L 0x59D6 siguiente_objeto
+C 0x59DE el bloque especial: posicion...
+C 0x59E5 ...x en D92B...
+C 0x59EF ...y en D92C...
+C 0x59F7 ...cual, en D92D...
+C 0x59FC ...y se pinta
+L 0x5A02 sin_bloque_especial
+L 0x5A06 altas_de_objetos
+C 0x5A0D los objetos de tipo 0 y 2 no se pintan aun
+C 0x5A17 +0F = el byte del tipo en p00:5A8E
+C 0x5A22 alta...
+C 0x5A25 ...y ocho pasos de su animacion, para que salga ya puesto
+L 0x5A3D siguiente_alta
+C 0x5A45 y los enemigos de tipo 0x18, 0x1C, 0x22 y 0x25 se dan de alta ya
+L 0x5A64 alta_enemigo_fijo
+C 0x5A64 alta y ocho pasos de animacion
+L 0x5A88 enemigo_tal_cual
+C 0x5A88 el codigo con el bit 7 es directamente el tipo
+D 0x5A8E 0x5AA5 objeto_mas0f  El byte +0F de cada tipo de objeto (p00:5A1A): 0x00-0x30
+B 0x5AA5 Un paso de animacion. IX = definicion: base de los patrones, numero de
+B 0x5AA5 cuadros y la lista de cuadros; cada cuadro = duracion, sprites y 4 bytes
+B 0x5AA5 por sprite (patron, x, y, atributo; 0xFF = sprite vacio). IY = estado
+B 0x5AA5 (+0 cuadro, +1 lo que le queda), HL = las fichas de sprite. Con A' bit 1
+B 0x5AA5 empieza de cero; devuelve A' = 1 si la animacion ha dado la vuelta.
+L 0x5AA5 anima
+C 0x5AA6 desde el principio?
+C 0x5AAA cuadro 0xFE: el siguiente sera el 0xFF+1 = 0...
+C 0x5AAE ...y cuenta 1: se cambia ya
+C 0x5AB4 aun le queda al cuadro?
+C 0x5ABE la base de los patrones
+C 0x5AC9 el cuadro siguiente...
+C 0x5ACD ...pasa del ultimo?
+C 0x5AD2 si: A' = 1 (el `ld a,0` sobra) y se vuelve al 0
+L 0x5ADB cuadro_siguiente
+C 0x5ADE apuntado
+C 0x5AE1 la lista de cuadros...
+C 0x5AE9 ...el de este
+C 0x5AF2 su duracion
+C 0x5AFA cuantos sprites lleva
+C 0x5B00 DE = base de los patrones, IY = fichas de sprite
+L 0x5B03 cada_sprite
+C 0x5B04 0xFF: sprite vacio
+C 0x5B0C (patron - 1) * 32 + base
+C 0x5B16 ficha +0/1: el patron
+C 0x5B1C +2: x relativa
+C 0x5B22 +3: y relativa
+C 0x5B28 +6/+7: la posicion del actor
+C 0x5B34 +8: el juego de graficos y bancos
+L 0x5B42 ficha_siguiente
+C 0x5B42 11 bytes mas alla
+L 0x5B5C sprite_vacio
+C 0x5B60 los 8 bytes de p00:5B7D: sin patron y oculto
+L 0x5B78 sigue_el_cuadro
+C 0x5B78 A' = 0: no ha dado la vuelta
+D 0x5B7D 0x5B95 ficha_vacia  Una ficha de sprite vacia (patron 0xFFFF, y = 0xFF) y tres y = 0xE0
+L 0x5B95 repinta_cuadro
+C 0x5B95 vuelve a rellenar las fichas del cuadro actual (IY+0) sin avanzar
+C 0x5BA3 el cuadro de ahora
+C 0x5BB7 cuantos sprites
+D 0x5BC3 0x5D27 bloques_especiales  Tabla de bloques de 16x16 de p00:48B6 (palabras de tile, filas de 8 bloques)
+F 0x5BC3 w8
+D 0x5D27 0x6000 bloques_titulo  Tabla de bloques de 16x16 del dibujo del titulo (p00:514C)
+F 0x5D27 w8
+# --- fin de las notas por tandas ---
+
+# --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x401a de -> contador de la tarea 1
+C 0x403a copia del registro del mapper de 0x4000 = a
+C 0x403d registro del mapper: banco A en 0x4000
+C 0x4042 copia del registro del mapper de 0x6000 = a
+C 0x4045 registro del mapper: banco A en 0x6000
+C 0x404a copia del registro del mapper de 0x8000 = a
+C 0x404d registro del mapper: banco A en 0x8000
+C 0x409a registro del mapper: banco A en 0x6000
+C 0x409e registro del mapper: banco A en 0x8000
+C 0x40aa registro del mapper: banco A en 0x6000
+C 0x40ad a = copia del registro del mapper de 0x8000
+C 0x40b0 registro del mapper: banco A en 0x8000
+C 0x411d 1 mientras la interrupcion hace el trabajo del cuadro = a
+C 0x412a 1 mientras la interrupcion hace el trabajo del cuadro = a
+C 0x414d peticion de sonido para p01:640F = a
+C 0x415c peticion de sonido para p01:63E1 = a
+C 0x4194 de = bytes ya copiados a VRAM, de paso
+C 0x41ad bytes ya copiados a VRAM, de paso = hl
+C 0x41b5 de -> los colores de los 32 sprites
+C 0x41cc de = bytes ya copiados a VRAM, de paso
+C 0x4264 de = el SP de la tarea que cede, de paso
+C 0x42fd los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x4474 hl -> la paleta puesta: 16 colores x 2 bytes
+C 0x449d hl -> 48 componentes de color del fundido
+C 0x44ab hl -> 48 componentes de color del fundido
+C 0x44ae de -> 16 marcas de color cambiado del fundido
+C 0x44df hl = la semilla del azar
+C 0x4576 copia del registro del mapper de 0x6000 = a
+C 0x4579 registro del mapper: banco A en 0x6000
+C 0x457e copia del registro del mapper de 0x8000 = a
+C 0x4581 registro del mapper: banco A en 0x8000
+C 0x458c copia del registro del mapper de 0x6000 = a
+C 0x458f registro del mapper: banco A en 0x6000
+C 0x4594 copia del registro del mapper de 0x8000 = a
+C 0x4597 registro del mapper: banco A en 0x8000
+C 0x459c copia del registro del mapper de 0xA000 = a
+C 0x459f registro del mapper: banco A en 0xA000
+C 0x45a6 copia del registro del mapper de 0x6000 = a
+C 0x45a9 registro del mapper: banco A en 0x6000
+C 0x45ae copia del registro del mapper de 0x8000 = a
+C 0x45b1 registro del mapper: banco A en 0x8000
+C 0x45b6 copia del registro del mapper de 0xA000 = a
+C 0x45b9 registro del mapper: banco A en 0xA000
+C 0x45d9 de -> los colores de los 32 sprites
+C 0x4613 la lista o la cadena que se esta pintando = hl
+C 0x4628 la lista o la cadena que se esta pintando = hl
+C 0x4645 la lista o la cadena que se esta pintando = hl
+C 0x46cc x del principio de la fila = a
+C 0x46e3 la lista o la cadena que se esta pintando = hl
+C 0x46f7 x donde se pinta = a
+C 0x4701 x donde se pinta = a
+C 0x4709 y donde se pinta = a
+C 0x4714 x del principio de la fila = a
+C 0x4717 la lista o la cadena que se esta pintando = hl
+C 0x471b columna del bloque que se pinta = a
+C 0x471e fila del bloque que se pinta = a
+C 0x472b la lista o la cadena que se esta pintando = hl
+C 0x473a de = x donde se pinta
+C 0x474b x donde se pinta = a
+C 0x4752 columna del bloque que se pinta = a
+C 0x475c x donde se pinta = a
+C 0x4760 columna del bloque que se pinta = a
+C 0x4768 y donde se pinta = a
+C 0x476f fila del bloque que se pinta = a
+C 0x4779 copia del registro del mapper de 0xA000 = a
+C 0x477c registro del mapper: banco A en 0xA000
+C 0x47e2 copia del registro del mapper de 0xA000 = a
+C 0x47e5 registro del mapper: banco A en 0xA000
+C 0x485a de -> la tabla de atributos de los 32 sprites
+C 0x4866 a = lo que se suma a la y de los sprites
+C 0x48b9 la tabla de bloques guardada = hl
+C 0x48bf la tabla de bloques de 16x16 de la fase = hl
+C 0x48e3 la tabla de bloques de 16x16 de la fase = hl
+C 0x4952 hl -> las 32 fichas de sprite
+C 0x499a hl -> las 32 fichas de sprite
+C 0x49d6 hl -> las 32 fichas de sprite
+C 0x4a04 hl -> las 32 fichas de sprite
+C 0x4a20 lo que se suma a la x de los sprites = a
+C 0x4a26 lo que se suma a la y de los sprites = a
+C 0x4a32 copia del registro del mapper de 0x8000 = a
+C 0x4a35 registro del mapper: banco A en 0x8000
+C 0x4a3c copia del registro del mapper de 0x8000 = a
+C 0x4a3f registro del mapper: banco A en 0x8000
+C 0x4a7c copia del registro del mapper de 0x6000 = a
+C 0x4a7f registro del mapper: banco A en 0x6000
+C 0x4a84 copia del registro del mapper de 0x8000 = a
+C 0x4a87 registro del mapper: banco A en 0x8000
+C 0x4a99 lo que se suma a la x de los sprites = a
+C 0x4a9f lo que se suma a la y de los sprites = a
+C 0x4aab copia del registro del mapper de 0x8000 = a
+C 0x4aae registro del mapper: banco A en 0x8000
+C 0x4ab5 copia del registro del mapper de 0x8000 = a
+C 0x4ab8 registro del mapper: banco A en 0x8000
+C 0x4b01 copia del registro del mapper de 0x6000 = a
+C 0x4b04 registro del mapper: banco A en 0x6000
+C 0x4b09 copia del registro del mapper de 0x8000 = a
+C 0x4b0c registro del mapper: banco A en 0x8000
+C 0x4b66 copia del registro del mapper de 0x6000 = a
+C 0x4b69 registro del mapper: banco A en 0x6000
+C 0x4b6e copia del registro del mapper de 0x8000 = a
+C 0x4b71 registro del mapper: banco A en 0x8000
+C 0x4bbc a = seis sitios de un sprite, un bit cada uno
+C 0x4c3c a = tres grupos de sprites, dos bits cada uno
+C 0x4e15 el desplazamiento vertical de la pantalla = a
+C 0x4e1d 0xFF = el juego corre, 0 = pausa = a
+C 0x4e22 peticion de sonido para p01:63E1 = a
+C 0x4e27 peticion de sonido para p01:640F = a
+C 0x4e2c 3 al empezar = a
+C 0x4e33 bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x4ea5 peticion de sonido para p01:640F = a
+C 0x4eaa peticion de sonido para p01:640F = a
+C 0x4eb9 peticion de sonido para p01:640F = a
+C 0x4ebd bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x4fa1 copia del registro del mapper de 0x6000 = a
+C 0x4fa4 registro del mapper: banco A en 0x6000
+C 0x4fa9 copia del registro del mapper de 0x8000 = a
+C 0x4fac registro del mapper: banco A en 0x8000
+C 0x4fba peticion de sonido para p01:640F = a
+C 0x4fbe la fase = a
+C 0x4fc6 copia del registro del mapper de 0x6000 = a
+C 0x4fc9 registro del mapper: banco A en 0x6000
+C 0x4fce copia del registro del mapper de 0x8000 = a
+C 0x4fd1 registro del mapper: banco A en 0x8000
+C 0x4fe2 peticion de sonido para p01:63E1 = a
+C 0x4fe7 peticion de sonido para p01:640F = a
+C 0x4feb bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x5012 ix -> las 32 fichas de sprite
+C 0x501c 5 = la demo ha terminado = a
+C 0x5031 y donde se pinta = a
+C 0x5036 x donde se pinta = a
+C 0x50cb a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x50d4 5 = la demo ha terminado = a
+C 0x50dc bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x5104 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x513b ix -> las 32 fichas de sprite
+C 0x5149 el desplazamiento vertical de la pantalla = a
+C 0x514f la tabla de bloques de 16x16 de la fase = hl
+C 0x515e y donde se pinta = a
+C 0x5163 x donde se pinta = a
+C 0x5184 el desplazamiento vertical de la pantalla = a
+C 0x525b y donde se pinta = a
+C 0x5260 x donde se pinta = a
+C 0x52a8 bit 7: el jugador usa la ficha 10 = a
+C 0x52fb 0xFF = el juego corre, 0 = pausa = a
+C 0x532d hl -> la fase
+C 0x536a x donde aparece el jugador en la pantalla nueva = a
+C 0x536d a = la y de Rastan
+C 0x5370 y donde aparece el jugador = a
+C 0x537c x donde aparece el jugador en la pantalla nueva = a
+C 0x5387 la columna de la pantalla en que se esta = a
+C 0x5394 y donde aparece el jugador = a
+C 0x53a3 x donde aparece el jugador en la pantalla nueva = a
+C 0x53b2 la columna de la pantalla en que se esta = a
+C 0x53b5 a = la y de Rastan
+C 0x53bf y donde aparece el jugador = a
+C 0x53cf y donde aparece el jugador = a
+C 0x53d6 a = la fila de la pantalla en que se esta
+C 0x53de la fila de la pantalla en que se esta = a
+C 0x53fb y donde aparece el jugador = a
+C 0x5406 la fila de la pantalla en que se esta = a
+C 0x5452 0x27 al entrar en una pantalla = a
+C 0x5458 ix -> las 32 fichas de sprite
+C 0x5464 hl = el mapa de fondo de la fila 0 de pantallas
+C 0x546a hl = el mapa de fondo de las demas filas
+C 0x5483 y donde se pinta = a
+C 0x5488 x donde se pinta = a
+C 0x54b9 copia del registro del mapper de 0x8000 = a
+C 0x54bc registro del mapper: banco A en 0x8000
+C 0x54d4 la columna de la pantalla en que se esta = a
+C 0x54da la fila de la pantalla en que se esta = a
+C 0x54f3 y donde se pinta = a
+C 0x54f8 x donde se pinta = a
+C 0x5550 la x de Rastan = a
+C 0x5553 a = y donde aparece el jugador
+C 0x5556 la y de Rastan = a
+C 0x5580 copia del registro del mapper de 0x8000 = a
+C 0x5583 registro del mapper: banco A en 0x8000
+C 0x5587 copia del registro del mapper de 0xA000 = a
+C 0x558a registro del mapper: banco A en 0xA000
+C 0x55c8 copia del registro del mapper de 0x8000 = a
+C 0x55cb registro del mapper: banco A en 0x8000
+C 0x55cf copia del registro del mapper de 0xA000 = a
+C 0x55d2 registro del mapper: banco A en 0xA000
+C 0x55e5 de -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x5643 y donde se pinta = a
+C 0x5648 x donde se pinta = a
+C 0x5657 copia del registro del mapper de 0x8000 = a
+C 0x565a registro del mapper: banco A en 0x8000
+C 0x5664 peticion de sonido para p01:640F = a
+C 0x567c peticion de sonido para p01:640F = a
+C 0x569b la tabla de pantallas de la fase = de
+C 0x56a3 la tabla de bloques de 16x16 de la fase = de
+C 0x56a9 la ultima columna de pantallas = a
+C 0x56ae la ultima fila de pantallas = a
+C 0x56b3 la columna de la pantalla en que se esta = a
+C 0x56b8 la fila de la pantalla en que se esta = a
+C 0x56bf el mapa de fondo de la fila 0 de pantallas = de
+C 0x56c7 el mapa de fondo de las demas filas = de
+C 0x56d0 el banco de los mapas de la fase = a
+C 0x56dc la x de Rastan = a
+C 0x56df x donde aparece el jugador en la pantalla nueva = a
+C 0x56e7 la y de Rastan = a
+C 0x56ea y donde aparece el jugador = a
+C 0x56fd copia del registro del mapper de 0x6000 = a
+C 0x5700 registro del mapper: banco A en 0x6000
+C 0x5705 copia del registro del mapper de 0x8000 = a
+C 0x5708 registro del mapper: banco A en 0x8000
+C 0x5722 lo que se suma a la y de los sprites = a
+C 0x5725 a = la x de la ficha 10 del jugador
+C 0x5728 lo que se suma a la x de los sprites = a
+C 0x573b copia del registro del mapper de 0x8000 = a
+C 0x573e registro del mapper: banco A en 0x8000
+C 0x5750 la ficha de sprite 10 = a
+C 0x5753 ficha 10, byte alto del patron = a
+C 0x5756 ficha 10, byte +7 = a
+C 0x575b ficha 10, y = a
+C 0x576b copia del registro del mapper de 0x6000 = a
+C 0x576e registro del mapper: banco A en 0x6000
+C 0x5773 copia del registro del mapper de 0x8000 = a
+C 0x5776 registro del mapper: banco A en 0x8000
+C 0x5794 bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x57a4 copia del registro del mapper de 0x6000 = a
+C 0x57a7 registro del mapper: banco A en 0x6000
+C 0x57b4 copia del registro del mapper de 0x6000 = a
+C 0x57b7 registro del mapper: banco A en 0x6000
+C 0x57c0 copia del registro del mapper de 0x6000 = a
+C 0x57c3 registro del mapper: banco A en 0x6000
+C 0x57cc copia del registro del mapper de 0x6000 = a
+C 0x57cf registro del mapper: banco A en 0x6000
+C 0x58c5 copia del registro del mapper de 0x6000 = a
+C 0x58c8 registro del mapper: banco A en 0x6000
+C 0x58df actor 0, byte +2 = a
+C 0x58ea copia del registro del mapper de 0x6000 = a
+C 0x58ed registro del mapper: banco A en 0x6000
+C 0x58f2 copia del registro del mapper de 0x8000 = a
+C 0x58f5 registro del mapper: banco A en 0x8000
+C 0x5930 de -> enemigo 0, byte +1
+C 0x593d de -> actor 0, byte +1
+C 0x594a seis sitios de un sprite, un bit cada uno = a
+C 0x5959 copia del registro del mapper de 0x8000 = a
+C 0x595c registro del mapper: banco A en 0x8000
+C 0x5960 copia del registro del mapper de 0xA000 = a
+C 0x5963 registro del mapper: banco A en 0xA000
+C 0x59a2 ix -> los 6 actores de la pantalla
+C 0x59a9 a = el banco de los mapas de la fase
+C 0x59ac copia del registro del mapper de 0x8000 = a
+C 0x59af registro del mapper: banco A en 0x8000
+C 0x59b3 copia del registro del mapper de 0xA000 = a
+C 0x59b6 registro del mapper: banco A en 0xA000
+C 0x59ec x del bloque especial de la pantalla = a
+C 0x59f4 y del bloque especial = a
+C 0x59f9 cual es el bloque especial = a
+C 0x5a03 cual es el bloque especial = a
+C 0x5a06 ix -> los 6 actores de la pantalla
+C 0x5b2e a = lo que se suma a la y de los sprites
+# --- fin de anota ---

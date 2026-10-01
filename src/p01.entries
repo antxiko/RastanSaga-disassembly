@@ -8,3 +8,4 @@
 0x6153   # call desde p00:40A1
 0x63e1   # call desde p00:4157
 0x640f   # call desde p00:4148
+0x646c   # huerfana: nadie la llama

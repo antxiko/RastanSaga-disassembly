@@ -3,7 +3,7 @@
 # llevando la cuenta de los bancos. Los saltos dentro del propio
 # banco los encuentra z80trace.py solo.
 0x8000   # p06:7FFE sigue de largo (el codigo cruza la frontera de banco)
-0x807c   # call desde p06:7F9C
+0x807c   # call desde p06:7E71
 0x80e6   # call desde p06:7EDF
 0x8104   # call desde p06:6946
 0x81a0   # tabla de p07:819E
@@ -11,6 +11,7 @@
 0x8214   # tabla de p07:819E
 0x8250   # tabla de p07:819E
 0x828e   # tabla de p07:819E
+0x82ca   # huerfana: nadie la llama
 0x83f6   # tabla de p07:819E
 0x847c   # tabla de p07:847A
 0x8495   # tabla de p07:847A

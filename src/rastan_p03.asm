@@ -15,7 +15,7 @@
 
 
 L_6000:
-	ld a,(0d5e5h)		;6000
+	ld a,(0d5e5h)		;6000   ; a = la fase
 	cp 002h		;6003
 	jp z,08016h		;6005
 	cp 005h		;6008
@@ -75,14 +75,14 @@ L_606A:
 	ld (0da1ch),a		;606f
 	ret			;6072
 L_6073:
-	ld ix,0d933h		;6073
+	ld ix,0d933h		;6073   ; ix -> los 6 actores de la pantalla
 	ld b,003h		;6077
 	ret			;6079
 L_607A:
 	call 04a8bh		;607a
 	bit 7,(ix+002h)		;607d
 	jp z,L_605C		;6081
-	ld a,(0d92dh)		;6084
+	ld a,(0d92dh)		;6084   ; a = cual es el bloque especial
 	and a			;6087
 	jp nz,L_60C3		;6088
 	call 044deh		;608b
@@ -92,11 +92,11 @@ L_607A:
 	ld a,(ix+006h)		;6095
 	add a,008h		;6098
 	and 0f0h		;609a
-	ld (0d92bh),a		;609c
+	ld (0d92bh),a		;609c   ; x del bloque especial de la pantalla = a
 	ld a,(ix+007h)		;609f
 	add a,008h		;60a2
 	and 0f0h		;60a4
-	ld (0d92ch),a		;60a6
+	ld (0d92ch),a		;60a6   ; y del bloque especial = a
 L_60A9:
 	call 044deh		;60a9
 	ld b,a			;60ac
@@ -106,7 +106,7 @@ L_60A9:
 	add a,003h		;60b2
 	cp 003h		;60b4
 	jp z,L_60A9		;60b6
-	ld (0d92dh),a		;60b9
+	ld (0d92dh),a		;60b9   ; cual es el bloque especial = a
 	push ix		;60bc
 	call 048b6h		;60be
 	pop ix		;60c1
@@ -155,7 +155,7 @@ L_6134:
 	and a			;613e
 	jr nz,L_614A		;613f
 	ld a,009h		;6141
-	ld (0d178h),a		;6143
+	ld (0d178h),a		;6143   ; peticion de sonido para p01:63E1 = a
 	ld (ix+010h),0ffh		;6146
 L_614A:
 	call L_7B29		;614a
@@ -257,7 +257,7 @@ L_6206:
 	ld a,(ix+00fh)		;6206
 	and a			;6209
 	jp z,L_7AAF		;620a
-	ld a,(0da06h)		;620d
+	ld a,(0da06h)		;620d   ; a = actor 5, byte +15
 	cp 00fh		;6210
 	call z,L_62C6		;6212
 	bit 1,(ix+001h)		;6215
@@ -309,7 +309,7 @@ L_6284:
 	ld (ix+013h),0ffh		;6284
 	jp 04a8bh		;6288
 L_628B:
-	ld a,(0d9e0h)		;628b
+	ld a,(0d9e0h)		;628b   ; a = actor 4, byte +15
 	cp 00fh		;628e
 	jr z,L_62AC		;6290
 	set 1,(ix+001h)		;6292
@@ -338,7 +338,7 @@ L_62C6:
 	push ix		;62c6
 	push ix		;62c8
 	pop iy		;62ca
-	ld ix,0d9f1h		;62cc
+	ld ix,0d9f1h		;62cc   ; ix -> actor 5
 	ld a,(ix+015h)		;62d0
 	cp 000h		;62d3
 	jp z,L_62DC		;62d5
@@ -350,7 +350,7 @@ L_62DC:
 	ld (ix+015h),00fh		;62e3
 	call L_6312		;62e7
 	ld hl,063d6h		;62ea
-	ld (0da01h),hl		;62ed
+	ld (0da01h),hl		;62ed   ; actor 5, byte +10 = hl
 	call 048f9h		;62f0
 	call 04a8bh		;62f3
 L_62F6:
@@ -459,19 +459,30 @@ L_63B4:
 	jp L_62F9		;63d3
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x63d6..0x6423  (77 bytes)
+; DATOS sin identificar  0x63d6..0x640f  (57 bytes)
 DATA_63D6:
 	defb 000h,000h,000h,002h,001h,002h,000h,002h,000h,002h,001h,002h,002h,002h,002h,002h	; 63d6  ................
 	defb 002h,002h,000h,002h,002h,002h,002h,002h,001h,002h,000h,002h,001h,002h,000h,002h	; 63e6  ................
 	defb 002h,002h,002h,002h,0ffh,03ah,0fch,0d8h,057h,0ddh,0cbh,001h,046h,028h,00ah,0ddh	; 63f6  .....:..W...F(..
-	defb 07eh,006h,0d6h,010h,0bah,0dah,017h,064h,0c9h,0ddh,07eh,006h,0bah,0d2h,017h,064h	; 6406  ~......d..~....d
-	defb 0c9h,03ah,0fdh,0d8h,057h,0ddh,07eh,007h,0bah,0dch,023h,064h,0c9h	; 6416  .:..W.~...#d.
+	defb 07eh,006h,0d6h,010h,0bah,0dah,017h,064h,0c9h	; 6406  ~......d.
 
 ; ======================================================================
-; CODIGO 0x6423..0x65c2  (415 bytes)
+; CODIGO 0x640f..0x6600  (497 bytes)
 ; ======================================================================
 
 
+L_640F:
+	ld a,(ix+006h)		;640f
+	cp d			;6412
+	jp nc,L_6417		;6413
+	ret			;6416
+L_6417:
+	ld a,(0d8fdh)		;6417   ; a = la y de Rastan
+	ld d,a			;641a
+	ld a,(ix+007h)		;641b
+	cp d			;641e
+	call c,L_6423		;641f
+	ret			;6422
 L_6423:
 	ld d,008h		;6423
 	ld a,(0d90fh)		;6425
@@ -487,7 +498,7 @@ L_6423:
 	res 5,a		;643a
 	ld (0d904h),a		;643c
 	ld a,050h		;643f
-	ld (0d913h),a		;6441
+	ld (0d913h),a		;6441   ; 0x27 al entrar en una pantalla = a
 	ld a,(0d910h)		;6444
 	bit 7,a		;6447
 	ret nz			;6449
@@ -656,17 +667,9 @@ L_65B3:
 	res 1,(ix+001h)		;65b7
 	ld (ix+011h),010h		;65bb
 	jp L_658E		;65bf
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x65c2..0x65c9  (7 bytes)
-DATA_65C2:
-	defb 0ddh,036h,012h,010h,0c3h,08eh,065h	; 65c2
-
-; ======================================================================
-; CODIGO 0x65c9..0x6600  (55 bytes)
-; ======================================================================
-
-
+L_65C2:
+	ld (ix+012h),010h		;65c2
+	jp L_658E		;65c6
 L_65C9:
 	ld a,(ix+007h)		;65c9
 	inc a			;65cc
@@ -699,7 +702,7 @@ DATA_6600:
 	defb 0c9h,0c9h	; 6600
 
 ; ======================================================================
-; CODIGO 0x6602..0x672e  (300 bytes)
+; CODIGO 0x6602..0x6968  (870 bytes)
 ; ======================================================================
 
 
@@ -737,7 +740,7 @@ L_6639:
 	and a			;6643
 	jr nz,L_664F		;6644
 	ld a,009h		;6646
-	ld (0d178h),a		;6648
+	ld (0d178h),a		;6648   ; peticion de sonido para p01:63E1 = a
 	ld (ix+010h),0ffh		;664b
 L_664F:
 	call L_7B29		;664f
@@ -773,7 +776,7 @@ L_668D:
 	and a			;6697
 	jr nz,L_66A3		;6698
 	ld a,009h		;669a
-	ld (0d178h),a		;669c
+	ld (0d178h),a		;669c   ; peticion de sonido para p01:63E1 = a
 	ld (ix+010h),0ffh		;669f
 L_66A3:
 	ld a,(ix+00fh)		;66a3
@@ -815,7 +818,7 @@ L_66E4:
 	cp 020h		;66f9
 	jr c,L_670F		;66fb
 L_66FD:
-	ld a,(0d8fdh)		;66fd
+	ld a,(0d8fdh)		;66fd   ; a = la y de Rastan
 	ld b,014h		;6700
 	sub b			;6702
 	ld (ix+013h),000h		;6703
@@ -827,7 +830,7 @@ L_670F:
 	call L_7CFB		;670f
 	cp 02ah		;6712
 	jr nc,L_66FD		;6714
-	ld a,(0d8fdh)		;6716
+	ld a,(0d8fdh)		;6716   ; a = la y de Rastan
 	ld b,014h		;6719
 	sub b			;671b
 	inc (ix+013h)		;671c
@@ -838,18 +841,16 @@ L_6722:
 L_6728:
 	inc (ix+007h)		;6728
 	jp 04a8bh		;672b
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x672e..0x6745  (23 bytes)
-DATA_672E:
-	defb 0cdh,029h,07bh,0a7h,0c2h,018h,07eh,0ddh,07eh,006h,0feh,0dch,0d2h,010h,04bh,0feh	; 672e  .){...~.~.....K.
-	defb 01eh,0dah,010h,04bh,0c3h,0a7h,07bh	; 673e
-
-; ======================================================================
-; CODIGO 0x6745..0x6932  (493 bytes)
-; ======================================================================
-
-
+L_672E:
+	call L_7B29		;672e
+	and a			;6731
+	jp nz,L_7E18		;6732
+	ld a,(ix+006h)		;6735
+	cp 0dch		;6738
+	jp nc,04b10h		;673a
+	cp 01eh		;673d
+	jp c,04b10h		;673f
+	jp L_7BA7		;6742
 L_6745:
 	ld a,(ix+00fh)		;6745
 	and a			;6748
@@ -905,7 +906,7 @@ L_67BA:
 	ld a,(ix+00fh)		;67ba
 	and a			;67bd
 	jp z,L_7AAF		;67be
-	ld a,(0d9bah)		;67c1
+	ld a,(0d9bah)		;67c1   ; a = actor 3, byte +15
 	cp 00fh		;67c4
 	call z,L_69AC		;67c6
 	bit 2,(ix+001h)		;67c9
@@ -1018,7 +1019,7 @@ L_68CA:
 	call L_7E83		;68ca
 	jp 04a8bh		;68cd
 L_68D0:
-	ld a,(0d9bah)		;68d0
+	ld a,(0d9bah)		;68d0   ; a = actor 3, byte +15
 	cp 00fh		;68d3
 	jp z,L_69A1		;68d5
 	call L_7B29		;68d8
@@ -1032,7 +1033,7 @@ L_68D0:
 	push ix		;68ef
 	call 04a8bh		;68f1
 	pop ix		;68f4
-	ld a,(0d9bah)		;68f6
+	ld a,(0d9bah)		;68f6   ; a = actor 3, byte +15
 	and a			;68f9
 	jp z,L_69AC		;68fa
 	ret			;68fd
@@ -1058,17 +1059,9 @@ L_6923:
 	res 2,(ix+001h)		;6927
 	ld (ix+011h),010h		;692b
 	jp L_68FE		;692f
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6932..0x6939  (7 bytes)
-DATA_6932:
-	defb 0ddh,036h,012h,010h,0c3h,0feh,068h	; 6932
-
-; ======================================================================
-; CODIGO 0x6939..0x6968  (47 bytes)
-; ======================================================================
-
-
+L_6932:
+	ld (ix+012h),010h		;6932
+	jp L_68FE		;6936
 L_6939:
 	inc (ix+007h)		;6939
 	inc (ix+007h)		;693c
@@ -1095,7 +1088,7 @@ DATA_6968:
 	defb 0c9h,0c9h	; 6968
 
 ; ======================================================================
-; CODIGO 0x696a..0x6cc0  (854 bytes)
+; CODIGO 0x696a..0x6cca  (864 bytes)
 ; ======================================================================
 
 
@@ -1133,7 +1126,7 @@ L_69AC:
 	push ix		;69ac
 	push ix		;69ae
 	pop iy		;69b0
-	ld ix,0d9a5h		;69b2
+	ld ix,0d9a5h		;69b2   ; ix -> actor 3
 	ld a,(ix+015h)		;69b6
 	and a			;69b9
 	jr z,L_69C0		;69ba
@@ -1143,11 +1136,11 @@ L_69C0:
 	bit 7,(iy+002h)		;69c0
 	jp z,L_69E3		;69c4
 	ld a,00dh		;69c7
-	ld (0d178h),a		;69c9
+	ld (0d178h),a		;69c9   ; peticion de sonido para p01:63E1 = a
 	ld (ix+015h),00fh		;69cc
 	call L_69F9		;69d0
 	ld hl,08bcfh		;69d3
-	ld (0d9b5h),hl		;69d6
+	ld (0d9b5h),hl		;69d6   ; actor 3, byte +10 = hl
 	push ix		;69d9
 	call 048f9h		;69db
 	pop ix		;69de
@@ -1254,9 +1247,9 @@ L_6AB1:
 	pop ix		;6ab4
 	ret			;6ab6
 L_6AB7:
-	ld a,(0d8fch)		;6ab7
+	ld a,(0d8fch)		;6ab7   ; a = la x de Rastan
 	ld b,a			;6aba
-	ld a,(0d8fdh)		;6abb
+	ld a,(0d8fdh)		;6abb   ; a = la y de Rastan
 	ld c,a			;6abe
 	ld d,(ix+006h)		;6abf
 	ld e,(ix+007h)		;6ac2
@@ -1277,9 +1270,9 @@ L_6AB7:
 	call L_6423		;6ad7
 	ret			;6ada
 L_6ADB:
-	ld a,(0d8fch)		;6adb
+	ld a,(0d8fch)		;6adb   ; a = la x de Rastan
 	ld b,a			;6ade
-	ld a,(0d8fdh)		;6adf
+	ld a,(0d8fdh)		;6adf   ; a = la y de Rastan
 	ld c,a			;6ae2
 	ld d,(ix+006h)		;6ae3
 	ld e,(ix+007h)		;6ae6
@@ -1304,9 +1297,9 @@ L_6AFF:
 	and 01eh		;6b02
 	cp 004h		;6b04
 	ret z			;6b06
-	ld a,(0d8fch)		;6b07
+	ld a,(0d8fch)		;6b07   ; a = la x de Rastan
 	ld b,a			;6b0a
-	ld a,(0d8fdh)		;6b0b
+	ld a,(0d8fdh)		;6b0b   ; a = la y de Rastan
 	ld c,a			;6b0e
 	ld d,(ix+006h)		;6b0f
 	ld e,(ix+007h)		;6b12
@@ -1332,9 +1325,9 @@ L_6B2C:
 	and 01eh		;6b2f
 	cp 004h		;6b31
 	ret z			;6b33
-	ld a,(0d8fch)		;6b34
+	ld a,(0d8fch)		;6b34   ; a = la x de Rastan
 	ld b,a			;6b37
-	ld a,(0d8fdh)		;6b38
+	ld a,(0d8fdh)		;6b38   ; a = la y de Rastan
 	ld c,a			;6b3b
 	ld d,(ix+006h)		;6b3c
 	ld e,(ix+007h)		;6b3f
@@ -1359,7 +1352,7 @@ L_6B59:
 	ld a,(ix+00fh)		;6b59
 	and a			;6b5c
 	jp z,L_7AAF		;6b5d
-	ld a,(0da06h)		;6b60
+	ld a,(0da06h)		;6b60   ; a = actor 5, byte +15
 	cp 00fh		;6b63
 	call z,L_6BFA		;6b65
 	bit 1,(ix+001h)		;6b68
@@ -1410,7 +1403,7 @@ L_6BCF:
 	jr nc,L_6BD8		;6bd4
 	jr L_6BC8		;6bd6
 L_6BD8:
-	ld a,(0da06h)		;6bd8
+	ld a,(0da06h)		;6bd8   ; a = actor 5, byte +15
 	cp 00fh		;6bdb
 	jr z,L_6BC8		;6bdd
 	call L_7CFB		;6bdf
@@ -1428,7 +1421,7 @@ L_6BFA:
 	push ix		;6bfa
 	push ix		;6bfc
 	pop iy		;6bfe
-	ld ix,0d9f1h		;6c00
+	ld ix,0d9f1h		;6c00   ; ix -> actor 5
 	ld a,(ix+015h)		;6c04
 	cp 000h		;6c07
 	jp z,L_6C10		;6c09
@@ -1478,7 +1471,7 @@ L_6C66:
 	and 0f0h		;6c6c
 	cp 020h		;6c6e
 	jp z,L_6CB2		;6c70
-	ld a,(0d8fch)		;6c73
+	ld a,(0d8fch)		;6c73   ; a = la x de Rastan
 	add a,008h		;6c76
 	ld c,a			;6c78
 	bit 0,(ix+013h)		;6c79
@@ -1509,20 +1502,25 @@ L_6C96:
 L_6CAF:
 	jp L_6C2A		;6caf
 L_6CB2:
-	ld ix,0d9f1h		;6cb2
+	ld ix,0d9f1h		;6cb2   ; ix -> actor 5
 	ld (ix+015h),000h		;6cb6
 	call 04b10h		;6cba
 	pop ix		;6cbd
 	ret			;6cbf
+L_6CC0:
+	ld ix,0d9f1h		;6cc0   ; ix -> actor 5
+	call 04b10h		;6cc4
+	pop ix		;6cc7
+	ret			;6cc9
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6cc0..0x6cdc  (28 bytes)
-DATA_6CC0:
-	defb 0ddh,021h,0f1h,0d9h,0cdh,010h,04bh,0ddh,0e1h,0c9h,03ah,0fdh,0d8h,0ddh,046h,007h	; 6cc0  .!....K...:...F.
-	defb 090h,0e6h,07fh,0feh,008h,038h,002h,0afh,0c9h,03eh,0ffh,0c9h	; 6cd0  .....8...>..
+; DATOS sin identificar  0x6cca..0x6cdc  (18 bytes)
+DATA_6CCA:
+	defb 03ah,0fdh,0d8h,0ddh,046h,007h,090h,0e6h,07fh,0feh,008h,038h,002h,0afh,0c9h,03eh	; 6cca  :...F......8...>
+	defb 0ffh,0c9h	; 6cda
 
 ; ======================================================================
-; CODIGO 0x6cdc..0x6dc6  (234 bytes)
+; CODIGO 0x6cdc..0x703d  (865 bytes)
 ; ======================================================================
 
 
@@ -1530,7 +1528,7 @@ L_6CDC:
 	ld a,(ix+00fh)		;6cdc
 	and a			;6cdf
 	jp z,L_7AAF		;6ce0
-	ld a,(0d9e0h)		;6ce3
+	ld a,(0d9e0h)		;6ce3   ; a = actor 4, byte +15
 	cp 00fh		;6ce6
 	call z,L_6DCA		;6ce8
 	bit 1,(ix+001h)		;6ceb
@@ -1566,7 +1564,7 @@ L_6D29:
 	cp 020h		;6d38
 	jr z,L_6D4E		;6d3a
 L_6D3C:
-	ld a,(0d9e0h)		;6d3c
+	ld a,(0d9e0h)		;6d3c   ; a = actor 4, byte +15
 	and a			;6d3f
 	jp nz,L_6D4E		;6d40
 	call L_7E83		;6d43
@@ -1609,7 +1607,7 @@ L_6D88:
 	call L_7D0F		;6da0
 	jp 04a8bh		;6da3
 L_6DA6:
-	ld a,(0d9e0h)		;6da6
+	ld a,(0d9e0h)		;6da6   ; a = actor 4, byte +15
 	cp 00fh		;6da9
 	jr z,L_6DBF		;6dab
 	set 1,(ix+001h)		;6dad
@@ -1622,27 +1620,19 @@ L_6DA6:
 L_6DBF:
 	res 1,(ix+001h)		;6dbf
 	jp 04a8bh		;6dc3
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6dc6..0x6dca  (4 bytes)
-DATA_6DC6:
-	defb 0cdh,018h,07eh,0c9h	; 6dc6
-
-; ======================================================================
-; CODIGO 0x6dca..0x6dfd  (51 bytes)
-; ======================================================================
-
-
+L_6DC6:
+	call L_7E18		;6dc6
+	ret			;6dc9
 L_6DCA:
 	push ix		;6dca
 	push ix		;6dcc
 	pop iy		;6dce
-	ld ix,0d9cbh		;6dd0
+	ld ix,0d9cbh		;6dd0   ; ix -> actor 4
 	ld a,(ix+015h)		;6dd4
 	cp 000h		;6dd7
 	jp z,L_6DE0		;6dd9
 	cp 00fh		;6ddc
-	jr $+89		;6dde
+	jr L_6E37		;6dde
 L_6DE0:
 	bit 7,(iy+002h)		;6de0
 	jp z,L_6DF4		;6de4
@@ -1657,17 +1647,11 @@ L_6DF7:
 	call 04a8bh		;6df7
 	pop ix		;6dfa
 	ret			;6dfc
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6dfd..0x6e07  (10 bytes)
-DATA_6DFD:
-	defb 0ddh,036h,015h,000h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 6dfd  .6....K...
-
-; ======================================================================
-; CODIGO 0x6e07..0x6e8b  (132 bytes)
-; ======================================================================
-
-
+L_6DFD:
+	ld (ix+015h),000h		;6dfd
+	call 04b10h		;6e01
+	pop ix		;6e04
+	ret			;6e06
 L_6E07:
 	ld (ix+001h),013h		;6e07
 	bit 0,(iy+001h)		;6e0b
@@ -1694,7 +1678,7 @@ L_6E37:
 	and 0f0h		;6e3d
 	cp 020h		;6e3f
 	jp z,L_6E7D		;6e41
-	ld a,(0d8fch)		;6e44
+	ld a,(0d8fch)		;6e44   ; a = la x de Rastan
 	add a,008h		;6e47
 	ld c,a			;6e49
 	bit 0,(ix+001h)		;6e4a
@@ -1722,22 +1706,16 @@ L_6E66:
 L_6E7A:
 	jp L_6DF7		;6e7a
 L_6E7D:
-	ld ix,0d9cbh		;6e7d
+	ld ix,0d9cbh		;6e7d   ; ix -> actor 4
 	ld (ix+015h),000h		;6e81
 	call 04b10h		;6e85
 	pop ix		;6e88
 	ret			;6e8a
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6e8b..0x6e95  (10 bytes)
-DATA_6E8B:
-	defb 0ddh,021h,0cbh,0d9h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 6e8b  .!....K...
-
-; ======================================================================
-; CODIGO 0x6e95..0x7003  (366 bytes)
-; ======================================================================
-
-
+L_6E8B:
+	ld ix,0d9cbh		;6e8b   ; ix -> actor 4
+	call 04b10h		;6e8f
+	pop ix		;6e92
+	ret			;6e94
 L_6E95:
 	ld a,(ix+00fh)		;6e95
 	and a			;6e98
@@ -1892,17 +1870,9 @@ L_6FF0:
 	set 3,(ix+001h)		;6ff8
 	ld (ix+011h),010h		;6ffc
 	jp L_6FCB		;7000
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7003..0x700a  (7 bytes)
-DATA_7003:
-	defb 0ddh,036h,012h,010h,0c3h,0cbh,06fh	; 7003
-
-; ======================================================================
-; CODIGO 0x700a..0x703d  (51 bytes)
-; ======================================================================
-
-
+L_7003:
+	ld (ix+012h),010h		;7003
+	jp L_6FCB		;7007
 L_700A:
 	ld a,(ix+007h)		;700a
 	inc a			;700d
@@ -1934,7 +1904,7 @@ DATA_703D:
 	defb 0c9h,0c9h	; 703d
 
 ; ======================================================================
-; CODIGO 0x703f..0x72d2  (659 bytes)
+; CODIGO 0x703f..0x730c  (717 bytes)
 ; ======================================================================
 
 
@@ -2238,17 +2208,9 @@ L_72C7:
 	res 1,(ix+001h)		;72c7
 	ld (ix+011h),010h		;72cb
 	jp L_72A2		;72cf
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x72d2..0x72d9  (7 bytes)
-DATA_72D2:
-	defb 0ddh,036h,012h,010h,0c3h,0a2h,072h	; 72d2
-
-; ======================================================================
-; CODIGO 0x72d9..0x730c  (51 bytes)
-; ======================================================================
-
-
+L_72D2:
+	ld (ix+012h),010h		;72d2
+	jp L_72A2		;72d6
 L_72D9:
 	ld a,(ix+007h)		;72d9
 	inc a			;72dc
@@ -2280,7 +2242,7 @@ DATA_730C:
 	defb 0c9h,0c9h	; 730c
 
 ; ======================================================================
-; CODIGO 0x730e..0x7456  (328 bytes)
+; CODIGO 0x730e..0x76b8  (938 bytes)
 ; ======================================================================
 
 
@@ -2327,7 +2289,7 @@ L_7368:
 	ld a,(ix+00fh)		;7368
 	and a			;736b
 	jp z,L_7AAF		;736c
-	ld a,(0d9bah)		;736f
+	ld a,(0d9bah)		;736f   ; a = actor 3, byte +15
 	cp 00fh		;7372
 	call z,L_7420		;7374
 	bit 1,(ix+001h)		;7377
@@ -2381,7 +2343,7 @@ L_73E2:
 	jr nc,L_73E8		;73e4
 	jr L_73D4		;73e6
 L_73E8:
-	ld a,(0d9bah)		;73e8
+	ld a,(0d9bah)		;73e8   ; a = actor 3, byte +15
 	cp 00fh		;73eb
 	jr z,L_7411		;73ed
 	call L_7CFB		;73ef
@@ -2393,7 +2355,7 @@ L_73E8:
 	push ix		;7403
 	call 04a8bh		;7405
 	pop ix		;7408
-	ld a,(0d9bah)		;740a
+	ld a,(0d9bah)		;740a   ; a = actor 3, byte +15
 	and a			;740d
 	jp z,L_7420		;740e
 L_7411:
@@ -2405,7 +2367,7 @@ L_7420:
 	push ix		;7420
 	push ix		;7422
 	pop iy		;7424
-	ld ix,0d9a5h		;7426
+	ld ix,0d9a5h		;7426   ; ix -> actor 3
 	ld a,(ix+015h)		;742a
 	cp 000h		;742d
 	jp z,L_7436		;742f
@@ -2427,17 +2389,11 @@ L_7450:
 	call 04a8bh		;7450
 	pop ix		;7453
 	ret			;7455
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7456..0x7460  (10 bytes)
-DATA_7456:
-	defb 0ddh,036h,015h,000h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 7456  .6....K...
-
-; ======================================================================
-; CODIGO 0x7460..0x74f2  (146 bytes)
-; ======================================================================
-
-
+L_7456:
+	ld (ix+015h),000h		;7456
+	call 04b10h		;745a
+	pop ix		;745d
+	ret			;745f
 L_7460:
 	ld (ix+001h),00fh		;7460
 	ld a,(iy+001h)		;7464
@@ -2467,7 +2423,7 @@ L_7496:
 	and 0f0h		;74a0
 	cp 020h		;74a2
 	jp z,L_74E4		;74a4
-	ld a,(0d8fch)		;74a7
+	ld a,(0d8fch)		;74a7   ; a = la x de Rastan
 	add a,008h		;74aa
 	ld c,a			;74ac
 	bit 0,(ix+013h)		;74ad
@@ -2496,22 +2452,16 @@ L_74C9:
 L_74E1:
 	jp L_7450		;74e1
 L_74E4:
-	ld ix,0d9a5h		;74e4
+	ld ix,0d9a5h		;74e4   ; ix -> actor 3
 	ld (ix+015h),000h		;74e8
 	call 04b10h		;74ec
 	pop ix		;74ef
 	ret			;74f1
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x74f2..0x74fc  (10 bytes)
-DATA_74F2:
-	defb 0ddh,021h,0a5h,0d9h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 74f2  .!....K...
-
-; ======================================================================
-; CODIGO 0x74fc..0x7678  (380 bytes)
-; ======================================================================
-
-
+L_74F2:
+	ld ix,0d9a5h		;74f2   ; ix -> actor 3
+	call 04b10h		;74f6
+	pop ix		;74f9
+	ret			;74fb
 L_74FC:
 	ld a,(ix+00fh)		;74fc
 	and a			;74ff
@@ -2672,17 +2622,9 @@ L_7665:
 	res 1,(ix+001h)		;766d
 	ld (ix+011h),020h		;7671
 	jp L_7640		;7675
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7678..0x767f  (7 bytes)
-DATA_7678:
-	defb 0ddh,036h,012h,020h,0c3h,040h,076h	; 7678
-
-; ======================================================================
-; CODIGO 0x767f..0x76b8  (57 bytes)
-; ======================================================================
-
-
+L_7678:
+	ld (ix+012h),020h		;7678
+	jp L_7640		;767c
 L_767F:
 	ld a,(ix+007h)		;767f
 	inc a			;7682
@@ -2714,7 +2656,7 @@ DATA_76B8:
 	defb 0c9h,0c9h	; 76b8
 
 ; ======================================================================
-; CODIGO 0x76ba..0x7768  (174 bytes)
+; CODIGO 0x76ba..0x7ae4  (1066 bytes)
 ; ======================================================================
 
 
@@ -2748,10 +2690,10 @@ L_76F1:
 	ld a,(ix+00fh)		;76f1
 	and a			;76f4
 	jp z,L_7AAF		;76f5
-	ld a,(0d9e0h)		;76f8
+	ld a,(0d9e0h)		;76f8   ; a = actor 4, byte +15
 	cp 0f1h		;76fb
 	call z,L_77AF		;76fd
-	ld a,(0d9e0h)		;7700
+	ld a,(0d9e0h)		;7700   ; a = actor 4, byte +15
 	cp 00fh		;7703
 	call z,L_77AF		;7705
 	bit 1,(ix+001h)		;7708
@@ -2791,28 +2733,21 @@ L_774A:
 L_775E:
 	call L_7CC6		;775e
 	cp 040h		;7761
-	jr c,$+16		;7763
+	jr c,L_7773		;7763
 L_7765:
 	jp L_7B64		;7765
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7768..0x7770  (8 bytes)
-DATA_7768:
-	defb 0cdh,0fbh,07ch,0feh,020h,0d2h,070h,077h	; 7768  ..|. .pw
-
-; ======================================================================
-; CODIGO 0x7770..0x77e8  (120 bytes)
-; ======================================================================
-
-
+L_7768:
+	call L_7CFB		;7768
+	cp 020h		;776b
+	jp nc,L_7770		;776d
 L_7770:
 	jp 04a8bh		;7770
 L_7773:
 	cp 020h		;7773
 	jr nc,L_7779		;7775
-	jr $-18		;7777
+	jr L_7765		;7777
 L_7779:
-	ld a,(0d9e0h)		;7779
+	ld a,(0d9e0h)		;7779   ; a = actor 4, byte +15
 	cp 00fh		;777c
 	jr z,L_779A		;777e
 	call L_7CFB		;7780
@@ -2822,7 +2757,7 @@ L_7779:
 	push ix		;778c
 	call 04a8bh		;778e
 	pop ix		;7791
-	ld a,(0d9e0h)		;7793
+	ld a,(0d9e0h)		;7793   ; a = actor 4, byte +15
 	and a			;7796
 	jp z,L_77AF		;7797
 L_779A:
@@ -2839,7 +2774,7 @@ L_77AF:
 	push ix		;77af
 	push ix		;77b1
 	pop iy		;77b3
-	ld ix,0d9cbh		;77b5
+	ld ix,0d9cbh		;77b5   ; ix -> actor 4
 	ld a,(ix+015h)		;77b9
 	cp 000h		;77bc
 	jp z,L_77C8		;77be
@@ -2862,17 +2797,11 @@ L_77E2:
 	call 04a8bh		;77e2
 	pop ix		;77e5
 	ret			;77e7
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x77e8..0x77f2  (10 bytes)
-DATA_77E8:
-	defb 0ddh,036h,015h,000h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 77e8  .6....K...
-
-; ======================================================================
-; CODIGO 0x77f2..0x794f  (349 bytes)
-; ======================================================================
-
-
+L_77E8:
+	ld (ix+015h),000h		;77e8
+	call 04b10h		;77ec
+	pop ix		;77ef
+	ret			;77f1
 L_77F2:
 	ld (ix+001h),001h		;77f2
 	ld a,(iy+001h)		;77f6
@@ -2901,7 +2830,7 @@ L_7828:
 	and 0f0h		;782e
 	cp 020h		;7830
 	jp z,L_7870		;7832
-	ld a,(0d8fch)		;7835
+	ld a,(0d8fch)		;7835   ; a = la x de Rastan
 	add a,008h		;7838
 	ld c,a			;783a
 	bit 0,(ix+013h)		;783b
@@ -2928,7 +2857,7 @@ L_7856:
 L_786D:
 	jp L_77E2		;786d
 L_7870:
-	ld ix,0d9cbh		;7870
+	ld ix,0d9cbh		;7870   ; ix -> actor 4
 	ld (ix+015h),0f1h		;7874
 	ld (ix+001h),003h		;7878
 	push ix		;787c
@@ -2958,10 +2887,10 @@ L_78AD:
 	ld a,(ix+00fh)		;78ad
 	and a			;78b0
 	jp z,L_7AAF		;78b1
-	ld a,(0d9e0h)		;78b4
+	ld a,(0d9e0h)		;78b4   ; a = actor 4, byte +15
 	cp 0f1h		;78b7
 	call z,L_7964		;78b9
-	ld a,(0d9e0h)		;78bc
+	ld a,(0d9e0h)		;78bc   ; a = actor 4, byte +15
 	cp 00fh		;78bf
 	call z,L_7964		;78c1
 	bit 1,(ix+001h)		;78c4
@@ -3011,7 +2940,7 @@ L_7927:
 	jr nc,L_792D		;7929
 	jr L_7921		;792b
 L_792D:
-	ld a,(0d9e0h)		;792d
+	ld a,(0d9e0h)		;792d   ; a = actor 4, byte +15
 	cp 00fh		;7930
 	jr z,L_7940		;7932
 	call L_7CFB		;7934
@@ -3022,33 +2951,25 @@ L_7940:
 	push ix		;7940
 	call 04a8bh		;7942
 	pop ix		;7945
-	ld a,(0d9e0h)		;7947
+	ld a,(0d9e0h)		;7947   ; a = actor 4, byte +15
 	and a			;794a
 	jp z,L_7964		;794b
 	ret			;794e
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x794f..0x7956  (7 bytes)
-DATA_794F:
-	defb 0ddh,0cbh,001h,08eh,0c3h,08bh,04ah	; 794f
-
-; ======================================================================
-; CODIGO 0x7956..0x799d  (71 bytes)
-; ======================================================================
-
-
+L_794F:
+	res 1,(ix+001h)		;794f
+	jp 04a8bh		;7953
 L_7956:
 	call L_7CC6		;7956
 	cp 040h		;7959
-	jr c,$-55		;795b
+	jr c,L_7924		;795b
 	cp 020h		;795d
-	jr nc,$-59		;795f
+	jr nc,L_7924		;795f
 	jp L_792D		;7961
 L_7964:
 	push ix		;7964
 	push ix		;7966
 	pop iy		;7968
-	ld ix,0d9cbh		;796a
+	ld ix,0d9cbh		;796a   ; ix -> actor 4
 	ld a,(ix+015h)		;796e
 	cp 000h		;7971
 	jp z,L_797D		;7973
@@ -3071,17 +2992,11 @@ L_7997:
 	call 04a8bh		;7997
 	pop ix		;799a
 	ret			;799c
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x799d..0x79a7  (10 bytes)
-DATA_799D:
-	defb 0ddh,036h,015h,000h,0cdh,010h,04bh,0ddh,0e1h,0c9h	; 799d  .6....K...
-
-; ======================================================================
-; CODIGO 0x79a7..0x7a3e  (151 bytes)
-; ======================================================================
-
-
+L_799D:
+	ld (ix+015h),000h		;799d
+	call 04b10h		;79a1
+	pop ix		;79a4
+	ret			;79a6
 L_79A7:
 	ld (ix+001h),005h		;79a7
 	ld a,(iy+001h)		;79ab
@@ -3110,7 +3025,7 @@ L_79DD:
 	and 0f0h		;79e3
 	cp 020h		;79e5
 	jp z,L_7A25		;79e7
-	ld a,(0d8fch)		;79ea
+	ld a,(0d8fch)		;79ea   ; a = la x de Rastan
 	add a,008h		;79ed
 	ld c,a			;79ef
 	bit 0,(ix+013h)		;79f0
@@ -3137,7 +3052,7 @@ L_7A0B:
 L_7A22:
 	jp L_7997		;7a22
 L_7A25:
-	ld ix,0d9cbh		;7a25
+	ld ix,0d9cbh		;7a25   ; ix -> actor 4
 	ld (ix+015h),0f1h		;7a29
 	ld (ix+001h),007h		;7a2d
 	push ix		;7a31
@@ -3146,24 +3061,80 @@ L_7A25:
 	call 04b10h		;7a38
 	pop ix		;7a3b
 	ret			;7a3d
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7a3e..0x7aaf  (113 bytes)
-DATA_7A3E:
-	defb 006h,005h,03ah,036h,0d9h,080h,067h,03ah,02ch,0d9h,090h,06fh,03ah,037h,0d9h,080h	; 7a3e  ..:6..g:,..o:7..
-	defb 057h,03ah,02dh,0d9h,090h,05fh,0cdh,0deh,044h,04fh,0e6h,01ch,0feh,004h,028h,00dh	; 7a4e  W:-.._..DO....(.
-	defb 0feh,008h,028h,01ah,0feh,00ch,028h,027h,0feh,010h,028h,034h,0c9h,0ddh,07eh,006h	; 7a5e  ..(...('..(4..~.
-	defb 03ch,03ch,03ch,03ch,0bch,0ddh,077h,006h,0d8h,07ch,0ddh,077h,006h,0c9h,0ddh,07eh	; 7a6e  <<<<..w..|.w...~
-	defb 006h,03dh,03dh,03dh,03dh,0bdh,0ddh,077h,006h,0d0h,07dh,0ddh,077h,006h,0c9h,0ddh	; 7a7e  .====..w..}.w...
-	defb 07eh,007h,03ch,03ch,03ch,03ch,0bah,0ddh,077h,006h,0d8h,07ah,0ddh,077h,006h,0c9h	; 7a8e  ~.<<<<..w..z.w..
-	defb 0ddh,07eh,007h,03dh,03dh,03dh,03dh,0bbh,0ddh,077h,006h,0d0h,07bh,0ddh,077h,006h	; 7a9e  .~.====..w..{.w.
-	defb 0c9h	; 7aae
-
-; ======================================================================
-; CODIGO 0x7aaf..0x7ae4  (53 bytes)
-; ======================================================================
-
-
+L_7A3E:
+	ld b,005h		;7a3e
+	ld a,(0d936h)		;7a40   ; a = actor 0, byte +3
+	add a,b			;7a43
+	ld h,a			;7a44
+	ld a,(0d92ch)		;7a45   ; a = y del bloque especial
+	sub b			;7a48
+	ld l,a			;7a49
+	ld a,(0d937h)		;7a4a   ; a = actor 0, byte +4
+	add a,b			;7a4d
+	ld d,a			;7a4e
+	ld a,(0d92dh)		;7a4f   ; a = cual es el bloque especial
+	sub b			;7a52
+	ld e,a			;7a53
+	call 044deh		;7a54
+	ld c,a			;7a57
+	and 01ch		;7a58
+	cp 004h		;7a5a
+	jr z,L_7A6B		;7a5c
+	cp 008h		;7a5e
+	jr z,L_7A7C		;7a60
+	cp 00ch		;7a62
+	jr z,L_7A8D		;7a64
+	cp 010h		;7a66
+	jr z,L_7A9E		;7a68
+	ret			;7a6a
+L_7A6B:
+	ld a,(ix+006h)		;7a6b
+	inc a			;7a6e
+	inc a			;7a6f
+	inc a			;7a70
+	inc a			;7a71
+	cp h			;7a72
+	ld (ix+006h),a		;7a73
+	ret c			;7a76
+	ld a,h			;7a77
+	ld (ix+006h),a		;7a78
+	ret			;7a7b
+L_7A7C:
+	ld a,(ix+006h)		;7a7c
+	dec a			;7a7f
+	dec a			;7a80
+	dec a			;7a81
+	dec a			;7a82
+	cp l			;7a83
+	ld (ix+006h),a		;7a84
+	ret nc			;7a87
+	ld a,l			;7a88
+	ld (ix+006h),a		;7a89
+	ret			;7a8c
+L_7A8D:
+	ld a,(ix+007h)		;7a8d
+	inc a			;7a90
+	inc a			;7a91
+	inc a			;7a92
+	inc a			;7a93
+	cp d			;7a94
+	ld (ix+006h),a		;7a95
+	ret c			;7a98
+	ld a,d			;7a99
+	ld (ix+006h),a		;7a9a
+	ret			;7a9d
+L_7A9E:
+	ld a,(ix+007h)		;7a9e
+	dec a			;7aa1
+	dec a			;7aa2
+	dec a			;7aa3
+	dec a			;7aa4
+	cp e			;7aa5
+	ld (ix+006h),a		;7aa6
+	ret nc			;7aa9
+	ld a,e			;7aaa
+	ld (ix+006h),a		;7aab
+	ret			;7aae
 L_7AAF:
 	push ix		;7aaf
 	ld a,(ix+000h)		;7ab1
@@ -3214,7 +3185,7 @@ DATA_7AE4:
 
 
 L_7B29:
-	ld a,(0d8fch)		;7b29
+	ld a,(0d8fch)		;7b29   ; a = la x de Rastan
 	ld b,a			;7b2c
 	ld a,(ix+006h)		;7b2d
 	cp b			;7b30
@@ -3268,7 +3239,7 @@ DATA_7B7A:
 
 
 L_7B90:
-	ld a,(0d8fdh)		;7b90
+	ld a,(0d8fdh)		;7b90   ; a = la y de Rastan
 	ld b,(ix+007h)		;7b93
 	cp b			;7b96
 	jr c,L_7BA0		;7b97
@@ -3313,7 +3284,7 @@ DATA_7BD9:
 	defb 08bh,04ah,0c9h,0ddh,035h,007h,0ddh,035h,007h,018h,0dch	; 7c09  .J..5..5...
 
 ; ======================================================================
-; CODIGO 0x7c14..0x7c46  (50 bytes)
+; CODIGO 0x7c14..0x7c82  (110 bytes)
 ; ======================================================================
 
 
@@ -3341,18 +3312,42 @@ L_7C3E:
 	dec (ix+007h)		;7c3e
 	dec (ix+007h)		;7c41
 	jr L_7C22		;7c44
+L_7C46:
+	bit 0,(ix+001h)		;7c46
+	jr nz,L_7C60		;7c4a
+	inc (ix+006h)		;7c4c
+	inc (ix+006h)		;7c4f
+	inc (ix+006h)		;7c52
+	inc (ix+006h)		;7c55
+	res 1,(ix+001h)		;7c58
+	call 04a8bh		;7c5c
+	ret			;7c5f
+L_7C60:
+	dec (ix+006h)		;7c60
+	dec (ix+006h)		;7c63
+	dec (ix+006h)		;7c66
+	dec (ix+006h)		;7c69
+	res 1,(ix+001h)		;7c6c
+	call 04a8bh		;7c70
+	ret			;7c73
+L_7C74:
+	ld a,(ix+010h)		;7c74
+	and a			;7c77
+	jr nz,L_7C7E		;7c78
+	call L_7C46		;7c7a
+	ret			;7c7d
+L_7C7E:
+	call L_7B48		;7c7e
+	ret			;7c81
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7c46..0x7cc6  (128 bytes)
-DATA_7C46:
-	defb 0ddh,0cbh,001h,046h,020h,014h,0ddh,034h,006h,0ddh,034h,006h,0ddh,034h,006h,0ddh	; 7c46  ...F ..4..4..4..
-	defb 034h,006h,0ddh,0cbh,001h,08eh,0cdh,08bh,04ah,0c9h,0ddh,035h,006h,0ddh,035h,006h	; 7c56  4.......J..5..5.
-	defb 0ddh,035h,006h,0ddh,035h,006h,0ddh,0cbh,001h,08eh,0cdh,08bh,04ah,0c9h,0ddh,07eh	; 7c66  .5..5.......J..~
-	defb 010h,0a7h,020h,004h,0cdh,046h,07ch,0c9h,0cdh,048h,07bh,0c9h,047h,0ddh,07eh,010h	; 7c76  .. ..F|..H{.G.~.
-	defb 03ch,0b8h,028h,005h,0ddh,077h,010h,0afh,0c9h,0afh,0ddh,077h,010h,03eh,001h,0c9h	; 7c86  <.(..w.....w.>..
-	defb 057h,03ah,0fch,0d8h,006h,010h,080h,047h,0ddh,07eh,006h,00eh,010h,081h,0b8h,038h	; 7c96  W:.....G.~.....8
-	defb 007h,090h,0bah,0c8h,038h,00ah,018h,010h,04fh,078h,041h,090h,0bah,0c8h,038h,008h	; 7ca6  ....8...OxA...8.
-	defb 0ddh,07eh,006h,03ch,0ddh,077h,006h,0c9h,0ddh,07eh,006h,03dh,0ddh,077h,006h,0c9h	; 7cb6  .~.<.w...~.=.w..
+; DATOS sin identificar  0x7c82..0x7cc6  (68 bytes)
+DATA_7C82:
+	defb 047h,0ddh,07eh,010h,03ch,0b8h,028h,005h,0ddh,077h,010h,0afh,0c9h,0afh,0ddh,077h	; 7c82  G.~.<.(..w.....w
+	defb 010h,03eh,001h,0c9h,057h,03ah,0fch,0d8h,006h,010h,080h,047h,0ddh,07eh,006h,00eh	; 7c92  .>..W:.....G.~..
+	defb 010h,081h,0b8h,038h,007h,090h,0bah,0c8h,038h,00ah,018h,010h,04fh,078h,041h,090h	; 7ca2  ...8....8...OxA.
+	defb 0bah,0c8h,038h,008h,0ddh,07eh,006h,03ch,0ddh,077h,006h,0c9h,0ddh,07eh,006h,03dh	; 7cb2  ..8..~.<.w...~.=
+	defb 0ddh,077h,006h,0c9h	; 7cc2
 
 ; ======================================================================
 ; CODIGO 0x7cc6..0x7cf4  (46 bytes)
@@ -3360,7 +3355,7 @@ DATA_7C46:
 
 
 L_7CC6:
-	ld a,(0d8fch)		;7cc6
+	ld a,(0d8fch)		;7cc6   ; a = la x de Rastan
 	ld b,010h		;7cc9
 	add a,b			;7ccb
 	ld b,a			;7ccc
@@ -3378,7 +3373,7 @@ L_7CD8:
 	sub b			;7cdb
 	ret			;7cdc
 L_7CDD:
-	ld a,(0d8fch)		;7cdd
+	ld a,(0d8fch)		;7cdd   ; a = la x de Rastan
 	ld b,010h		;7ce0
 	add a,b			;7ce2
 	ld b,a			;7ce3
@@ -3402,12 +3397,12 @@ DATA_7CF4:
 	defb 03eh,001h,04fh,0c9h,0afh,04fh,0c9h	; 7cf4
 
 ; ======================================================================
-; CODIGO 0x7cfb..0x7d23  (40 bytes)
+; CODIGO 0x7cfb..0x7d40  (69 bytes)
 ; ======================================================================
 
 
 L_7CFB:
-	ld a,(0d8fdh)		;7cfb
+	ld a,(0d8fdh)		;7cfb   ; a = la y de Rastan
 	ld b,010h		;7cfe
 	add a,b			;7d00
 	ld b,a			;7d01
@@ -3432,14 +3427,29 @@ L_7D1C:
 	dec (ix+006h)		;7d1c
 	dec (ix+006h)		;7d1f
 	ret			;7d22
+L_7D23:
+	call L_7E18		;7d23
+	ld a,(ix+001h)		;7d26
+	and 001h		;7d29
+	and a			;7d2b
+	jr z,L_7D37		;7d2c
+	ld a,(ix+006h)		;7d2e
+	dec a			;7d31
+	dec a			;7d32
+	ld (ix+006h),a		;7d33
+	ret			;7d36
+L_7D37:
+	ld a,(ix+006h)		;7d37
+	inc a			;7d3a
+	inc a			;7d3b
+	ld (ix+006h),a		;7d3c
+	ret			;7d3f
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7d23..0x7d56  (51 bytes)
-DATA_7D23:
-	defb 0cdh,018h,07eh,0ddh,07eh,001h,0e6h,001h,0a7h,028h,009h,0ddh,07eh,006h,03dh,03dh	; 7d23  ..~.~....(..~.==
-	defb 0ddh,077h,006h,0c9h,0ddh,07eh,006h,03ch,03ch,0ddh,077h,006h,0c9h,0ddh,07eh,006h	; 7d33  .w...~.<<.w...~.
-	defb 0feh,0fbh,0d2h,050h,07dh,0ddh,07eh,006h,0feh,001h,0dah,053h,07dh,03eh,001h,0c9h	; 7d43  ...P}.~....S}>..
-	defb 03eh,002h,0c9h	; 7d53
+; DATOS sin identificar  0x7d40..0x7d56  (22 bytes)
+DATA_7D40:
+	defb 0ddh,07eh,006h,0feh,0fbh,0d2h,050h,07dh,0ddh,07eh,006h,0feh,001h,0dah,053h,07dh	; 7d40  .~....P}.~....S}
+	defb 03eh,001h,0c9h,03eh,002h,0c9h	; 7d50
 
 ; ======================================================================
 ; CODIGO 0x7d56..0x7de0  (138 bytes)
@@ -3467,7 +3477,7 @@ L_7D56:
 	add hl,hl			;7d73
 	add hl,bc			;7d74
 	add hl,bc			;7d75
-	ld de,0d774h		;7d76
+	ld de,0d774h		;7d76   ; de -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,de			;7d79
 	inc hl			;7d7a
 	bit 0,(ix+001h)		;7d7b
@@ -3565,7 +3575,7 @@ DATA_7E29:
 	defb 007h,0c9h	; 7e49
 
 ; ======================================================================
-; CODIGO 0x7e4b..0x7e63  (24 bytes)
+; CODIGO 0x7e4b..0x7ef1  (166 bytes)
 ; ======================================================================
 
 
@@ -3580,18 +3590,23 @@ L_7E5A:
 	inc (ix+007h)		;7e5a
 	inc (ix+007h)		;7e5d
 	jp L_7F3E		;7e60
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7e63..0x7e83  (32 bytes)
-DATA_7E63:
-	defb 0ddh,07eh,006h,0feh,001h,0dch,071h,07eh,0feh,0e7h,0d4h,07ah,07eh,0c9h,03eh,001h	; 7e63  .~....q~...z~.>.
-	defb 0ddh,077h,006h,0cdh,018h,07eh,0c9h,03eh,0e7h,0ddh,077h,006h,0cdh,018h,07eh,0c9h	; 7e73  .w...~.>..w...~.
-
-; ======================================================================
-; CODIGO 0x7e83..0x7ef1  (110 bytes)
-; ======================================================================
-
-
+L_7E63:
+	ld a,(ix+006h)		;7e63
+	cp 001h		;7e66
+	call c,L_7E71		;7e68
+	cp 0e7h		;7e6b
+	call nc,L_7E7A		;7e6d
+	ret			;7e70
+L_7E71:
+	ld a,001h		;7e71
+	ld (ix+006h),a		;7e73
+	call L_7E18		;7e76
+	ret			;7e79
+L_7E7A:
+	ld a,0e7h		;7e7a
+	ld (ix+006h),a		;7e7c
+	call L_7E18		;7e7f
+	ret			;7e82
 L_7E83:
 	bit 0,(ix+001h)		;7e83
 	jr nz,L_7E90		;7e87
@@ -3671,9 +3686,9 @@ DATA_7EF1:
 
 L_7F1F:
 	ld a,0feh		;7f1f
-	ld (0d93dh),a		;7f21
+	ld (0d93dh),a		;7f21   ; actor 0, byte +A = a
 	ld a,001h		;7f24
-	ld (0d93eh),a		;7f26
+	ld (0d93eh),a		;7f26   ; actor 0, byte +B = a
 	call L_7F3E		;7f29
 	call L_7F3E		;7f2c
 	call L_7F3E		;7f2f
@@ -3682,7 +3697,7 @@ L_7F1F:
 	call L_7F3E		;7f38
 	call L_7F3E		;7f3b
 L_7F3E:
-	ld a,(0d933h)		;7f3e
+	ld a,(0d933h)		;7f3e   ; a = los 6 actores de la pantalla
 	dec a			;7f41
 	ld l,a			;7f42
 	ld h,000h		;7f43
@@ -3693,7 +3708,7 @@ L_7F3E:
 	inc hl			;7f4b
 	ld d,(hl)			;7f4c
 	push de			;7f4d
-	ld a,(0d934h)		;7f4e
+	ld a,(0d934h)		;7f4e   ; a = actor 0, byte +1
 	ld l,a			;7f51
 	ld h,000h		;7f52
 	add hl,hl			;7f54
@@ -3704,12 +3719,12 @@ L_7F3E:
 	ld d,(hl)			;7f59
 	push de			;7f5a
 	pop ix		;7f5b
-	ld hl,0d4ceh		;7f5d
-	ld iy,0d93dh		;7f60
-	ld a,(0d939h)		;7f64
-	ld (0d5ddh),a		;7f67
-	ld a,(0d93ah)		;7f6a
-	ld (0d5deh),a		;7f6d
+	ld hl,0d4ceh		;7f5d   ; hl -> ficha de sprite 17
+	ld iy,0d93dh		;7f60   ; iy -> actor 0, byte +A
+	ld a,(0d939h)		;7f64   ; a = actor 0, byte +6
+	ld (0d5ddh),a		;7f67   ; lo que se suma a la x de los sprites = a
+	ld a,(0d93ah)		;7f6a   ; a = actor 0, byte +7
+	ld (0d5deh),a		;7f6d   ; lo que se suma a la y de los sprites = a
 	ld b,00ch		;7f70
 	call 058c3h		;7f72
 	ret			;7f75
@@ -3731,19 +3746,19 @@ DATA_7F76:
 
 
 L_7FDA:
-	ld a,(0d933h)		;7fda
+	ld a,(0d933h)		;7fda   ; a = los 6 actores de la pantalla
 	cp 007h		;7fdd
 	jr z,$+36		;7fdf
 	ld a,007h		;7fe1
-	ld (0d17ah),a		;7fe3
+	ld (0d17ah),a		;7fe3   ; peticion de sonido para p01:640F = a
 	ld a,007h		;7fe6
-	ld (0d933h),a		;7fe8
+	ld (0d933h),a		;7fe8   ; los 6 actores de la pantalla = a
 	xor a			;7feb
-	ld (0d934h),a		;7fec
+	ld (0d934h),a		;7fec   ; actor 0, byte +1 = a
 	ld a,0feh		;7fef
-	ld (0d93dh),a		;7ff1
+	ld (0d93dh),a		;7ff1   ; actor 0, byte +A = a
 	ld a,001h		;7ff4
-	ld (0d93eh),a		;7ff6
+	ld (0d93eh),a		;7ff6   ; actor 0, byte +B = a
 	call L_7F3E		;7ff9
 	ld hl,00130h		;7ffc
 

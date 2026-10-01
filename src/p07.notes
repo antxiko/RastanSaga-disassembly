@@ -1,0 +1,43 @@
+
+# --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x8003 a = y del bloque especial
+C 0x800c a = cual es el bloque especial
+C 0x8073 cual es el bloque especial = a
+C 0x80fb bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x8104 a = la x de Rastan
+C 0x8108 a = la y de Rastan
+C 0x810c ix -> los 8 enemigos de la pantalla
+C 0x8113 ix -> enemigo 1
+C 0x811a ix -> enemigo 2
+C 0x8121 ix -> enemigo 3
+C 0x8128 ix -> enemigo 4
+C 0x812f ix -> enemigo 5
+C 0x8136 ix -> enemigo 6
+C 0x813d ix -> enemigo 7
+C 0x8172 ix -> los 6 actores de la pantalla
+C 0x844c ix -> los 6 actores de la pantalla
+C 0x88d7 la y de Rastan = a
+C 0x892b la y de Rastan = a
+C 0x89a4 la x de Rastan = a
+C 0x8a68 la x de Rastan = a
+C 0x8aff la x de Rastan = a
+C 0x8b80 la x de Rastan = a
+C 0x8bc6 a = cual es el bloque especial
+C 0x8bd0 a = x del bloque especial de la pantalla
+C 0x8bd9 a = y del bloque especial
+C 0x8be6 a = cual es el bloque especial
+C 0x8c0e cual es el bloque especial = a
+C 0x8cbb ix -> los 6 actores de la pantalla
+C 0x918c hl = actor 1, byte +10
+C 0x9192 a = la x de Rastan
+C 0x9196 a = la y de Rastan
+C 0x91a7 a = actor 0, byte +7
+C 0x91ab a = actor 0, byte +6
+C 0x91b0 a = los 6 actores de la pantalla
+C 0x91d2 bit 7: el jugador usa la ficha 10 = a
+C 0x91d5 de = actor 1, byte +10
+C 0x91dc a = actor 0, byte +25
+C 0x91e2 a = actor 0, byte +7
+C 0x91e6 a = actor 0, byte +6
+C 0x91eb a = los 6 actores de la pantalla
+# --- fin de anota ---

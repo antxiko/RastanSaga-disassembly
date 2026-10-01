@@ -1,0 +1,75 @@
+
+# --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x8010 hl -> bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
+C 0x8016 ix -> los 6 actores de la pantalla
+C 0x802d actor 1, byte +10 = hl
+C 0x8053 a = actor 1, byte +10
+C 0x8057 a = actor 1, byte +11
+C 0x8262 ix -> los 6 actores de la pantalla
+C 0x8279 actor 1, byte +10 = hl
+C 0x829a peticion de sonido para p01:63E1 = a
+C 0x82a9 a = actor 1, byte +10
+C 0x82ad a = actor 1, byte +11
+C 0x838f peticion de sonido para p01:63E1 = a
+C 0x848e ix -> los 6 actores de la pantalla
+C 0x84a5 actor 1, byte +10 = hl
+C 0x84d0 a = actor 1, byte +10
+C 0x84d4 a = actor 1, byte +11
+C 0x84db a = actor 1, byte +12
+C 0x84e2 a = actor 4, byte +15
+C 0x858b a = actor 4, byte +15
+C 0x85a6 a = actor 4, byte +15
+C 0x85d9 peticion de sonido para p01:63E1 = a
+C 0x85fe peticion de sonido para p01:63E1 = a
+C 0x8623 peticion de sonido para p01:63E1 = a
+C 0x8645 peticion de sonido para p01:63E1 = a
+C 0x866f ix -> actor 4
+C 0x86f1 a = la x de Rastan
+C 0x872e ix -> actor 4
+C 0x8780 actor 1, byte +12 = a
+C 0x8799 ix -> los 6 actores de la pantalla
+C 0x87b0 actor 1, byte +10 = hl
+C 0x87db a = actor 1, byte +10
+C 0x87df a = actor 1, byte +11
+C 0x89ce ix -> los 6 actores de la pantalla
+C 0x89e4 actor 1, byte +10 = hl
+C 0x8a0f a = actor 1, byte +10
+C 0x8a13 a = actor 1, byte +11
+C 0x8a1a a = actor 3, byte +15
+C 0x8a31 a = actor 1, byte +12
+C 0x8a5b a = actor 3, byte +15
+C 0x8a65 peticion de sonido para p01:63E1 = a
+C 0x8a7d a = actor 3, byte +15
+C 0x8a86 peticion de sonido para p01:63E1 = a
+C 0x8b19 a = la x de Rastan
+C 0x8b57 peticion de sonido para p01:63E1 = a
+C 0x8b5b actor 1, byte +12 = a
+C 0x8b71 ix -> actor 3
+C 0x8b91 actor 3, byte +10 = hl
+C 0x8bf4 a = la columna de la pantalla en que se esta
+C 0x8bfc a = la fila de la pantalla en que se esta
+C 0x8c06 a = la columna de la pantalla en que se esta
+C 0x8c0e a = la fila de la pantalla en que se esta
+C 0x8c18 a = la columna de la pantalla en que se esta
+C 0x8c20 a = la fila de la pantalla en que se esta
+C 0x8c2a a = la columna de la pantalla en que se esta
+C 0x8c32 a = la fila de la pantalla en que se esta
+C 0x8c3c a = la columna de la pantalla en que se esta
+C 0x8c44 a = la fila de la pantalla en que se esta
+C 0x8c50 peticion de sonido para p01:640F = a
+C 0x8c57 los 6 actores de la pantalla = a
+C 0x8c5a actor 0, byte +1 = a
+C 0x8c5d actor 0, byte +2 = a
+C 0x8c78 a = actor 0, byte +2
+C 0x8c8b y donde se pinta = a
+C 0x8c90 x donde se pinta = a
+C 0x8ca1 a = los 6 actores de la pantalla
+C 0x8ca5 los 6 actores de la pantalla = a
+C 0x8cb6 a = los 6 actores de la pantalla
+C 0x8cc4 a = los 6 actores de la pantalla
+C 0x8ccd a = actor 0, byte +1
+C 0x8cd1 actor 0, byte +1 = a
+C 0x8ce6 actor 0, byte +2 = a
+C 0x8cec a = los 6 actores de la pantalla
+C 0x8cf2 la lista o la cadena que se esta pintando = bc
+# --- fin de anota ---

@@ -66,7 +66,7 @@ L_6069:
 	ld (0da1fh),a		;606e
 	ret			;6071
 L_6072:
-	ld ix,0da20h		;6072
+	ld ix,0da20h		;6072   ; ix -> los 8 enemigos de la pantalla
 	ld b,008h		;6076
 	ret			;6078
 L_6079:
@@ -82,7 +82,7 @@ L_6079:
 	cp 00ah		;608f
 	jp nz,L_605E		;6091
 	call 057afh		;6094
-	ld a,(0da19h)		;6097
+	ld a,(0da19h)		;6097   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 0,a		;609a
 	jr nz,L_605E		;609c
 L_609E:
@@ -109,13 +109,13 @@ L_609E:
 L_60CF:
 	bit 0,(ix+001h)		;60cf
 	jp nz,L_60E4		;60d3
-	ld a,(0d8fch)		;60d6
+	ld a,(0d8fch)		;60d6   ; a = la x de Rastan
 	sub (ix+010h)		;60d9
 	cp 0c0h		;60dc
 	jp c,L_61A1		;60de
 	jp L_61CE		;60e1
 L_60E4:
-	ld a,(0d8fch)		;60e4
+	ld a,(0d8fch)		;60e4   ; a = la x de Rastan
 	sub (ix+010h)		;60e7
 	cp 040h		;60ea
 	jp nc,L_60F2		;60ec
@@ -128,10 +128,10 @@ L_60F2:
 	ld (ix+012h),a		;60fb
 	push ix		;60fe
 	ld a,(ix+010h)		;6100
-	ld (0d5d6h),a		;6103
+	ld (0d5d6h),a		;6103   ; x donde se pinta = a
 	ld a,(ix+011h)		;6106
 	add a,010h		;6109
-	ld (0d5d7h),a		;610b
+	ld (0d5d7h),a		;610b   ; y donde se pinta = a
 	ld hl,0628eh		;610e
 	ld bc,01020h		;6111
 	ld de,00000h		;6114
@@ -146,10 +146,10 @@ L_611F:
 	ld (ix+012h),a		;6129
 	push ix		;612c
 	ld a,(ix+010h)		;612e
-	ld (0d5d6h),a		;6131
+	ld (0d5d6h),a		;6131   ; x donde se pinta = a
 	ld a,(ix+011h)		;6134
 	add a,010h		;6137
-	ld (0d5d7h),a		;6139
+	ld (0d5d7h),a		;6139   ; y donde se pinta = a
 	ld hl,0627eh		;613c
 	ld bc,01020h		;613f
 	ld de,00000h		;6142
@@ -165,7 +165,7 @@ L_611F:
 	add a,008h		;615c
 	ld (ix+007h),a		;615e
 	call 057afh		;6161
-	ld a,(0da19h)		;6164
+	ld a,(0da19h)		;6164   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6167
 	jp nz,L_605E		;6169
 L_616C:
@@ -198,10 +198,10 @@ L_61A1:
 	ld (ix+012h),a		;61aa
 	push ix		;61ad
 	ld a,(ix+010h)		;61af
-	ld (0d5d6h),a		;61b2
+	ld (0d5d6h),a		;61b2   ; x donde se pinta = a
 	ld a,(ix+011h)		;61b5
 	add a,010h		;61b8
-	ld (0d5d7h),a		;61ba
+	ld (0d5d7h),a		;61ba   ; y donde se pinta = a
 	ld hl,062aeh		;61bd
 	ld bc,01020h		;61c0
 	ld de,00000h		;61c3
@@ -216,10 +216,10 @@ L_61CE:
 	ld (ix+012h),a		;61d8
 	push ix		;61db
 	ld a,(ix+010h)		;61dd
-	ld (0d5d6h),a		;61e0
+	ld (0d5d6h),a		;61e0   ; x donde se pinta = a
 	ld a,(ix+011h)		;61e3
 	add a,010h		;61e6
-	ld (0d5d7h),a		;61e8
+	ld (0d5d7h),a		;61e8   ; y donde se pinta = a
 	ld hl,0629eh		;61eb
 	ld bc,01020h		;61ee
 	ld de,00000h		;61f1
@@ -234,7 +234,7 @@ L_61CE:
 	add a,008h		;6209
 	ld (ix+007h),a		;620b
 	call 057afh		;620e
-	ld a,(0da19h)		;6211
+	ld a,(0da19h)		;6211   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6214
 	jp nz,L_605E		;6216
 L_6219:
@@ -290,7 +290,7 @@ DATA_627E:
 	defb 047h,006h,048h,006h,049h,006h,04ah,006h,054h,006h,055h,006h,056h,006h,057h,006h	; 62ae  G.H.I.J.T.U.V.W.
 
 ; ======================================================================
-; CODIGO 0x62be..0x634b  (141 bytes)
+; CODIGO 0x62be..0x6468  (426 bytes)
 ; ======================================================================
 
 
@@ -303,7 +303,7 @@ L_62BE:
 	ld a,(ix+011h)		;62ca
 	ld (ix+007h),a		;62cd
 	call 057afh		;62d0
-	ld a,(0da19h)		;62d3
+	ld a,(0da19h)		;62d3   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 0,a		;62d6
 	jp nz,L_605E		;62d8
 L_62DB:
@@ -350,17 +350,8 @@ L_6340:
 	set 1,(ix+001h)		;6340
 	set 1,(ix+001h)		;6344
 	jp L_605E		;6348
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x634b..0x634e  (3 bytes)
-DATA_634B:
-	defb 0c3h,05eh,060h	; 634b
-
-; ======================================================================
-; CODIGO 0x634e..0x6468  (282 bytes)
-; ======================================================================
-
-
+L_634B:
+	jp L_605E		;634b
 L_634E:
 	ld a,(ix+001h)		;634e
 	cp 000h		;6351
@@ -382,7 +373,7 @@ L_6360:
 	ld a,(ix+011h)		;6375
 	ld (ix+007h),a		;6378
 	call 057afh		;637b
-	ld a,(0da19h)		;637e
+	ld a,(0da19h)		;637e   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6381
 	jp nz,L_605E		;6383
 L_6386:
@@ -425,7 +416,7 @@ L_63C6:
 	ld a,(ix+011h)		;63d9
 	ld (ix+007h),a		;63dc
 	call 057afh		;63df
-	ld a,(0da19h)		;63e2
+	ld a,(0da19h)		;63e2   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;63e5
 	jp nz,L_605E		;63e7
 L_63EA:
@@ -458,7 +449,7 @@ L_6417:
 	ld a,(ix+011h)		;642a
 	ld (ix+010h),a		;642d
 	call 057afh		;6430
-	ld a,(0da19h)		;6433
+	ld a,(0da19h)		;6433   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6436
 	jp nz,L_605E		;6438
 L_643B:
@@ -503,7 +494,7 @@ L_647B:
 	ld a,(ix+011h)		;648e
 	ld (ix+007h),a		;6491
 	call 057afh		;6494
-	ld a,(0da19h)		;6497
+	ld a,(0da19h)		;6497   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 0,a		;649a
 	jp nz,L_605E		;649c
 L_649F:
@@ -560,7 +551,7 @@ L_64F2:
 	add hl,hl			;650f
 	add hl,bc			;6510
 	add hl,bc			;6511
-	ld de,0d774h		;6512
+	ld de,0d774h		;6512   ; de -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,de			;6515
 	inc hl			;6516
 	ld de,00020h		;6517

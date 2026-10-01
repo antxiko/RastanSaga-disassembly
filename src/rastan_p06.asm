@@ -21,7 +21,7 @@ L_69A4:	equ 0x069a4
 L_69A7:	equ 0x069a7
 
 ; ======================================================================
-; CODIGO 0x6000..0x60b3  (179 bytes)
+; CODIGO 0x6000..0x60be  (190 bytes)
 ; ======================================================================
 
 
@@ -34,10 +34,10 @@ L_6000:
 	ld (0d8f4h),a		;600e
 	ld a,(0d905h)		;6011
 	ld (0d8f5h),a		;6014
-	ld a,(0d8fch)		;6017
-	ld (0d5ddh),a		;601a
-	ld a,(0d8fdh)		;601d
-	ld (0d5deh),a		;6020
+	ld a,(0d8fch)		;6017   ; a = la x de Rastan
+	ld (0d5ddh),a		;601a   ; lo que se suma a la x de los sprites = a
+	ld a,(0d8fdh)		;601d   ; a = la y de Rastan
+	ld (0d5deh),a		;6020   ; lo que se suma a la y de los sprites = a
 	ld hl,0d904h		;6023
 	bit 6,(hl)		;6026
 	jp z,L_602D		;6028
@@ -51,17 +51,17 @@ L_602D:
 	ld (hl),a			;603b
 	ret			;603c
 L_603D:
-	ld a,(0d8fch)		;603d
-	ld (0d5ddh),a		;6040
-	ld a,(0d8fdh)		;6043
-	ld (0d5deh),a		;6046
+	ld a,(0d8fch)		;603d   ; a = la x de Rastan
+	ld (0d5ddh),a		;6040   ; lo que se suma a la x de los sprites = a
+	ld a,(0d8fdh)		;6043   ; a = la y de Rastan
+	ld (0d5deh),a		;6046   ; lo que se suma a la y de los sprites = a
 	ld a,(0d188h)		;6049
 	bit 1,a		;604c
 	jr z,L_6055		;604e
 	call L_6134		;6050
 	jr L_605E		;6053
 L_6055:
-	ld ix,0d413h		;6055
+	ld ix,0d413h		;6055   ; ix -> las 32 fichas de sprite
 	ld b,00bh		;6059
 	call 04823h		;605b
 L_605E:
@@ -70,7 +70,7 @@ L_605E:
 	ld a,(hl)			;6062
 	or a			;6063
 	ret nz			;6064
-	ld hl,0d17dh		;6065
+	ld hl,0d17dh		;6065   ; hl -> bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
 	set 6,(hl)		;6068
 	ret			;606a
 L_606B:
@@ -115,19 +115,30 @@ L_6091:
 L_60B1:
 	pop de			;60b1
 	ret			;60b2
+L_60B3:
+	exx			;60b3
+	ld b,000h		;60b4
+	exx			;60b6
+	ld d,018h		;60b7
+	ld e,000h		;60b9
+	call 04612h		;60bb
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x60b3..0x60d4  (33 bytes)
-DATA_60B3:
-	defb 0d9h,006h,000h,0d9h,016h,018h,01eh,000h,0cdh,012h,046h,020h,020h,020h,020h,020h	; 60b3  ..........F
-	defb 020h,030h,000h,0cdh,0e9h,060h,02eh,000h,026h,018h,022h,0dbh,0d5h,0cdh,0fah,060h	; 60c3   0...`..&."....`
-	defb 0c9h	; 60d3
+; DATOS sin identificar  0x60be..0x60c6  (8 bytes)
+DATA_60BE:
+	defb 020h,020h,020h,020h,020h,020h,030h,000h	; 60be        0.
 
 ; ======================================================================
-; CODIGO 0x60d4..0x6397  (707 bytes)
+; CODIGO 0x60c6..0x6397  (721 bytes)
 ; ======================================================================
 
 
+	call L_60E9		;60c6
+	ld l,000h		;60c9
+	ld h,018h		;60cb
+	ld (0d5dbh),hl		;60cd   ; la lista o la cadena que se esta pintando = hl
+	call L_60FA		;60d0
+	ret			;60d3
 L_60D4:
 	call L_60E9		;60d4
 	bit 7,b		;60d7
@@ -135,7 +146,7 @@ L_60D4:
 	res 7,(ix+02dh)		;60da
 	ld l,000h		;60de
 	ld h,018h		;60e0
-	ld (0d5dbh),hl		;60e2
+	ld (0d5dbh),hl		;60e2   ; la lista o la cadena que se esta pintando = hl
 	call L_60FA		;60e5
 	ret			;60e8
 L_60E9:
@@ -235,11 +246,11 @@ L_616C:
 	ex af,af'			;6183
 	push de			;6184
 	pop ix		;6185
-	ld hl,0d429h		;6187
+	ld hl,0d429h		;6187   ; hl -> ficha de sprite 2
 	ld iy,0d8feh		;618a
 	ld a,01ah		;618e
-	ld (0d191h),a		;6190
-	ld (077f8h),a		;6193
+	ld (0d191h),a		;6190   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;6193   ; registro del mapper: banco A en 0x8000
 	call 05aa5h		;6196
 	ex af,af'			;6199
 	ld b,a			;619a
@@ -268,11 +279,11 @@ L_61A5:
 	ex af,af'			;61bb
 	push de			;61bc
 	pop ix		;61bd
-	ld hl,0d455h		;61bf
+	ld hl,0d455h		;61bf   ; hl -> ficha de sprite 6
 	ld iy,0d900h		;61c2
 	ld a,01ah		;61c6
-	ld (0d191h),a		;61c8
-	ld (077f8h),a		;61cb
+	ld (0d191h),a		;61c8   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;61cb   ; registro del mapper: banco A en 0x8000
 	call 05aa5h		;61ce
 	ld a,(0d8f5h)		;61d1
 	and 003h		;61d4
@@ -298,11 +309,11 @@ L_61A5:
 	ex af,af'			;61f1
 	pop af			;61f2
 	ex af,af'			;61f3
-	ld hl,0d413h		;61f4
+	ld hl,0d413h		;61f4   ; hl -> las 32 fichas de sprite
 	ld iy,0d8feh		;61f7
 	ld a,01ah		;61fb
-	ld (0d191h),a		;61fd
-	ld (077f8h),a		;6200
+	ld (0d191h),a		;61fd   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;6200   ; registro del mapper: banco A en 0x8000
 	call 05b95h		;6203
 	ret			;6206
 L_6207:
@@ -322,7 +333,7 @@ L_6207:
 	ld h,000h		;621e
 	add hl,hl			;6220
 	push hl			;6221
-	ld de,0d5f4h		;6222
+	ld de,0d5f4h		;6222   ; de -> el fondo desempaquetado: 11 x 16 bloques
 	add hl,de			;6225
 	ld e,(hl)			;6226
 	inc hl			;6227
@@ -398,9 +409,9 @@ L_6207:
 	pop ix		;629b
 	ret			;629d
 L_629E:
-	ld a,(0d92bh)		;629e
+	ld a,(0d92bh)		;629e   ; a = x del bloque especial de la pantalla
 	ld e,a			;62a1
-	ld a,(0d92ch)		;62a2
+	ld a,(0d92ch)		;62a2   ; a = y del bloque especial
 	sub 020h		;62a5
 	ld d,a			;62a7
 	ld a,e			;62a8
@@ -412,23 +423,23 @@ L_629E:
 	ld l,a			;62b2
 	ld h,000h		;62b3
 	add hl,hl			;62b5
-	ld de,0d5f4h		;62b6
+	ld de,0d5f4h		;62b6   ; de -> el fondo desempaquetado: 11 x 16 bloques
 	add hl,de			;62b9
 	ld e,(hl)			;62ba
 	inc hl			;62bb
 	ld d,(hl)			;62bc
 	ex de,hl			;62bd
-	ld a,(0d92bh)		;62be
+	ld a,(0d92bh)		;62be   ; a = x del bloque especial de la pantalla
 	ld e,a			;62c1
-	ld a,(0d92ch)		;62c2
+	ld a,(0d92ch)		;62c2   ; a = y del bloque especial
 	ld d,a			;62c5
 	exx			;62c6
 	ld b,000h		;62c7
 	exx			;62c9
 	call 04777h		;62ca
-	ld a,(0d92bh)		;62cd
+	ld a,(0d92bh)		;62cd   ; a = x del bloque especial de la pantalla
 	ld e,a			;62d0
-	ld a,(0d92ch)		;62d1
+	ld a,(0d92ch)		;62d1   ; a = y del bloque especial
 	sub 020h		;62d4
 	ld d,a			;62d6
 	ld a,e			;62d7
@@ -440,7 +451,7 @@ L_629E:
 	ld l,a			;62e1
 	ld h,000h		;62e2
 	add hl,hl			;62e4
-	ld de,0d774h		;62e5
+	ld de,0d774h		;62e5   ; de -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,de			;62e8
 	ld e,(hl)			;62e9
 	inc hl			;62ea
@@ -449,9 +460,9 @@ L_629E:
 	ld a,l			;62ee
 	cp 0ffh		;62ef
 	ret z			;62f1
-	ld a,(0d92bh)		;62f2
+	ld a,(0d92bh)		;62f2   ; a = x del bloque especial de la pantalla
 	ld e,a			;62f5
-	ld a,(0d92ch)		;62f6
+	ld a,(0d92ch)		;62f6   ; a = y del bloque especial
 	ld d,a			;62f9
 	exx			;62fa
 	ld b,001h		;62fb
@@ -515,18 +526,18 @@ L_6370:
 L_6379:
 	push de			;6379
 	push hl			;637a
-	ld hl,(0d5eah)		;637b
-	ld (0d5ech),hl		;637e
+	ld hl,(0d5eah)		;637b   ; hl = la tabla de bloques de 16x16 de la fase
+	ld (0d5ech),hl		;637e   ; la tabla de bloques guardada = hl
 	ld hl,05bc3h		;6381
-	ld (0d5eah),hl		;6384
+	ld (0d5eah),hl		;6384   ; la tabla de bloques de 16x16 de la fase = hl
 	pop hl			;6387
 	pop de			;6388
 	exx			;6389
 	ld b,000h		;638a
 	exx			;638c
 	call 04777h		;638d
-	ld hl,(0d5ech)		;6390
-	ld (0d5eah),hl		;6393
+	ld hl,(0d5ech)		;6390   ; hl = la tabla de bloques guardada
+	ld (0d5eah),hl		;6393   ; la tabla de bloques de 16x16 de la fase = hl
 	ret			;6396
 
 ; ----------------------------------------------------------------------
@@ -631,16 +642,16 @@ L_68A7:
 	ld hl,0d910h		;68b8
 	bit 1,(hl)		;68bb
 	jr z,L_68EC		;68bd
-	ld a,(0d913h)		;68bf
+	ld a,(0d913h)		;68bf   ; a = 0x27 al entrar en una pantalla
 	dec a			;68c2
-	ld (0d913h),a		;68c3
+	ld (0d913h),a		;68c3   ; 0x27 al entrar en una pantalla = a
 	jr nz,L_68EC		;68c6
 	res 1,(hl)		;68c8
 L_68CA:
 	ld c,a			;68ca
-	ld a,(0d913h)		;68cb
+	ld a,(0d913h)		;68cb   ; a = 0x27 al entrar en una pantalla
 	dec a			;68ce
-	ld (0d913h),a		;68cf
+	ld (0d913h),a		;68cf   ; 0x27 al entrar en una pantalla = a
 	jr z,L_68E0		;68d2
 	cp 03ch		;68d4
 	jr nc,L_68E8		;68d6
@@ -655,7 +666,7 @@ L_68E0:
 	jr L_68EC		;68e6
 L_68E8:
 	xor a			;68e8
-	ld (0d573h),a		;68e9
+	ld (0d573h),a		;68e9   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 L_68EC:
 	ld hl,0d927h		;68ec
 	inc (hl)			;68ef
@@ -691,7 +702,7 @@ L_6921:
 	ld (0d929h),a		;6925
 	ld b,003h		;6928
 	ld de,00026h		;692a
-	ld ix,0d934h		;692d
+	ld ix,0d934h		;692d   ; ix -> actor 0, byte +1
 L_6931:
 	ld a,(ix+000h)		;6931
 	cp 016h		;6934
@@ -749,12 +760,12 @@ L_6995:
 	ld bc,0043eh		;69a6
 L_69A9:
 	ld a,a			;69a9
-	ld (0d178h),a		;69aa
+	ld (0d178h),a		;69aa   ; peticion de sonido para p01:63E1 = a
 	ret			;69ad
 L_69AE:
 	ret			;69ae
 L_69AF:
-	ld a,(0d573h)		;69af
+	ld a,(0d573h)		;69af   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld b,a			;69b2
 	ld a,(0d90fh)		;69b3
 	bit 0,a		;69b6
@@ -779,7 +790,7 @@ L_69AF:
 	set 5,(hl)		;69e0
 L_69E2:
 	exx			;69e2
-	ld hl,0d958h		;69e3
+	ld hl,0d958h		;69e3   ; hl -> actor 0, byte +25
 	ld de,00026h		;69e6
 	ld b,003h		;69e9
 L_69EB:
@@ -796,9 +807,9 @@ L_69F2:
 	ret			;69fe
 L_69FF:
 	set 5,(hl)		;69ff
-	ld a,(0d573h)		;6a01
+	ld a,(0d573h)		;6a01   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	and 0f3h		;6a04
-	ld (0d573h),a		;6a06
+	ld (0d573h),a		;6a06   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 L_6A09:
 	ret			;6a09
 L_6A0A:
@@ -806,36 +817,36 @@ L_6A0A:
 	set 5,(hl)		;6a0d
 	ld hl,0d904h		;6a0f
 	set 5,(hl)		;6a12
-	ld a,(0d573h)		;6a14
+	ld a,(0d573h)		;6a14   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	and 0fch		;6a17
 	or 002h		;6a19
-	ld (0d573h),a		;6a1b
+	ld (0d573h),a		;6a1b   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ret			;6a1e
 L_6A1F:
 	call 042bah		;6a1f
-	ld a,(0d17dh)		;6a22
+	ld a,(0d17dh)		;6a22   ; a = bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
 	bit 7,a		;6a25
 	ret z			;6a27
-	ld a,(0d181h)		;6a28
+	ld a,(0d181h)		;6a28   ; a = 5 = la demo ha terminado
 	add a,a			;6a2b
 	add a,a			;6a2c
 	add a,a			;6a2d
 	add a,a			;6a2e
 	and 010h		;6a2f
 	or 008h		;6a31
-	ld (0d573h),a		;6a33
+	ld (0d573h),a		;6a33   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ret			;6a36
 L_6A37:
 	xor a			;6a37
 	ld (0d8fah),a		;6a38
 	ld (0d8fbh),a		;6a3b
-	ld a,(0d8fch)		;6a3e
+	ld a,(0d8fch)		;6a3e   ; a = la x de Rastan
 	ld h,a			;6a41
-	ld a,(0d8fdh)		;6a42
+	ld a,(0d8fdh)		;6a42   ; a = la y de Rastan
 	ld l,a			;6a45
 	ld a,(0d904h)		;6a46
 	ld b,a			;6a49
-	ld a,(0d573h)		;6a4a
+	ld a,(0d573h)		;6a4a   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld c,a			;6a4d
 	ld a,(0d90eh)		;6a4e
 	bit 6,a		;6a51
@@ -848,7 +859,7 @@ L_6A37:
 L_6A60:
 	res 5,c		;6a60
 	ld a,c			;6a62
-	ld (0d573h),a		;6a63
+	ld (0d573h),a		;6a63   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 L_6A66:
 	ld a,(0d90fh)		;6a66
 	bit 3,a		;6a69
@@ -883,13 +894,13 @@ L_6A98:
 	jr z,L_6AA9		;6aa6
 	dec h			;6aa8
 L_6AA9:
-	ld a,(0d573h)		;6aa9
+	ld a,(0d573h)		;6aa9   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld c,a			;6aac
 	bit 5,c		;6aad
 	jp nz,L_7175		;6aaf
 	jp L_6E64		;6ab2
 L_6AB5:
-	ld a,(0d573h)		;6ab5
+	ld a,(0d573h)		;6ab5   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld c,a			;6ab8
 	bit 5,b		;6ab9
 	jr nz,L_6AD6		;6abb
@@ -917,21 +928,21 @@ L_6AD6:
 	cp 01ah		;6ae9
 	jr z,L_6AFB		;6aeb
 	xor a			;6aed
-	ld (0d573h),a		;6aee
+	ld (0d573h),a		;6aee   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ret			;6af1
 L_6AF2:
-	ld a,(0d573h)		;6af2
+	ld a,(0d573h)		;6af2   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	and 003h		;6af5
-	ld (0d573h),a		;6af7
+	ld (0d573h),a		;6af7   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ret			;6afa
 L_6AFB:
-	ld a,(0d573h)		;6afb
+	ld a,(0d573h)		;6afb   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	and 001h		;6afe
-	ld (0d573h),a		;6b00
+	ld (0d573h),a		;6b00   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ret			;6b03
 L_6B04:
 	ld a,002h		;6b04
-	ld (0d573h),a		;6b06
+	ld (0d573h),a		;6b06   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ret			;6b09
 L_6B0A:
 	bit 3,c		;6b0a
@@ -1249,13 +1260,13 @@ L_6CF6:
 	ld e,004h		;6d01
 	ld d,008h		;6d03
 L_6D05:
-	ld a,(0d573h)		;6d05
+	ld a,(0d573h)		;6d05   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld c,a			;6d08
 	and d			;6d09
 	jr nz,L_6D14		;6d0a
-	ld a,(0d573h)		;6d0c
+	ld a,(0d573h)		;6d0c   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	or e			;6d0f
-	ld (0d573h),a		;6d10
+	ld (0d573h),a		;6d10   ; los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 	ld c,a			;6d13
 L_6D14:
 	push hl			;6d14
@@ -1267,7 +1278,7 @@ L_6D1E:
 	ld a,(0d90fh)		;6d1e
 	res 1,a		;6d21
 	ld (0d90fh),a		;6d23
-	ld a,(0d573h)		;6d26
+	ld a,(0d573h)		;6d26   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld c,a			;6d29
 	bit 5,b		;6d2a
 	ret nz			;6d2c
@@ -1402,7 +1413,7 @@ L_6DFC:
 L_6E01:
 	pop hl			;6e01
 	pop bc			;6e02
-	ld a,(0d8fdh)		;6e03
+	ld a,(0d8fdh)		;6e03   ; a = la y de Rastan
 	ld l,a			;6e06
 	jp L_7878		;6e07
 L_6E0A:
@@ -1492,7 +1503,7 @@ L_6E86:
 L_6EA3:
 	pop hl			;6ea3
 	pop bc			;6ea4
-	ld a,(0d8fch)		;6ea5
+	ld a,(0d8fch)		;6ea5   ; a = la x de Rastan
 	ld h,a			;6ea8
 	jp L_6F0D		;6ea9
 L_6EAC:
@@ -1540,7 +1551,7 @@ L_6ED8:
 	ld (0d907h),a		;6efe
 	jp L_6F0D		;6f01
 L_6F04:
-	ld a,(0d8fch)		;6f04
+	ld a,(0d8fch)		;6f04   ; a = la x de Rastan
 	ld h,a			;6f07
 	jp L_6F0D		;6f08
 L_6F0B:
@@ -1667,7 +1678,7 @@ L_6FC2:
 	set 4,a		;6fd8
 	set 3,a		;6fda
 	ld (0d90dh),a		;6fdc
-	ld a,(0d8fdh)		;6fdf
+	ld a,(0d8fdh)		;6fdf   ; a = la y de Rastan
 	ld (0d907h),a		;6fe2
 	jp L_7878		;6fe5
 L_6FE8:
@@ -2068,7 +2079,7 @@ L_7297:
 	jp nc,L_72B2		;72ac
 	jp L_72B6		;72af
 L_72B2:
-	ld a,(0d8fch)		;72b2
+	ld a,(0d8fch)		;72b2   ; a = la x de Rastan
 	ld h,a			;72b5
 L_72B6:
 	push bc			;72b6
@@ -2188,7 +2199,7 @@ L_736E:
 	ld de,(0d90bh)		;7377
 	dec de			;737b
 	ld (0d90bh),de		;737c
-	ld a,(0d8fdh)		;7380
+	ld a,(0d8fdh)		;7380   ; a = la y de Rastan
 	ld l,a			;7383
 	ld a,(0d90dh)		;7384
 	set 1,a		;7387
@@ -2203,7 +2214,7 @@ L_739E:
 	ld a,(0d90eh)		;739e
 	bit 0,a		;73a1
 	jr z,L_73C4		;73a3
-	ld a,(0d573h)		;73a5
+	ld a,(0d573h)		;73a5   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld c,a			;73a8
 	bit 5,c		;73a9
 	jr z,L_73C4		;73ab
@@ -2330,7 +2341,7 @@ L_7504:
 	pop hl			;7504
 	pop bc			;7505
 L_7506:
-	ld a,(0d8fch)		;7506
+	ld a,(0d8fch)		;7506   ; a = la x de Rastan
 	ld h,a			;7509
 	ld a,(0d90eh)		;750a
 	set 0,a		;750d
@@ -2339,7 +2350,7 @@ L_7506:
 L_7514:
 	pop hl			;7514
 	pop bc			;7515
-	ld a,(0d8fdh)		;7516
+	ld a,(0d8fdh)		;7516   ; a = la y de Rastan
 	xor l			;7519
 	and 0f0h		;751a
 	jr z,L_7506		;751c
@@ -2775,7 +2786,7 @@ L_77E1:
 	call L_7818		;77f7
 	ret			;77fa
 L_77FB:
-	ld a,(0d573h)		;77fb
+	ld a,(0d573h)		;77fb   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	bit 5,a		;77fe
 	ret z			;7800
 	ld c,a			;7801
@@ -2799,7 +2810,7 @@ L_7818:
 	set 6,a		;7823
 	ld (0d90fh),a		;7825
 	ld a,050h		;7828
-	ld (0d913h),a		;782a
+	ld (0d913h),a		;782a   ; 0x27 al entrar en una pantalla = a
 	exx			;782d
 	ld hl,0d929h		;782e
 	set 7,(hl)		;7831
@@ -2830,9 +2841,9 @@ L_7856:
 	and 0f0h		;7857
 	ld l,a			;7859
 	ld a,h			;785a
-	ld (0d8fch),a		;785b
+	ld (0d8fch),a		;785b   ; la x de Rastan = a
 	ld a,l			;785e
-	ld (0d8fdh),a		;785f
+	ld (0d8fdh),a		;785f   ; la y de Rastan = a
 	xor a			;7862
 	ld (0d90dh),a		;7863
 	ld a,(0d90fh)		;7866
@@ -2848,9 +2859,9 @@ L_7876:
 	pop bc			;7877
 L_7878:
 	ld a,h			;7878
-	ld (0d8fch),a		;7879
+	ld (0d8fch),a		;7879   ; la x de Rastan = a
 	ld a,l			;787c
-	ld (0d8fdh),a		;787d
+	ld (0d8fdh),a		;787d   ; la y de Rastan = a
 	ret			;7880
 
 ; ----------------------------------------------------------------------
@@ -2914,7 +2925,7 @@ DATA_78D1:
 	defb 0d6h,010h,018h,0f5h	; 78d1
 
 ; ======================================================================
-; CODIGO 0x78d5..0x7d8f  (1210 bytes)
+; CODIGO 0x78d5..0x8000  (1835 bytes)
 ; ======================================================================
 
 
@@ -2932,7 +2943,7 @@ L_78D5:
 	ld h,000h		;78e1
 	add hl,bc			;78e3
 	add hl,bc			;78e4
-	ld bc,0d774h		;78e5
+	ld bc,0d774h		;78e5   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;78e8
 	inc hl			;78e9
 	ex af,af'			;78ea
@@ -2984,7 +2995,7 @@ L_791C:
 	jr nc,L_7909		;7928
 	add hl,bc			;792a
 	add hl,bc			;792b
-	ld bc,0d774h		;792c
+	ld bc,0d774h		;792c   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;792f
 	inc hl			;7930
 	ld a,e			;7931
@@ -3022,7 +3033,7 @@ L_794E:
 	ld h,000h		;795a
 	add hl,bc			;795c
 	add hl,bc			;795d
-	ld bc,0d774h		;795e
+	ld bc,0d774h		;795e   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;7961
 	inc hl			;7962
 	jp L_78F7		;7963
@@ -3068,7 +3079,7 @@ L_7993:
 	ld h,000h		;79a1
 	add hl,bc			;79a3
 	add hl,bc			;79a4
-	ld bc,0d774h		;79a5
+	ld bc,0d774h		;79a5   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;79a8
 	inc hl			;79a9
 	ex af,af'			;79aa
@@ -3113,7 +3124,7 @@ L_79D1:
 	ld h,000h		;79df
 	add hl,bc			;79e1
 	add hl,bc			;79e2
-	ld bc,0d774h		;79e3
+	ld bc,0d774h		;79e3   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;79e6
 	inc hl			;79e7
 	jp L_79B7		;79e8
@@ -3141,7 +3152,7 @@ L_79EB:
 	jp nc,L_7909		;7a0a
 	add hl,bc			;7a0d
 	add hl,bc			;7a0e
-	ld bc,0d774h		;7a0f
+	ld bc,0d774h		;7a0f   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;7a12
 	inc hl			;7a13
 	ld a,e			;7a14
@@ -3167,7 +3178,7 @@ L_7A26:
 	and 001h		;7a31
 	ld d,a			;7a33
 	ld e,000h		;7a34
-	ld a,(0d573h)		;7a36
+	ld a,(0d573h)		;7a36   ; a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 	ld h,a			;7a39
 	ld a,(0d90fh)		;7a3a
 	and 020h		;7a3d
@@ -3295,9 +3306,9 @@ L_7B16:
 	ld (0d904h),a		;7b1e
 	ret			;7b21
 L_7B22:
-	ld a,(0d8fdh)		;7b22
+	ld a,(0d8fdh)		;7b22   ; a = la y de Rastan
 	ld l,a			;7b25
-	ld a,(0d8fch)		;7b26
+	ld a,(0d8fch)		;7b26   ; a = la x de Rastan
 	ld h,a			;7b29
 	ld a,(0d8feh)		;7b2a
 	inc a			;7b2d
@@ -3382,12 +3393,12 @@ L_7BB0:
 	ld a,h			;7bb1
 	sub 010h		;7bb2
 	ld h,a			;7bb4
-	ld a,(0d924h)		;7bb5
+	ld a,(0d924h)		;7bb5   ; a = bit 7: el jugador usa la ficha 10
 	or a			;7bb8
 	jp nz,L_7C73		;7bb9
-	ld (0d922h),hl		;7bbc
+	ld (0d922h),hl		;7bbc   ; la y de la ficha 10 del jugador = hl
 	ld a,083h		;7bbf
-	ld (0d924h),a		;7bc1
+	ld (0d924h),a		;7bc1   ; bit 7: el jugador usa la ficha 10 = a
 	jp L_7C73		;7bc4
 L_7BC7:
 	ld a,c			;7bc7
@@ -3444,12 +3455,12 @@ L_7C12:
 	ld a,h			;7c15
 	add a,020h		;7c16
 	ld h,a			;7c18
-	ld a,(0d924h)		;7c19
+	ld a,(0d924h)		;7c19   ; a = bit 7: el jugador usa la ficha 10
 	or a			;7c1c
 	jp nz,L_7C73		;7c1d
-	ld (0d922h),hl		;7c20
+	ld (0d922h),hl		;7c20   ; la y de la ficha 10 del jugador = hl
 	ld a,081h		;7c23
-	ld (0d924h),a		;7c25
+	ld (0d924h),a		;7c25   ; bit 7: el jugador usa la ficha 10 = a
 	jp L_7C73		;7c28
 L_7C2B:
 	ld e,001h		;7c2b
@@ -3462,12 +3473,12 @@ L_7C2B:
 	ld a,(0d919h)		;7c35
 	cp 003h		;7c38
 	jp nz,L_7C73		;7c3a
-	ld a,(0d924h)		;7c3d
+	ld a,(0d924h)		;7c3d   ; a = bit 7: el jugador usa la ficha 10
 	or a			;7c40
 	jp nz,L_7C73		;7c41
-	ld (0d922h),hl		;7c44
+	ld (0d922h),hl		;7c44   ; la y de la ficha 10 del jugador = hl
 	ld a,080h		;7c47
-	ld (0d924h),a		;7c49
+	ld (0d924h),a		;7c49   ; bit 7: el jugador usa la ficha 10 = a
 	jp L_7C73		;7c4c
 L_7C4F:
 	ld e,002h		;7c4f
@@ -3480,12 +3491,12 @@ L_7C4F:
 	ld a,(0d919h)		;7c59
 	cp 003h		;7c5c
 	jp nz,L_7C73		;7c5e
-	ld a,(0d924h)		;7c61
+	ld a,(0d924h)		;7c61   ; a = bit 7: el jugador usa la ficha 10
 	or a			;7c64
 	jp nz,L_7C73		;7c65
-	ld (0d922h),hl		;7c68
+	ld (0d922h),hl		;7c68   ; la y de la ficha 10 del jugador = hl
 	ld a,082h		;7c6b
-	ld (0d924h),a		;7c6d
+	ld (0d924h),a		;7c6d   ; bit 7: el jugador usa la ficha 10 = a
 	jp L_7C73		;7c70
 L_7C73:
 	ld a,(0d919h)		;7c73
@@ -3512,7 +3523,7 @@ L_7C8D:
 	call L_7FF2		;7c98
 	ld b,003h		;7c9b
 	ld de,00026h		;7c9d
-	ld ix,0d933h		;7ca0
+	ld ix,0d933h		;7ca0   ; ix -> los 6 actores de la pantalla
 L_7CA4:
 	ld a,(ix+00fh)		;7ca4
 	or a			;7ca7
@@ -3616,18 +3627,18 @@ L_7D76:
 	cp 02bh		;7d87
 	jp nc,L_7E83		;7d89
 	jp L_7E69		;7d8c
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7d8f..0x7da8  (25 bytes)
-DATA_7D8F:
-	defb 0ddh,07eh,006h,094h,0c6h,01fh,0feh,01dh,0d2h,083h,07eh,0ddh,07eh,007h,095h,0c6h	; 7d8f  .~........~.~...
-	defb 01fh,0feh,017h,0d2h,083h,07eh,0c3h,069h,07eh	; 7d9f  .....~.i~
-
-; ======================================================================
-; CODIGO 0x7da8..0x7e50  (168 bytes)
-; ======================================================================
-
-
+L_7D8F:
+	ld a,(ix+006h)		;7d8f
+	sub h			;7d92
+	add a,01fh		;7d93
+	cp 01dh		;7d95
+	jp nc,L_7E83		;7d97
+	ld a,(ix+007h)		;7d9a
+	sub l			;7d9d
+	add a,01fh		;7d9e
+	cp 017h		;7da0
+	jp nc,L_7E83		;7da2
+	jp L_7E69		;7da5
 L_7DA8:
 	ld a,(ix+006h)		;7da8
 	sub h			;7dab
@@ -3706,18 +3717,18 @@ L_7E37:
 	cp 01eh		;7e48
 	jp nc,L_7E83		;7e4a
 	jp L_7E69		;7e4d
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x7e50..0x7e69  (25 bytes)
-DATA_7E50:
-	defb 0ddh,07eh,006h,094h,0c6h,00eh,0feh,01dh,0d2h,083h,07eh,0ddh,07eh,007h,095h,0c6h	; 7e50  .~........~.~...
-	defb 00ch,0feh,018h,0d2h,083h,07eh,0c3h,069h,07eh	; 7e60  .....~.i~
-
-; ======================================================================
-; CODIGO 0x7e69..0x8000  (407 bytes)
-; ======================================================================
-
-
+L_7E50:
+	ld a,(ix+006h)		;7e50
+	sub h			;7e53
+	add a,00eh		;7e54
+	cp 01dh		;7e56
+	jp nc,L_7E83		;7e58
+	ld a,(ix+007h)		;7e5b
+	sub l			;7e5e
+	add a,00ch		;7e5f
+	cp 018h		;7e61
+	jp nc,L_7E83		;7e63
+	jp L_7E69		;7e66
 L_7E69:
 	ld a,(ix+00fh)		;7e69
 	sub c			;7e6c
@@ -3746,7 +3757,7 @@ L_7E83:
 L_7E96:
 	ld b,008h		;7e96
 	ld de,00026h		;7e98
-	ld ix,0da20h		;7e9b
+	ld ix,0da20h		;7e9b   ; ix -> los 8 enemigos de la pantalla
 L_7E9F:
 	ld a,(ix+000h)		;7e9f
 	cp 024h		;7ea2
@@ -3808,9 +3819,9 @@ L_7F00:
 	add ix,de		;7f00
 	djnz L_7E9F		;7f02
 L_7F04:
-	ld hl,(0d922h)		;7f04
+	ld hl,(0d922h)		;7f04   ; hl = la y de la ficha 10 del jugador
 	ld c,030h		;7f07
-	ld a,(0d924h)		;7f09
+	ld a,(0d924h)		;7f09   ; a = bit 7: el jugador usa la ficha 10
 	bit 7,a		;7f0c
 	ret z			;7f0e
 	ld a,h			;7f0f
@@ -3861,13 +3872,13 @@ L_7F4C:
 	jr nz,L_7F60		;7f59
 L_7F5B:
 	xor a			;7f5b
-	ld (0d924h),a		;7f5c
+	ld (0d924h),a		;7f5c   ; bit 7: el jugador usa la ficha 10 = a
 	ret			;7f5f
 L_7F60:
 	ld b,003h		;7f60
 	ld c,030h		;7f62
 	ld de,00026h		;7f64
-	ld ix,0d933h		;7f67
+	ld ix,0d933h		;7f67   ; ix -> los 6 actores de la pantalla
 L_7F6B:
 	ld a,(ix+000h)		;7f6b
 	or a			;7f6e
@@ -3900,7 +3911,7 @@ L_7FA0:
 L_7FA6:
 	add ix,de		;7fa6
 	djnz L_7F6B		;7fa8
-	ld a,(0d924h)		;7faa
+	ld a,(0d924h)		;7faa   ; a = bit 7: el jugador usa la ficha 10
 	and 003h		;7fad
 	cp 001h		;7faf
 	jr c,L_7FBF		;7fb1
@@ -3926,7 +3937,7 @@ L_7FCB:
 	add a,003h		;7fcc
 	ld l,a			;7fce
 L_7FCF:
-	ld (0d922h),hl		;7fcf
+	ld (0d922h),hl		;7fcf   ; la y de la ficha 10 del jugador = hl
 	ret			;7fd2
 L_7FD3:
 	bit 0,b		;7fd3
@@ -3950,11 +3961,11 @@ L_7FE6:
 	ret nz			;7fee
 	jp L_7F04		;7fef
 L_7FF2:
-	ld a,(0d92dh)		;7ff2
+	ld a,(0d92dh)		;7ff2   ; a = cual es el bloque especial
 	or a			;7ff5
 	ret z			;7ff6
 	cp 004h		;7ff7
 	ret nc			;7ff9
-	ld a,(0d92bh)		;7ffa
+	ld a,(0d92bh)		;7ffa   ; a = x del bloque especial de la pantalla
 	sub h			;7ffd
 	add a,00eh		;7ffe

@@ -1,0 +1,118 @@
+
+# --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x6017 a = la x de Rastan
+C 0x601a lo que se suma a la x de los sprites = a
+C 0x601d a = la y de Rastan
+C 0x6020 lo que se suma a la y de los sprites = a
+C 0x603d a = la x de Rastan
+C 0x6040 lo que se suma a la x de los sprites = a
+C 0x6043 a = la y de Rastan
+C 0x6046 lo que se suma a la y de los sprites = a
+C 0x6055 ix -> las 32 fichas de sprite
+C 0x6065 hl -> bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
+C 0x60cd la lista o la cadena que se esta pintando = hl
+C 0x60e2 la lista o la cadena que se esta pintando = hl
+C 0x6187 hl -> ficha de sprite 2
+C 0x6190 copia del registro del mapper de 0x8000 = a
+C 0x6193 registro del mapper: banco A en 0x8000
+C 0x61bf hl -> ficha de sprite 6
+C 0x61c8 copia del registro del mapper de 0x8000 = a
+C 0x61cb registro del mapper: banco A en 0x8000
+C 0x61f4 hl -> las 32 fichas de sprite
+C 0x61fd copia del registro del mapper de 0x8000 = a
+C 0x6200 registro del mapper: banco A en 0x8000
+C 0x6222 de -> el fondo desempaquetado: 11 x 16 bloques
+C 0x629e a = x del bloque especial de la pantalla
+C 0x62a2 a = y del bloque especial
+C 0x62b6 de -> el fondo desempaquetado: 11 x 16 bloques
+C 0x62be a = x del bloque especial de la pantalla
+C 0x62c2 a = y del bloque especial
+C 0x62cd a = x del bloque especial de la pantalla
+C 0x62d1 a = y del bloque especial
+C 0x62e5 de -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x62f2 a = x del bloque especial de la pantalla
+C 0x62f6 a = y del bloque especial
+C 0x637b hl = la tabla de bloques de 16x16 de la fase
+C 0x637e la tabla de bloques guardada = hl
+C 0x6384 la tabla de bloques de 16x16 de la fase = hl
+C 0x6390 hl = la tabla de bloques guardada
+C 0x6393 la tabla de bloques de 16x16 de la fase = hl
+C 0x68bf a = 0x27 al entrar en una pantalla
+C 0x68c3 0x27 al entrar en una pantalla = a
+C 0x68cb a = 0x27 al entrar en una pantalla
+C 0x68cf 0x27 al entrar en una pantalla = a
+C 0x68e9 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x692d ix -> actor 0, byte +1
+C 0x69aa peticion de sonido para p01:63E1 = a
+C 0x69af a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x69e3 hl -> actor 0, byte +25
+C 0x6a01 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6a06 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6a14 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6a1b los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6a22 a = bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
+C 0x6a28 a = 5 = la demo ha terminado
+C 0x6a33 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6a3e a = la x de Rastan
+C 0x6a42 a = la y de Rastan
+C 0x6a4a a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6a63 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6aa9 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6ab5 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6aee los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6af2 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6af7 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6afb a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6b00 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6b06 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6d05 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6d0c a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6d10 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6d26 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6e03 a = la y de Rastan
+C 0x6ea5 a = la x de Rastan
+C 0x6f04 a = la x de Rastan
+C 0x6fdf a = la y de Rastan
+C 0x72b2 a = la x de Rastan
+C 0x7380 a = la y de Rastan
+C 0x73a5 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x7506 a = la x de Rastan
+C 0x7516 a = la y de Rastan
+C 0x77fb a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x782a 0x27 al entrar en una pantalla = a
+C 0x785b la x de Rastan = a
+C 0x785f la y de Rastan = a
+C 0x7879 la x de Rastan = a
+C 0x787d la y de Rastan = a
+C 0x78e5 bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x792c bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x795e bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x79a5 bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x79e3 bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x7a0f bc -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x7a36 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x7b22 a = la y de Rastan
+C 0x7b26 a = la x de Rastan
+C 0x7bb5 a = bit 7: el jugador usa la ficha 10
+C 0x7bbc la y de la ficha 10 del jugador = hl
+C 0x7bc1 bit 7: el jugador usa la ficha 10 = a
+C 0x7c19 a = bit 7: el jugador usa la ficha 10
+C 0x7c20 la y de la ficha 10 del jugador = hl
+C 0x7c25 bit 7: el jugador usa la ficha 10 = a
+C 0x7c3d a = bit 7: el jugador usa la ficha 10
+C 0x7c44 la y de la ficha 10 del jugador = hl
+C 0x7c49 bit 7: el jugador usa la ficha 10 = a
+C 0x7c61 a = bit 7: el jugador usa la ficha 10
+C 0x7c68 la y de la ficha 10 del jugador = hl
+C 0x7c6d bit 7: el jugador usa la ficha 10 = a
+C 0x7ca0 ix -> los 6 actores de la pantalla
+C 0x7e9b ix -> los 8 enemigos de la pantalla
+C 0x7f04 hl = la y de la ficha 10 del jugador
+C 0x7f09 a = bit 7: el jugador usa la ficha 10
+C 0x7f5c bit 7: el jugador usa la ficha 10 = a
+C 0x7f67 ix -> los 6 actores de la pantalla
+C 0x7faa a = bit 7: el jugador usa la ficha 10
+C 0x7fcf la y de la ficha 10 del jugador = hl
+C 0x7ff2 a = cual es el bloque especial
+C 0x7ffa a = x del bloque especial de la pantalla
+# --- fin de anota ---

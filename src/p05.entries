@@ -3,3 +3,4 @@
 # llevando la cuenta de los bancos. Los saltos dentro del propio
 # banco los encuentra z80trace.py solo.
 0x6000   # call desde p00:57AA
+0x634b   # huerfana: nadie la llama

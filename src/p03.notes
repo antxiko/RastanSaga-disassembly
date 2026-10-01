@@ -1,0 +1,94 @@
+
+# --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x6000 a = la fase
+C 0x6073 ix -> los 6 actores de la pantalla
+C 0x6084 a = cual es el bloque especial
+C 0x609c x del bloque especial de la pantalla = a
+C 0x60a6 y del bloque especial = a
+C 0x60b9 cual es el bloque especial = a
+C 0x6143 peticion de sonido para p01:63E1 = a
+C 0x620d a = actor 5, byte +15
+C 0x628b a = actor 4, byte +15
+C 0x62cc ix -> actor 5
+C 0x62ed actor 5, byte +10 = hl
+C 0x6417 a = la y de Rastan
+C 0x6441 0x27 al entrar en una pantalla = a
+C 0x6648 peticion de sonido para p01:63E1 = a
+C 0x669c peticion de sonido para p01:63E1 = a
+C 0x66fd a = la y de Rastan
+C 0x6716 a = la y de Rastan
+C 0x67c1 a = actor 3, byte +15
+C 0x68d0 a = actor 3, byte +15
+C 0x68f6 a = actor 3, byte +15
+C 0x69b2 ix -> actor 3
+C 0x69c9 peticion de sonido para p01:63E1 = a
+C 0x69d6 actor 3, byte +10 = hl
+C 0x6ab7 a = la x de Rastan
+C 0x6abb a = la y de Rastan
+C 0x6adb a = la x de Rastan
+C 0x6adf a = la y de Rastan
+C 0x6b07 a = la x de Rastan
+C 0x6b0b a = la y de Rastan
+C 0x6b34 a = la x de Rastan
+C 0x6b38 a = la y de Rastan
+C 0x6b60 a = actor 5, byte +15
+C 0x6bd8 a = actor 5, byte +15
+C 0x6c00 ix -> actor 5
+C 0x6c73 a = la x de Rastan
+C 0x6cb2 ix -> actor 5
+C 0x6cc0 ix -> actor 5
+C 0x6ce3 a = actor 4, byte +15
+C 0x6d3c a = actor 4, byte +15
+C 0x6da6 a = actor 4, byte +15
+C 0x6dd0 ix -> actor 4
+C 0x6e44 a = la x de Rastan
+C 0x6e7d ix -> actor 4
+C 0x6e8b ix -> actor 4
+C 0x736f a = actor 3, byte +15
+C 0x73e8 a = actor 3, byte +15
+C 0x740a a = actor 3, byte +15
+C 0x7426 ix -> actor 3
+C 0x74a7 a = la x de Rastan
+C 0x74e4 ix -> actor 3
+C 0x74f2 ix -> actor 3
+C 0x76f8 a = actor 4, byte +15
+C 0x7700 a = actor 4, byte +15
+C 0x7779 a = actor 4, byte +15
+C 0x7793 a = actor 4, byte +15
+C 0x77b5 ix -> actor 4
+C 0x7835 a = la x de Rastan
+C 0x7870 ix -> actor 4
+C 0x78b4 a = actor 4, byte +15
+C 0x78bc a = actor 4, byte +15
+C 0x792d a = actor 4, byte +15
+C 0x7947 a = actor 4, byte +15
+C 0x796a ix -> actor 4
+C 0x79ea a = la x de Rastan
+C 0x7a25 ix -> actor 4
+C 0x7a40 a = actor 0, byte +3
+C 0x7a45 a = y del bloque especial
+C 0x7a4a a = actor 0, byte +4
+C 0x7a4f a = cual es el bloque especial
+C 0x7b29 a = la x de Rastan
+C 0x7b90 a = la y de Rastan
+C 0x7cc6 a = la x de Rastan
+C 0x7cdd a = la x de Rastan
+C 0x7cfb a = la y de Rastan
+C 0x7d76 de -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x7f21 actor 0, byte +A = a
+C 0x7f26 actor 0, byte +B = a
+C 0x7f3e a = los 6 actores de la pantalla
+C 0x7f4e a = actor 0, byte +1
+C 0x7f5d hl -> ficha de sprite 17
+C 0x7f60 iy -> actor 0, byte +A
+C 0x7f64 a = actor 0, byte +6
+C 0x7f67 lo que se suma a la x de los sprites = a
+C 0x7f6a a = actor 0, byte +7
+C 0x7f6d lo que se suma a la y de los sprites = a
+C 0x7fda a = los 6 actores de la pantalla
+C 0x7fe3 peticion de sonido para p01:640F = a
+C 0x7fe8 los 6 actores de la pantalla = a
+C 0x7fec actor 0, byte +1 = a
+C 0x7ff1 actor 0, byte +A = a
+C 0x7ff6 actor 0, byte +B = a
+# --- fin de anota ---

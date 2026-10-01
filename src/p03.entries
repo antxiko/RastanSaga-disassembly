@@ -13,32 +13,57 @@
 0x6134   # tabla de p03:605B
 0x61aa   # tabla de p03:605B
 0x6206   # tabla de p03:605B
+0x640f   # huerfana: nadie la llama
+0x6417   # huerfana: nadie la llama
 0x645e   # tabla de p03:605B
+0x65c2   # huerfana: nadie la llama
 0x6639   # tabla de p03:605B
 0x668d   # tabla de p03:605B
+0x672e   # huerfana: nadie la llama
 0x6745   # tabla de p03:605B
 0x67ba   # tabla de p03:605B
+0x6932   # huerfana: nadie la llama
 0x69e3   # jp cc desde p04:8B84
 0x6a29   # jp desde p04:8B7D
 0x6aff   # call desde p04:86FD
 0x6b2c   # call desde p04:8717
 0x6b59   # tabla de p03:605B
+0x6cc0   # huerfana: nadie la llama
 0x6cdc   # tabla de p03:605B
+0x6dc6   # huerfana: nadie la llama
+0x6dfd   # huerfana: nadie la llama
+0x6e8b   # huerfana: nadie la llama
 0x6e95   # tabla de p03:605B
+0x7003   # huerfana: nadie la llama
 0x7076   # tabla de p03:605B
 0x70c6   # tabla de p03:605B
 0x717d   # tabla de p03:605B
+0x72d2   # huerfana: nadie la llama
 0x7368   # tabla de p03:605B
+0x7456   # huerfana: nadie la llama
+0x74f2   # huerfana: nadie la llama
 0x74fc   # tabla de p03:605B
+0x7678   # huerfana: nadie la llama
 0x76f1   # tabla de p03:605B
+0x7768   # huerfana: nadie la llama
+0x77e8   # huerfana: nadie la llama
 0x78ad   # tabla de p03:605B
-0x7b29   # call desde p04:8804
+0x794f   # huerfana: nadie la llama
+0x799d   # huerfana: nadie la llama
+0x7a3e   # huerfana: nadie la llama
+0x7b29   # call desde p04:8386
+0x7c46   # huerfana: nadie la llama
+0x7c74   # huerfana: nadie la llama
 0x7cc6   # call desde p04:881A
+0x7d23   # huerfana: nadie la llama
 0x7d56   # call desde p04:811A
-0x7e18   # call desde p04:8A3D
+0x7e18   # call desde p04:88BA
 0x7e5a   # jp cc desde p04:8A2E
+0x7e63   # huerfana: nadie la llama
+0x7e71   # huerfana: nadie la llama
+0x7e7a   # huerfana: nadie la llama
 0x7e83   # call desde p04:88FD
 0x7ebd   # call desde p04:82CE
 0x7f1f   # call desde p04:89FE
-0x7f3e   # jp desde p04:8A03
+0x7f3e   # jp desde p04:8900
 0x7fda   # jp cc desde p04:89D7

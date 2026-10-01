@@ -2,6 +2,10 @@
 # (`make semillas`), que sigue el flujo por el cartucho entero
 # llevando la cuenta de los bancos. Los saltos dentro del propio
 # banco los encuentra z80trace.py solo.
+!texto 0x4612   # detras del call, una cadena acabada en 0
 0x6000   # call desde p00:570B
+0x60b3   # huerfana: nadie la llama
 0x629e   # call desde p07:8076
 0x7818   # call desde p07:8403
+0x7d8f   # huerfana: nadie la llama
+0x7e50   # huerfana: nadie la llama

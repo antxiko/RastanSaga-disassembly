@@ -81,7 +81,7 @@ DATA_605F:
 	defb 012h,000h,014h,000h,015h,03bh,016h,005h	; 606f  .....;..
 
 ; ======================================================================
-; CODIGO 0x6077..0x646c  (1013 bytes)
+; CODIGO 0x6077..0x6478  (1025 bytes)
 ; ======================================================================
 
 
@@ -94,21 +94,21 @@ L_6077:
 	ld bc,0ffffh		;6084
 	call 0016bh		;6087   ; BIOS BIGFIL - Same function as FILVRM (with 16-bit VRAM-address)
 	ld a,012h		;608a
-	ld (0d191h),a		;608c
-	ld (077f8h),a		;608f
+	ld (0d191h),a		;608c   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;608f   ; registro del mapper: banco A en 0x8000
 	ld a,013h		;6092
-	ld (0d192h),a		;6094
-	ld (07ff8h),a		;6097
+	ld (0d192h),a		;6094   ; copia del registro del mapper de 0xA000 = a
+	ld (07ff8h),a		;6097   ; registro del mapper: banco A en 0xA000
 	ld hl,08000h		;609a
 	ld de,00000h		;609d
 	ld bc,03fffh		;60a0
 	call 0005ch		;60a3   ; BIOS LDIRVM - Block transfers to VRAM from memory
 	ld a,014h		;60a6
-	ld (0d191h),a		;60a8
-	ld (077f8h),a		;60ab
+	ld (0d191h),a		;60a8   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;60ab   ; registro del mapper: banco A en 0x8000
 	ld a,015h		;60ae
-	ld (0d192h),a		;60b0
-	ld (07ff8h),a		;60b3
+	ld (0d192h),a		;60b0   ; copia del registro del mapper de 0xA000 = a
+	ld (07ff8h),a		;60b3   ; registro del mapper: banco A en 0xA000
 	ld hl,08000h		;60b6
 	ld de,04000h		;60b9
 	ld bc,03fffh		;60bc
@@ -126,21 +126,21 @@ L_6077:
 	ld bc,08000h		;60da
 	call 044f1h		;60dd
 	ld a,016h		;60e0
-	ld (0d191h),a		;60e2
-	ld (077f8h),a		;60e5
+	ld (0d191h),a		;60e2   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;60e5   ; registro del mapper: banco A en 0x8000
 	ld a,017h		;60e8
-	ld (0d192h),a		;60ea
-	ld (07ff8h),a		;60ed
+	ld (0d192h),a		;60ea   ; copia del registro del mapper de 0xA000 = a
+	ld (07ff8h),a		;60ed   ; registro del mapper: banco A en 0xA000
 	ld hl,08000h		;60f0
 	ld de,00000h		;60f3
 	ld bc,03fffh		;60f6
 	call 0005ch		;60f9   ; BIOS LDIRVM - Block transfers to VRAM from memory
 	ld a,018h		;60fc
-	ld (0d191h),a		;60fe
-	ld (077f8h),a		;6101
+	ld (0d191h),a		;60fe   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;6101   ; registro del mapper: banco A en 0x8000
 	ld a,019h		;6104
-	ld (0d192h),a		;6106
-	ld (07ff8h),a		;6109
+	ld (0d192h),a		;6106   ; copia del registro del mapper de 0xA000 = a
+	ld (07ff8h),a		;6109   ; registro del mapper: banco A en 0xA000
 	ld hl,08000h		;610c
 	ld de,04000h		;610f
 	ld bc,03fffh		;6112
@@ -158,13 +158,13 @@ L_6077:
 	ld bc,08000h		;6130
 	call 044f1h		;6133
 	ld a,010h		;6136
-	ld (0d191h),a		;6138
-	ld (077f8h),a		;613b
+	ld (0d191h),a		;6138   ; copia del registro del mapper de 0x8000 = a
+	ld (077f8h),a		;613b   ; registro del mapper: banco A en 0x8000
 	ld a,011h		;613e
-	ld (0d192h),a		;6140
-	ld (07ff8h),a		;6143
+	ld (0d192h),a		;6140   ; copia del registro del mapper de 0xA000 = a
+	ld (07ff8h),a		;6143   ; registro del mapper: banco A en 0xA000
 	ld hl,08000h		;6146
-	ld de,0c000h		;6149
+	ld de,0c000h		;6149   ; de -> contador de la tarea 0
 	ld bc,03fffh		;614c
 	call 0005ch		;614f   ; BIOS LDIRVM - Block transfers to VRAM from memory
 	ret			;6152
@@ -175,7 +175,7 @@ L_6153:
 	ld hl,0d16bh		;6158
 	ld b,003h		;615b
 L_615D:
-	ld a,(0d067h)		;615d
+	ld a,(0d067h)		;615d   ; a = 3 al empezar
 	add a,(hl)			;6160
 	dec hl			;6161
 	jp p,L_6166		;6162
@@ -640,16 +640,21 @@ L_6455:
 	pop de			;6469
 	pop hl			;646a
 	ret			;646b
+L_646C:
+	ld a,080h		;646c
+	ld (0d069h),a		;646e
+	ld a,007h		;6471
+	ld e,0bfh		;6473
+	jp L_64C4		;6475
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x646c..0x64c4  (88 bytes)
-DATA_646C:
-	defb 03eh,080h,032h,069h,0d0h,03eh,007h,01eh,0bfh,0c3h,0c4h,064h,097h,032h,069h,0d0h	; 646c  >.2i.>.....d.2i.
-	defb 0c9h,03eh,001h,018h,0f8h,0ffh,000h,001h,00bh,001h,000h,001h,001h,000h,001h,06ah	; 647c  .>.............j
-	defb 0d0h,0c1h,064h,0c1h,064h,0ffh,0c1h,001h,00bh,001h,000h,001h,001h,000h,001h,076h	; 648c  ..d.d..........v
-	defb 0d0h,0c1h,064h,0c1h,064h,0ffh,002h,001h,00bh,001h,000h,001h,001h,000h,001h,082h	; 649c  ..d.d...........
-	defb 0d0h,0c1h,064h,0c1h,064h,0ffh,001h,001h,00bh,001h,000h,001h,001h,000h,001h,06ch	; 64ac  ..d.d..........l
-	defb 0d1h,0c1h,064h,0c1h,064h,0f0h,000h,000h	; 64bc  ..d.d...
+; DATOS sin identificar  0x6478..0x64c4  (76 bytes)
+DATA_6478:
+	defb 097h,032h,069h,0d0h,0c9h,03eh,001h,018h,0f8h,0ffh,000h,001h,00bh,001h,000h,001h	; 6478  .2i..>..........
+	defb 001h,000h,001h,06ah,0d0h,0c1h,064h,0c1h,064h,0ffh,0c1h,001h,00bh,001h,000h,001h	; 6488  ...j..d.d.......
+	defb 001h,000h,001h,076h,0d0h,0c1h,064h,0c1h,064h,0ffh,002h,001h,00bh,001h,000h,001h	; 6498  ...v..d.d.......
+	defb 001h,000h,001h,082h,0d0h,0c1h,064h,0c1h,064h,0ffh,001h,001h,00bh,001h,000h,001h	; 64a8  ......d.d.......
+	defb 001h,000h,001h,06ch,0d1h,0c1h,064h,0c1h,064h,0f0h,000h,000h	; 64b8  ...l..d.d...
 
 ; ======================================================================
 ; CODIGO 0x64c4..0x64cc  (8 bytes)

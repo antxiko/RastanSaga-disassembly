@@ -25,12 +25,12 @@ l8094h:	equ 0x08094
 L_8000:
 	cp 01dh		;8000
 	ret nc			;8002
-	ld a,(0d92ch)		;8003
+	ld a,(0d92ch)		;8003   ; a = y del bloque especial
 	sub l			;8006
 	add a,00eh		;8007
 	cp 01dh		;8009
 	ret nc			;800b
-	ld a,(0d92dh)		;800c
+	ld a,(0d92dh)		;800c   ; a = cual es el bloque especial
 	cp 001h		;800f
 	jr z,L_8026		;8011
 	cp 002h		;8013
@@ -87,7 +87,7 @@ L_8063:
 	ld bc,00000h		;806c
 	call L_8D0B		;806f
 	xor a			;8072
-	ld (0d92dh),a		;8073
+	ld (0d92dh),a		;8073   ; cual es el bloque especial = a
 	call 0629eh		;8076
 	pop hl			;8079
 	pop bc			;807a
@@ -122,7 +122,7 @@ DATA_8096:
 	defb 008h,008h,00ch,000h,00ch,00ch,020h,000h,030h,030h,030h,000h,034h,034h,034h,000h	; 80d6  ...... .000.444.
 
 ; ======================================================================
-; CODIGO 0x80e6..0x82ca  (484 bytes)
+; CODIGO 0x80e6..0x8407  (801 bytes)
 ; ======================================================================
 
 
@@ -142,32 +142,32 @@ L_80E6:
 	ld h,000h		;80f7
 	add hl,bc			;80f9
 	add hl,bc			;80fa
-	ld bc,0d774h		;80fb
+	ld bc,0d774h		;80fb   ; bc -> lo de delante desempaquetado: 11 x 16 bloques
 	add hl,bc			;80fe
 	inc hl			;80ff
 	ld a,(hl)			;8100
 	and 0f0h		;8101
 	ret			;8103
 L_8104:
-	ld a,(0d8fch)		;8104
+	ld a,(0d8fch)		;8104   ; a = la x de Rastan
 	ld h,a			;8107
-	ld a,(0d8fdh)		;8108
+	ld a,(0d8fdh)		;8108   ; a = la y de Rastan
 	ld l,a			;810b
-	ld ix,0da20h		;810c
+	ld ix,0da20h		;810c   ; ix -> los 8 enemigos de la pantalla
 	call L_8632		;8110
-	ld ix,0da46h		;8113
+	ld ix,0da46h		;8113   ; ix -> enemigo 1
 	call L_8632		;8117
-	ld ix,0da6ch		;811a
+	ld ix,0da6ch		;811a   ; ix -> enemigo 2
 	call L_8632		;811e
-	ld ix,0da92h		;8121
+	ld ix,0da92h		;8121   ; ix -> enemigo 3
 	call L_8632		;8125
-	ld ix,0dab8h		;8128
+	ld ix,0dab8h		;8128   ; ix -> enemigo 4
 	call L_8632		;812c
-	ld ix,0dadeh		;812f
+	ld ix,0dadeh		;812f   ; ix -> enemigo 5
 	call L_8632		;8133
-	ld ix,0db04h		;8136
+	ld ix,0db04h		;8136   ; ix -> enemigo 6
 	call L_8632		;813a
-	ld ix,0db2ah		;813d
+	ld ix,0db2ah		;813d   ; ix -> enemigo 7
 	call L_8632		;8141
 	call L_85F6		;8144
 	call L_8BC6		;8147
@@ -193,7 +193,7 @@ L_816B:
 	call L_8172		;816e
 	ret			;8171
 L_8172:
-	ld ix,0d933h		;8172
+	ld ix,0d933h		;8172   ; ix -> los 6 actores de la pantalla
 	ld a,003h		;8176
 	ld c,000h		;8178
 L_817A:
@@ -361,33 +361,125 @@ L_82BE:
 	cp 031h		;82c2
 	jp nc,L_83F6		;82c4
 	jp L_83D0		;82c7
-
-; ----------------------------------------------------------------------
-; DATOS sin identificar  0x82ca..0x83d0  (262 bytes)
-DATA_82CA:
-	defb 0ddh,07eh,001h,0e6h,01eh,0feh,002h,0dah,010h,083h,0cah,014h,083h,0feh,008h,0dah	; 82ca  .~..............
-	defb 054h,083h,0cah,0f6h,083h,0feh,00ch,0dah,073h,083h,0cah,092h,083h,0feh,00eh,0cah	; 82da  T.......s.......
-	defb 0b1h,083h,0feh,014h,0c2h,0f6h,083h,0ddh,07eh,006h,094h,0c6h,013h,0feh,017h,0d2h	; 82ea  ........~.......
-	defb 0f6h,083h,0ddh,07eh,007h,095h,0c6h,007h,0feh,01fh,0d2h,0f6h,083h,0ddh,0cbh,025h	; 82fa  ...~...........%
-	defb 0feh,016h,00ch,0c3h,0d0h,083h,016h,00ch,018h,002h,016h,018h,0ddh,07eh,006h,094h	; 830a  .............~..
-	defb 0c6h,013h,0feh,017h,0d2h,0f6h,083h,0ddh,07eh,007h,095h,0c6h,007h,0feh,01fh,0d2h	; 831a  ........~.......
-	defb 0f6h,083h,0ddh,0cbh,025h,0feh,03ah,01ah,0d9h,0b7h,028h,010h,0afh,032h,01ah,0d9h	; 832a  ....%.:...(..2..
-	defb 03ah,005h,0d9h,0e6h,0fch,032h,005h,0d9h,0afh,032h,019h,0d9h,03ah,026h,0d9h,0b7h	; 833a  :....2...2..:&..
-	defb 0cah,0d0h,083h,0afh,032h,026h,0d9h,0c3h,0d0h,083h,0ddh,07eh,006h,094h,0c6h,012h	; 834a  ....2&.....~....
-	defb 0feh,012h,0d2h,0f6h,083h,0ddh,07eh,007h,095h,0c6h,015h,0feh,01bh,0d2h,0f6h,083h	; 835a  ......~.........
-	defb 0ddh,0cbh,025h,0feh,016h,010h,0c3h,0d0h,083h,0ddh,07eh,006h,094h,0c6h,012h,0feh	; 836a  ..%.......~.....
-	defb 012h,0d2h,0f6h,083h,0ddh,07eh,007h,095h,0c6h,007h,0feh,01fh,0d2h,0f6h,083h,0ddh	; 837a  .....~..........
-	defb 0cbh,025h,0feh,016h,018h,0c3h,0d0h,083h,0ddh,07eh,006h,094h,0c6h,012h,0feh,012h	; 838a  .%.......~......
-	defb 0d2h,0f6h,083h,0ddh,07eh,007h,095h,0c6h,007h,0feh,01fh,0d2h,0f6h,083h,0ddh,0cbh	; 839a  ....~...........
-	defb 025h,0feh,016h,008h,0c3h,0d0h,083h,0ddh,07eh,006h,094h,0c6h,013h,0feh,017h,0d2h	; 83aa  %.......~.......
-	defb 0f6h,083h,0ddh,07eh,007h,095h,0c6h,007h,0feh,01fh,0d2h,0f6h,083h,0ddh,0cbh,025h	; 83ba  ...~...........%
-	defb 0feh,016h,010h,0c3h,0d0h,083h	; 83ca
-
-; ======================================================================
-; CODIGO 0x83d0..0x8407  (55 bytes)
-; ======================================================================
-
-
+L_82CA:
+	ld a,(ix+001h)		;82ca
+	and 01eh		;82cd
+	cp 002h		;82cf
+	jp c,L_8310		;82d1
+	jp z,L_8314		;82d4
+	cp 008h		;82d7
+	jp c,L_8354		;82d9
+	jp z,L_83F6		;82dc
+	cp 00ch		;82df
+	jp c,L_8373		;82e1
+	jp z,L_8392		;82e4
+	cp 00eh		;82e7
+	jp z,L_83B1		;82e9
+	cp 014h		;82ec
+	jp nz,L_83F6		;82ee
+	ld a,(ix+006h)		;82f1
+	sub h			;82f4
+	add a,013h		;82f5
+	cp 017h		;82f7
+	jp nc,L_83F6		;82f9
+	ld a,(ix+007h)		;82fc
+	sub l			;82ff
+	add a,007h		;8300
+	cp 01fh		;8302
+	jp nc,L_83F6		;8304
+	set 7,(ix+025h)		;8307
+	ld d,00ch		;830b
+	jp L_83D0		;830d
+L_8310:
+	ld d,00ch		;8310
+	jr L_8316		;8312
+L_8314:
+	ld d,018h		;8314
+L_8316:
+	ld a,(ix+006h)		;8316
+	sub h			;8319
+	add a,013h		;831a
+	cp 017h		;831c
+	jp nc,L_83F6		;831e
+	ld a,(ix+007h)		;8321
+	sub l			;8324
+	add a,007h		;8325
+	cp 01fh		;8327
+	jp nc,L_83F6		;8329
+	set 7,(ix+025h)		;832c
+	ld a,(0d91ah)		;8330
+	or a			;8333
+	jr z,L_8346		;8334
+	xor a			;8336
+	ld (0d91ah),a		;8337
+	ld a,(0d905h)		;833a
+	and 0fch		;833d
+	ld (0d905h),a		;833f
+	xor a			;8342
+	ld (0d919h),a		;8343
+L_8346:
+	ld a,(0d926h)		;8346
+	or a			;8349
+	jp z,L_83D0		;834a
+	xor a			;834d
+	ld (0d926h),a		;834e
+	jp L_83D0		;8351
+L_8354:
+	ld a,(ix+006h)		;8354
+	sub h			;8357
+	add a,012h		;8358
+	cp 012h		;835a
+	jp nc,L_83F6		;835c
+	ld a,(ix+007h)		;835f
+	sub l			;8362
+	add a,015h		;8363
+	cp 01bh		;8365
+	jp nc,L_83F6		;8367
+	set 7,(ix+025h)		;836a
+	ld d,010h		;836e
+	jp L_83D0		;8370
+L_8373:
+	ld a,(ix+006h)		;8373
+	sub h			;8376
+	add a,012h		;8377
+	cp 012h		;8379
+	jp nc,L_83F6		;837b
+	ld a,(ix+007h)		;837e
+	sub l			;8381
+	add a,007h		;8382
+	cp 01fh		;8384
+	jp nc,L_83F6		;8386
+	set 7,(ix+025h)		;8389
+	ld d,018h		;838d
+	jp L_83D0		;838f
+L_8392:
+	ld a,(ix+006h)		;8392
+	sub h			;8395
+	add a,012h		;8396
+	cp 012h		;8398
+	jp nc,L_83F6		;839a
+	ld a,(ix+007h)		;839d
+	sub l			;83a0
+	add a,007h		;83a1
+	cp 01fh		;83a3
+	jp nc,L_83F6		;83a5
+	set 7,(ix+025h)		;83a8
+	ld d,008h		;83ac
+	jp L_83D0		;83ae
+L_83B1:
+	ld a,(ix+006h)		;83b1
+	sub h			;83b4
+	add a,013h		;83b5
+	cp 017h		;83b7
+	jp nc,L_83F6		;83b9
+	ld a,(ix+007h)		;83bc
+	sub l			;83bf
+	add a,007h		;83c0
+	cp 01fh		;83c2
+	jp nc,L_83F6		;83c4
+	set 7,(ix+025h)		;83c7
+	ld d,010h		;83cb
+	jp L_83D0		;83cd
 L_83D0:
 	ld a,(0d91bh)		;83d0
 	or a			;83d3
@@ -437,7 +529,7 @@ DATA_8407:
 
 
 L_844C:
-	ld ix,0d933h		;844c
+	ld ix,0d933h		;844c   ; ix -> los 6 actores de la pantalla
 	ld a,003h		;8450
 	ld c,000h		;8452
 L_8454:
@@ -1071,7 +1163,7 @@ L_88BC:
 	ret nc			;88d4
 	ld l,e			;88d5
 	ld a,l			;88d6
-	ld (0d8fdh),a		;88d7
+	ld (0d8fdh),a		;88d7   ; la y de Rastan = a
 	ld (0d914h),ix		;88da
 	push hl			;88de
 	ld hl,0d90fh		;88df
@@ -1117,7 +1209,7 @@ L_8914:
 	jp nc,L_892F		;8926
 	ld l,e			;8929
 	ld a,l			;892a
-	ld (0d8fdh),a		;892b
+	ld (0d8fdh),a		;892b   ; la y de Rastan = a
 	ret			;892e
 L_892F:
 	push hl			;892f
@@ -1187,7 +1279,7 @@ L_8960:
 	set 3,a		;899e
 	ld (0d90fh),a		;89a0
 	ld a,e			;89a3
-	ld (0d8fch),a		;89a4
+	ld (0d8fch),a		;89a4   ; la x de Rastan = a
 	ld (0d914h),ix		;89a7
 	ld a,(0d90fh)		;89ab
 	res 0,a		;89ae
@@ -1300,7 +1392,7 @@ L_8A33:
 	set 3,a		;8a62
 	ld (0d90fh),a		;8a64
 	ld a,e			;8a67
-	ld (0d8fch),a		;8a68
+	ld (0d8fch),a		;8a68   ; la x de Rastan = a
 	ld (0d914h),ix		;8a6b
 	ld a,(0d90fh)		;8a6f
 	res 0,a		;8a72
@@ -1387,7 +1479,7 @@ L_8ACA:
 	set 3,a		;8af9
 	ld (0d90fh),a		;8afb
 	ld a,e			;8afe
-	ld (0d8fch),a		;8aff
+	ld (0d8fch),a		;8aff   ; la x de Rastan = a
 	ld (0d914h),ix		;8b02
 	ld a,(0d90fh)		;8b06
 	res 0,a		;8b09
@@ -1462,7 +1554,7 @@ L_8B4A:
 	set 3,a		;8b7a
 	ld (0d90fh),a		;8b7c
 	ld a,e			;8b7f
-	ld (0d8fch),a		;8b80
+	ld (0d8fch),a		;8b80   ; la x de Rastan = a
 	ld (0d914h),ix		;8b83
 	ld a,(0d90fh)		;8b87
 	res 0,a		;8b8a
@@ -1499,25 +1591,25 @@ L_8BC1:
 	ld (0d917h),a		;8bc2
 	ret			;8bc5
 L_8BC6:
-	ld a,(0d92dh)		;8bc6
+	ld a,(0d92dh)		;8bc6   ; a = cual es el bloque especial
 	cp 013h		;8bc9
 	ret nc			;8bcb
 	sub 004h		;8bcc
 	ret c			;8bce
 	ld c,a			;8bcf
-	ld a,(0d92bh)		;8bd0
+	ld a,(0d92bh)		;8bd0   ; a = x del bloque especial de la pantalla
 	sub h			;8bd3
 	add a,007h		;8bd4
 	cp 01ah		;8bd6
 	ret nc			;8bd8
-	ld a,(0d92ch)		;8bd9
+	ld a,(0d92ch)		;8bd9   ; a = y del bloque especial
 	sub l			;8bdc
 	add a,007h		;8bdd
 	cp 01fh		;8bdf
 	ret nc			;8be1
 	push hl			;8be2
 	call 0629eh		;8be3
-	ld a,(0d92dh)		;8be6
+	ld a,(0d92dh)		;8be6   ; a = cual es el bloque especial
 	sub 004h		;8be9
 	add a,a			;8beb
 	ld c,a			;8bec
@@ -1542,7 +1634,7 @@ L_8BC6:
 	ld d,(hl)			;8c0b
 	ex de,hl			;8c0c
 	xor a			;8c0d
-	ld (0d92dh),a		;8c0e
+	ld (0d92dh),a		;8c0e   ; cual es el bloque especial = a
 	ex (sp),hl			;8c11
 	ret			;8c12
 
@@ -1628,7 +1720,7 @@ L_8CB1:
 L_8CB6:
 	ld b,003h		;8cb6
 	ld de,00026h		;8cb8
-	ld ix,0d933h		;8cbb
+	ld ix,0d933h		;8cbb   ; ix -> los 6 actores de la pantalla
 L_8CBF:
 	ld (ix+00fh),000h		;8cbf
 	add ix,de		;8cc3
@@ -1780,13 +1872,13 @@ DATA_8D2C:
 
 
 L_918C:
-	ld hl,(0d969h)		;918c
+	ld hl,(0d969h)		;918c   ; hl = actor 1, byte +10
 	ld a,h			;918f
 	or l			;9190
 	ret z			;9191
-	ld a,(0d8fch)		;9192
+	ld a,(0d8fch)		;9192   ; a = la x de Rastan
 	ld h,a			;9195
-	ld a,(0d8fdh)		;9196
+	ld a,(0d8fdh)		;9196   ; a = la y de Rastan
 	ld l,a			;9199
 	ld a,(0d904h)		;919a
 	and 01eh		;919d
@@ -1796,12 +1888,12 @@ L_918C:
 	add a,00eh		;91a4
 	ld l,a			;91a6
 L_91A7:
-	ld a,(0d93ah)		;91a7
+	ld a,(0d93ah)		;91a7   ; a = actor 0, byte +7
 	ld e,a			;91aa
-	ld a,(0d939h)		;91ab
+	ld a,(0d939h)		;91ab   ; a = actor 0, byte +6
 	ld d,a			;91ae
 	exx			;91af
-	ld a,(0d933h)		;91b0
+	ld a,(0d933h)		;91b0   ; a = los 6 actores de la pantalla
 	cp 006h		;91b3
 	ret nc			;91b5
 	add a,a			;91b6
@@ -1829,20 +1921,20 @@ DATA_91C5:
 
 L_91D1:
 	xor a			;91d1
-	ld (0d924h),a		;91d2
-	ld de,(0d969h)		;91d5
+	ld (0d924h),a		;91d2   ; bit 7: el jugador usa la ficha 10 = a
+	ld de,(0d969h)		;91d5   ; de = actor 1, byte +10
 	ld a,d			;91d9
 	or e			;91da
 	ret z			;91db
-	ld a,(0d958h)		;91dc
+	ld a,(0d958h)		;91dc   ; a = actor 0, byte +25
 	bit 7,a		;91df
 	ret nz			;91e1
-	ld a,(0d93ah)		;91e2
+	ld a,(0d93ah)		;91e2   ; a = actor 0, byte +7
 	ld e,a			;91e5
-	ld a,(0d939h)		;91e6
+	ld a,(0d939h)		;91e6   ; a = actor 0, byte +6
 	ld d,a			;91e9
 	exx			;91ea
-	ld a,(0d933h)		;91eb
+	ld a,(0d933h)		;91eb   ; a = los 6 actores de la pantalla
 	cp 006h		;91ee
 	ret nc			;91f0
 	add a,a			;91f1

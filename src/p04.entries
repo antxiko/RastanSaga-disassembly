@@ -5,9 +5,13 @@
 0x8002   # p03:7FFF sigue de largo (el codigo cruza la frontera de banco)
 0x8003   # jr cc desde p03:7FDF
 0x8016   # jp cc desde p03:6005
+0x80c7   # huerfana: nadie la llama
 0x8262   # jp cc desde p03:600A
+0x8321   # huerfana: nadie la llama
 0x848e   # jp cc desde p03:600F
+0x86a2   # huerfana: nadie la llama
 0x8799   # jp cc desde p03:6014
+0x884f   # huerfana: nadie la llama
 0x89ce   # jp cc desde p03:6019
 0x8bf4   # jp cc desde p03:601E
 0x8c06   # jp cc desde p03:6023

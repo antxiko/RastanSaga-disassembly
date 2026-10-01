@@ -82,3 +82,25 @@ ZONAS_TABLA = [
     (7, 0x864C, 0x8668, "tabla de 14 palabras que salta p07:864A"),
     (7, 0x8C13, 0x8C31, "tabla de 15 palabras que salta p07:8C11"),
 ]
+
+# RUTINAS HUERFANAS: codigo que ningun call, jp ni tabla alcanza (no hay ni un
+# operando de 16 bits que las apunte: work/apunta.py). Son restos que se
+# quedaron en el cartucho; muchas son copias muertas detras de un `jp` (el
+# mismo `ld (ix+12h),10h / jp X` dos veces seguidas). Se aceptaron porque, leidas
+# desde ahi, acaban en `ret`/`jp` y cada call/jp cae en un inicio de
+# instruccion ya conocido (work/huerfanas.py); las cinco ultimas, a ojo.
+# Se trazan con el banco de al lado que les toca (PAREJA).
+PAREJA = {0: (0, 1, 2, 0), 1: (0, 1, 2, 0), 3: (0, 3, 4, 0), 4: (0, 3, 4, 0),
+          5: (0, 5, 2, 0), 6: (0, 6, 7, 0), 7: (0, 6, 7, 0)}
+HUERFANAS = [
+    "p00:41EC", "p00:4215", "p00:421D", "p00:4313", "p00:4332", "p00:449B",
+    "p01:646C", "p03:640F", "p03:6417", "p03:65C2", "p03:672E", "p03:6932",
+    "p03:6CC0", "p03:6DC6", "p03:6DFD", "p03:6E8B", "p03:7003", "p03:72D2",
+    "p03:7456", "p03:74F2", "p03:7678", "p03:7768", "p03:77E8", "p03:794F",
+    "p03:799D", "p03:7A3E", "p03:7C46", "p03:7C74", "p03:7D23", "p03:7E63",
+    "p03:7E71", "p03:7E7A", "p04:80C7", "p04:8321", "p04:86A2", "p04:884F",
+    "p05:634B", "p06:60B3", "p06:7D8F", "p06:7E50", "p07:82CA",
+]
+for _h in HUERFANAS:
+    _b, _a = int(_h[1:3]), int(_h[4:], 16)
+    SEMILLAS.append((_a, PAREJA[_b], "huerfana: nadie la llama"))
