@@ -1,4 +1,200 @@
 
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+B 0x6000 Pone en la pagina 2 (0x8000) el slot del cartucho, el mismo que la pagina 1
+B 0x6000 en la que corre: asi los bancos de 0x8000 y 0xA000 se ven.
+L 0x6000 cartucho_en_pagina_2
+C 0x6000 el registro de slots primarios...
+C 0x6003 ...los bits de la pagina 1: el slot del cartucho
+C 0x600A EXPTBL: si ese slot esta expandido (bit 7)...
+C 0x6012 ...se le anade el subslot de SLTTBL (bits 2-3)
+L 0x601B en_pagina_2
+C 0x601B H = 0x80: la pagina 2
+C 0x601D ENASLT
+B 0x6020 El VDP: todos los registros a 0, SCREEN 5 (256x212, 16 colores),
+B 0x6020 pantalla apagada y los 12 registros de p01:605F.
+L 0x6020 prepara_vdp
+C 0x6020 de R#23 a R#1...
+C 0x6023 ...a 0
+C 0x602C y R#0 = 0
+C 0x6033 SCREEN 5
+C 0x6038 R#1: sprites de 16x16 y pantalla apagada (bits 6, 5 y 1)
+C 0x6042 escrito
+C 0x6048 los 12 pares (registro, valor) de p01:605F
+C 0x605A CLIKSW (F3DB) = 0: las teclas no hacen clic
+D 0x605F 0x6077 registros_vdp  12 pares (registro, valor): R#2 0x1F, R#11 1, R#5 0x0F, R#6 0x11, R#7 0, R#8 0x28, R#9 0x80 (212 lineas), R#14 3, R#18 0, R#20 0, R#21 0x3B, R#22 5
+F 0x605F 2
+B 0x6077 Los graficos a la VRAM: la borra entera, copia los bancos 0x12-0x15 a la
+B 0x6077 pagina 0 y de ahi a la 2, los 0x16-0x19 igual a la 3, y los 0x10-0x11 a
+B 0x6077 la mitad de abajo de la pagina 1 (los tiles de 8x8).
+L 0x6077 carga_graficos
+C 0x6077 los primeros 64 KB de VRAM a 0...
+C 0x6081 ...y los otros 64 KB
+C 0x608A bancos 0x12 y 0x13 en 0x8000/0xA000
+C 0x609A 16 KB a VRAM 0x0000
+C 0x60A6 bancos 0x14 y 0x15
+C 0x60B6 16 KB a VRAM 0x4000
+C 0x60C2 de la pagina 0 a la 2 (A' = 2)...
+C 0x60C8 ...las 128 primeras lineas...
+C 0x60D4 ...y las 128 siguientes
+C 0x60E0 bancos 0x16 y 0x17 a VRAM 0x0000
+C 0x60FC bancos 0x18 y 0x19 a VRAM 0x4000
+C 0x6118 y de la pagina 0 a la 3
+C 0x6136 bancos 0x10 y 0x11...
+C 0x6146 ...a VRAM 0xC000: la mitad de abajo de la pagina 1
+B 0x6153 EL SONIDO, cada cuadro (desde la interrupcion). Primero los registros del
+B 0x6153 PSG con lo que dejo el cuadro anterior (D161-D16B), luego cuatro voces de
+B 0x6153 25 bytes en D08E: tres de musica y la de los efectos.
+L 0x6153 sonido
+C 0x6153 D069 bit 7: sonido apagado
+C 0x6158 los volumenes de los tres canales (D169-D16B)...
+C 0x615D ...mas el ajuste de D067...
+C 0x6162 ...sin bajar de 0
+C 0x6167 a los registros 8, 9 y 10 del PSG
+L 0x6171 registros_psg
+C 0x6171 y los registros 7 a 0 (mezclador, ruido y tonos)
+C 0x617A IY = la primera voz
+C 0x617E 25 bytes por voz, cuatro voces
+L 0x6183 cada_voz
+C 0x6184 voz apagada
+C 0x618B la nota sigue sonando?
+C 0x618E ...acabada: la siguiente (p01:6253)
+C 0x6191 la envolvente de volumen: aun no toca cambiar
+C 0x6196 el paso de la envolvente se acaba?
+C 0x619B la envolvente (+0C/+0D)...
+C 0x61A1 ...en su paso (+5)
+C 0x61A9 un 0 la hace volver al principio
+L 0x61B3 paso_envolvente
+C 0x61B3 nibble bajo: cuantos cuadros dura cada cambio
+C 0x61B8 nibble alto: cuantos cambios
+C 0x61C3 el byte de despues: cuanto cambia el volumen cada vez
+L 0x61CA cambia_volumen
+C 0x61CA volumen + cambio...
+C 0x61D0 ...si se desborda, no se toca
+C 0x61D6 entre 0 y 15
+L 0x61E2 volumen_cero
+L 0x61E4 pon_volumen
+C 0x61E4 al canal
+L 0x61E7 cuenta_envolvente
+L 0x61ED vibrato
+C 0x61ED la envolvente de tono (+0E/+0F), igual
+L 0x620F paso_vibrato
+L 0x6226 cambia_tono
+C 0x6226 el tono (+15/+16) + el cambio con signo
+C 0x6242 al canal
+L 0x624B siguiente_voz
+B 0x6253 La partitura de una voz (+10/+11): bytes 1-0x7F = duracion y nota; 0 =
+B 0x6253 fin; 0x80 elige envolvente, 0x81 la de tono, 0x82 salta, 0x83 llama,
+B 0x6253 0x84 vuelve, 0x85 repite, 0x90-0xBF empieza una repeticion, 0xC0-0xDF ruido,
+B 0x6253 0xE0-0xEF mezclador y 0xF0-0xFF volumen.
+L 0x6253 partitura
+L 0x6259 lee_partitura
+C 0x625B 0: se acabo
+C 0x625E 1-0x7F: una nota
+C 0x6261 0xF0-0xFF: volumen
+C 0x6265 0xE0-0xEF: mezclador
+C 0x626A 0xC0-0xDF: ruido
+C 0x626E 0x90-0xBF: empieza repeticion
+C 0x6273 0x81: envolvente de tono
+C 0x6278 0x80: envolvente de volumen
+C 0x627B 0x83: llamada
+C 0x627F 0x82: salto
+C 0x6281 0x85: repeticion
+C 0x6286 0x84: vuelta
+L 0x6288 guarda_partitura
+C 0x6288 por donde va
+L 0x6290 pon_ruido
+C 0x6290 la frecuencia del ruido (D167)
+L 0x6297 salta_partitura
+L 0x629D pon_volumen_voz
+C 0x629D el volumen de partida (+3)
+L 0x62A4 fin_partitura
+C 0x62A4 voz apagada: volumen y tono a 0
+C 0x62B1 la voz 2...
+C 0x62B8 ...si habia una musica guardada (D068 bit 7)...
+C 0x62C2 ...se recupera (D0F2 -> D06A): vuelve la musica de antes
+L 0x62D0 vuelta_partitura
+C 0x62D0 la pila de la voz (+0A/+0B)...
+C 0x62D3 ...devuelve la direccion
+L 0x62D9 guarda_pila
+L 0x62E2 llamada_partitura
+C 0x62E2 guarda la vuelta en la pila de la voz...
+C 0x62EF ...y salta
+L 0x62F3 pon_mezclador
+C 0x62F3 los bits de ruido y tono del canal...
+C 0x62F8 ...corridos segun la voz (+1)
+L 0x62FF corre_mezclador
+L 0x6306 guarda_mezclador
+C 0x6306 en D168 (el registro 7)
+L 0x6310 empieza_repeticion
+C 0x6310 a la pila: la direccion y la cuenta (byte - 0x90)
+L 0x631F repite
+C 0x631F una vuelta menos...
+C 0x6324 ...ninguna: sigue
+C 0x6326 ...si no, otra vez desde el principio
+L 0x6330 fin_repeticion
+L 0x6335 pon_envolvente
+C 0x6335 el numero...
+C 0x6338 ...en la tabla de p01:6526
+L 0x6340 pon_envolvente_b
+L 0x634C pon_envolvente_tono
+C 0x634F en la tabla de p01:6571
+L 0x6357 pon_envolvente_tono_b
+L 0x6363 nota
+C 0x6363 la duracion
+C 0x6366 el tono (o, con el bit 7, un silencio)
+C 0x6371 al canal
+C 0x6374 apuntado en +15/+16
+C 0x637A el volumen de partida
+C 0x6385 las envolventes desde el principio
+L 0x638D cuentas_a_uno
+L 0x639C silencio
+C 0x639C volumen 0
+L 0x63A7 volumen_canal
+C 0x63A7 registro 8 + canal
+C 0x63AD la voz de efectos (bit 7) solo suena si no hay efecto (D0D9)
+L 0x63B8 guarda_volumen
+C 0x63B8 en D161 + registro
+L 0x63C0 tono_canal
+C 0x63C0 registro 2 * canal
+L 0x63D0 guarda_tono
+C 0x63D0 los dos bytes del tono
+L 0x63DA pila_voz
+B 0x63E1 EFECTO A (D178): la voz de efectos (D0D9) con la cabecera de p01:64B1 y la
+B 0x63E1 partitura del efecto (tabla p01:64CC).
+L 0x63E1 efecto
+C 0x63E4 D069 bit 0: sin sonido
+C 0x63EB la cabecera de la voz de efectos
+C 0x63F6 el efecto * 2...
+C 0x63FA ...su partitura
+C 0x6402 el mezclador: ruido y tono del canal 3
+B 0x640F MUSICA A (D17A). Si es una melodia corta (bit 7) y suena otra larga, la
+B 0x640F guarda en D0F2 para volver a ella al acabar.
+L 0x640F musica
+C 0x6412 sin sonido
+C 0x6419 la que sonaba...
+C 0x641E ...pasa a ser esta
+C 0x6421 corta (bit 7) sobre larga: se guarda la larga
+L 0x6430 empieza_musica
+C 0x6430 musica * 6 en p01:64F0: las tres partituras
+C 0x643B tres voces
+L 0x6440 pon_partitura
+C 0x6440 la partitura de la voz
+C 0x644D las cabeceras de p01:6481
+L 0x6455 pon_cabecera
+C 0x6463 mezclador = 0xB8
+L 0x646C huerfana_silencio
+C 0x646C nadie la llama: sonido apagado y el mezclador todo cerrado
+D 0x6478 0x6481 resto_6478  datos sin uso delante de las cabeceras
+D 0x6481 0x64B1 voces_cabecera  Las cabeceras de las tres voces de musica (16 bytes cada una)
+F 0x6481 16
+D 0x64B1 0x64C1 voz_efectos  La cabecera de la voz de efectos (16 bytes)
+F 0x64B1 16
+D 0x64C1 0x64C4 resto_64C1  tres bytes sin uso
+L 0x64C4 escribe_psg
+C 0x64C4 el registro A del PSG...
+C 0x64C8 ...vale E
+# --- fin de las notas por tandas ---
+
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
 C 0x608c copia del registro del mapper de 0x8000 = a
 C 0x608f registro del mapper: banco A en 0x8000
@@ -25,5 +221,4 @@ C 0x613b registro del mapper: banco A en 0x8000
 C 0x6140 copia del registro del mapper de 0xA000 = a
 C 0x6143 registro del mapper: banco A en 0xA000
 C 0x6149 de -> contador de la tarea 0
-C 0x615d a = 3 al empezar
 # --- fin de anota ---

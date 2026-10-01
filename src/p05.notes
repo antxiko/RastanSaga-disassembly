@@ -1,21 +1,203 @@
 
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+B 0x6000 TAREA 4: las cosas de DA20 (8, de 38 bytes), una por cuadro (DA1D apunta a
+B 0x6000 la que toca, DA1F cuenta). Segun su tipo: las que siguen a otra, las que
+B 0x6000 salen al azar, una puerta, piedras que caen, las que saltan en arco, gotas,
+B 0x6000 y con el bit 7 un trozo de decorado animado.
+L 0x6000 cosas
+C 0x6000 la que toca
+C 0x6004 cuantas quedan en la vuelta
+C 0x6009 su tipo: bit 7, decorado animado (p05:6543)
+C 0x6011 0x18 y 0x22: pegadas a su sitio
+C 0x6015 0x1C: p05:6521
+C 0x601E 0x19 y 0x1D: salen al azar (p05:6079)
+C 0x6028 0x1F: la puerta (p05:60CF)
+C 0x602D 0x21: cae (p05:62BE)
+C 0x6032 0x1E y 0x17: saltan en arco (p05:634E)
+C 0x603C 0x1A y 0x1B: gotas (p05:647B)
+C 0x6046 las demas: nada
+L 0x6049 cosa_fija
+C 0x6049 sin sprites: nada
+C 0x604F en su sitio (+10, +11)...
+C 0x605B ...y pintada
+L 0x605E siguiente_cosa
+C 0x605F 38 bytes por cosa
+C 0x6064 acabada la vuelta...
+C 0x6066 ...desde la primera
+C 0x6069 apunta la siguiente
+L 0x6072 primera_cosa
+C 0x6072 DA20, ocho
+B 0x6079 Tipos 0x19 y 0x1D: aparecen en su sitio una vez de cada 32 (R & 0x1F =
+B 0x6079 0x0A), se animan los cuadros en que R tiene el bit 3 y, al acabar la
+B 0x6079 animacion, se dan de baja guardando tipo, pose y sitio para volver.
+L 0x6079 sale_al_azar
+C 0x6079 ya tiene sprites: p05:609E
+C 0x607F en su sitio
+C 0x608B al azar, una vez de cada 32...
+C 0x6094 ...alta
+C 0x6097 no habia sprites libres: nada
+L 0x609E anima_al_azar
+C 0x609E con R bit 3...
+C 0x60A5 ...un paso de animacion
+C 0x60A8 aun no ha acabado: nada
+C 0x60AE se guardan tipo, pose y sitio...
+C 0x60BC ...baja (que borra los 38 bytes)...
+C 0x60C1 ...y se devuelven
+B 0x60CF Tipo 0x1F: una puerta que se abre y se cierra segun donde este Rastan
+B 0x60CF (16x32 pixeles de tiles: p05:627E/628E/629E/62AE), y por la que sale un
+B 0x60CF actor que avanza de 3 en 3 pixeles 15 cuadros.
+L 0x60CF puerta
+C 0x60CF mirando a la izquierda: p05:60E4
+C 0x60D6 Rastan a 0x40 o mas a la derecha (sin pasar de 0xC0): p05:61A1
+C 0x60E1 si no, p05:61CE
+L 0x60E4 puerta_izq
+C 0x60E4 Rastan a menos de 0x40: p05:611F
+L 0x60F2 puerta_cierra
+C 0x60F2 ya cerrada: p05:616C
+C 0x60F9 se cierra...
+C 0x6100 ...en (x, y + 0x10)...
+C 0x610E ...con los tiles de p05:628E (16 x 32)
+L 0x611F puerta_abre
+C 0x611F ya abierta: p05:616C
+C 0x6127 se abre...
+C 0x613C ...con los tiles de p05:627E
+C 0x614A sin el actor de dentro...
+C 0x6151 ...sale en (x + 0x10, y + 8)
+C 0x6161 alta
+C 0x6164 sin sitio para el sprite: nada
+L 0x616C puerta_actor
+C 0x616C sin el actor: nada
+C 0x6173 3 pixeles a la derecha
+C 0x617C +13 cuenta los cuadros: a 15...
+C 0x6184 ...se acaba (p05:6254)
+C 0x6187 pintado con la y + 8 un momento...
+C 0x6198 ...y devuelta
+L 0x61A1 puerta_der_cierra
+C 0x61A1 lo mismo hacia el otro lado: se cierra con p05:62AE
+L 0x61CE puerta_der_abre
+C 0x61CE se abre con p05:629E
+C 0x6200 el actor sale en (x, y + 8)
+L 0x6219 puerta_der_actor
+C 0x6220 3 pixeles a la izquierda
+C 0x6229 15 cuadros
+L 0x6254 cosa_vuelve
+C 0x6254 se guardan pose (+12), tipo, sitio...
+C 0x6266 ...baja...
+C 0x626C ...y se devuelven: vuelve a empezar
+D 0x627E 0x62BE puerta_tiles  Los tiles de la puerta: cuatro listas de 2 x 4 palabras (abierta y cerrada a cada lado)
+F 0x627E w8
+B 0x62BE Tipo 0x21: aparece arriba, acaba su animacion y cae de 8 en 8 pixeles;
+B 0x62BE cambia de pose al pasar por y = 0xA3 y 0xB3 y a 0xD3 vuelve a empezar.
+L 0x62BE cae_de_arriba
+C 0x62BE ya tiene sprites: p05:62DB
+C 0x62C4 en su sitio
+C 0x62D0 alta
+C 0x62D3 sin sitio: nada
+L 0x62DB cae_animando
+C 0x62DB pose 0: animandose arriba
+C 0x62E1 un paso
+C 0x62E4 no ha acabado: nada
+C 0x62EB pose 1...
+C 0x62F0 ...y 0x20 mas abajo
+L 0x62F8 cae_8
+C 0x62F8 8 pixeles abajo
+C 0x6311 pintado
+C 0x6315 por debajo de 0xD3: vuelve a empezar
+C 0x631D de 0xB3: pose 2
+C 0x6322 de 0xA3: pose 3
+L 0x632A cae_fin
+C 0x632A pose 0 y vuelve
+L 0x6335 cae_pose_2
+L 0x6340 cae_pose_3
+C 0x6340 (el `set 1` repetido)
+L 0x634B huerfana_cosa_nada
+C 0x634B nadie llega aqui
+B 0x634E Tipos 0x1E y 0x17: saltan en arco (los pasos en y de p05:6468) hacia
+B 0x634E arriba (pose 0), a la derecha (1) o a la izquierda (2).
+L 0x634E salta_en_arco
+C 0x634E pose 0: p05:6360
+C 0x6356 1: p05:63C6
+C 0x635B 2: p05:6417
+L 0x6360 arco_arriba
+C 0x6360 ya tiene sprites: sigue
+C 0x6366 al azar, una vez de cada 16
+C 0x636F en su sitio, alta
+C 0x637E sin sitio: nada
+L 0x6386 arco_paso
+C 0x6386 el paso del arco (+13) en p05:6468
+C 0x638F y + paso
+C 0x6396 siguiente paso
+C 0x6399 pintado
+C 0x639C 19 pasos: se acaba
+L 0x63A4 arco_vuelve
+C 0x63A4 tipo, pose y sitio guardados...
+C 0x63B2 ...baja...
+C 0x63B7 ...y devueltos
+L 0x63C6 arco_der
+C 0x63C6 al azar (R & 9)
+C 0x63D3 alta
+L 0x63EA arco_der_paso
+C 0x63EA el paso en y...
+C 0x63FA ...y 4 a la derecha
+C 0x6406 siguiente
+C 0x640C 19 pasos
+L 0x6417 arco_izq
+C 0x6417 al azar (R & 9)
+C 0x6424 (aqui guarda la x en +16 y la y en la x: un error)
+C 0x6430 alta
+L 0x643B arco_izq_paso
+C 0x643B el paso en y...
+C 0x644B ...y 4 a la izquierda
+D 0x6468 0x647B arco_pasos  Los 19 pasos en y del arco (de -8 a +8)
+B 0x647B Tipos 0x1A y 0x1B: gotas. Aparecen al azar, caen de 4 en 4 hasta una
+B 0x647B casilla de clase 0x20 y alli se deshacen (pose 1, 10 cuadros).
+L 0x647B gota
+C 0x647B ya tiene sprites: sigue
+C 0x6481 al azar (R & 0x2A = 0)
+C 0x6488 en su sitio, alta
+C 0x6497 sin sitio: nada
+L 0x649F gota_cae
+C 0x649F pose 1: deshaciendose
+C 0x64A5 4 pixeles abajo
+C 0x64B1 pintada
+C 0x64B4 suelo debajo?
+C 0x64BA si: pose 1, desde el cuadro 0
+L 0x64C8 gota_se_deshace
+C 0x64C8 un cuadro mas
+C 0x64CE 10: se acaba
+C 0x64D6 tipo y sitio guardados, baja y devueltos
+L 0x64F2 suelo_bajo_gota
+C 0x64F2 la casilla de (x + 1, y + 1)...
+C 0x64FC ...fila...
+C 0x6504 ...columna...
+C 0x6512 ...en D774...
+C 0x6517 ...una fila mas abajo
+C 0x651B clase 0x20?
+L 0x6521 tipo_1c
+C 0x6521 tipo 0x1C: tres de cada cuatro cuadros...
+C 0x652A ...si tiene sprites, en su sitio y pintado
+B 0x6543 Bit 7: un trozo de decorado animado. Cada 8 cuadros copia a su sitio un
+B 0x6543 trozo de la pagina 1, alternando dos origenes (filas 0x28 y 0x30) con la x
+B 0x6543 que dice el nibble bajo del tipo: un decorado de dos cuadros.
+L 0x6543 decorado_animado
+C 0x6543 +12 cuenta los cuadros...
+C 0x6549 ...cada 8
+C 0x654E x de origen = nibble bajo * 16
+C 0x6558 una vuelta, filas 0x28-0x30...
+C 0x6565 ...y la otra, 8 mas abajo
+L 0x6575 decorado_destino
+C 0x6575 el destino: su sitio, 8 lineas mas abajo
+C 0x6583 de la pagina 1 a la 0
+C 0x6589 copiado
+# --- fin de las notas por tandas ---
+
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
-C 0x605b p00 pinta_actor_b5
-C 0x6072 ix -> los 8 enemigos de la pantalla
-C 0x6094 p00 alta_actor_b5
-C 0x6097 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-C 0x60a5 p00 pinta_actor_b5
-C 0x60bc p00 baja_actor_b5
-C 0x60d6 a = la x de Rastan
-C 0x60e4 a = la x de Rastan
 C 0x6103 x donde se pinta = a
 C 0x610b y donde se pinta = a
 C 0x6117 p00 pinta_bloque_tiles
 C 0x6131 x donde se pinta = a
 C 0x6139 y donde se pinta = a
 C 0x6145 p00 pinta_bloque_tiles
-C 0x6161 p00 alta_actor_b5
-C 0x6164 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 C 0x6194 p00 pinta_actor_b5
 C 0x61b2 x donde se pinta = a
 C 0x61ba y donde se pinta = a
@@ -26,28 +208,15 @@ C 0x61f4 p00 pinta_bloque_tiles
 C 0x620e p00 alta_actor_b5
 C 0x6211 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 C 0x6247 p00 pinta_actor_b5
-C 0x6266 p00 baja_actor_b5
-C 0x62d0 p00 alta_actor_b5
-C 0x62d3 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-C 0x62e1 p00 pinta_actor_b5
-C 0x6311 p00 pinta_actor_b5
 C 0x637b p00 alta_actor_b5
-C 0x637e a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-C 0x6399 p00 pinta_actor_b5
-C 0x63b2 p00 baja_actor_b5
 C 0x63df p00 alta_actor_b5
 C 0x63e2 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 C 0x6409 p00 pinta_actor_b5
-C 0x6430 p00 alta_actor_b5
 C 0x6433 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 C 0x645a p00 pinta_actor_b5
 C 0x6494 p00 alta_actor_b5
-C 0x6497 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-C 0x64b1 p00 pinta_actor_b5
 C 0x64c2 p00 pinta_actor_b5
 C 0x64cb p00 pinta_actor_b5
 C 0x64e1 p00 baja_actor_b5
-C 0x6512 de -> lo de delante desempaquetado: 11 x 16 bloques
 C 0x653d p00 pinta_actor_b5
-C 0x6589 p00 copia_vram_vram
 # --- fin de anota ---

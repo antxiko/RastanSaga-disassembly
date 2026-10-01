@@ -14,18 +14,23 @@
 ; ======================================================================
 
 
-L_6000:
-	call 00138h		;6000   ; BIOS RSLREG - Reads the primary slot register
-	rrca			;6003
+
+; ----------------------------------------------------------------------
+; Pone en la pagina 2 (0x8000) el slot del cartucho, el mismo que la pagina 1
+; en la que corre: asi los bancos de 0x8000 y 0xA000 se ven.
+; ----------------------------------------------------------------------
+cartucho_en_pagina_2:
+	call 00138h		;6000   ; BIOS RSLREG - Reads the primary slot register | el registro de slots primarios...
+	rrca			;6003   ; ...los bits de la pagina 1: el slot del cartucho
 	rrca			;6004
 	and 003h		;6005
 	ld c,a			;6007
 	ld b,000h		;6008
-	ld hl,0fcc1h		;600a
+	ld hl,0fcc1h		;600a   ; EXPTBL: si ese slot esta expandido (bit 7)...
 	add hl,bc			;600d
 	or (hl)			;600e
-	jp p,L_601B		;600f
-	ld c,a			;6012
+	jp p,en_pagina_2		;600f
+	ld c,a			;6012   ; ...se le anade el subslot de SLTTBL (bits 2-3)
 	inc hl			;6013
 	inc hl			;6014
 	inc hl			;6015
@@ -33,31 +38,36 @@ L_6000:
 	ld a,(hl)			;6017
 	and 00ch		;6018
 	or c			;601a
-L_601B:
-	ld h,080h		;601b
-	jp 00024h		;601d   ; BIOS ENASLT - Switches to specified slot and page definitively
-L_6020:
-	ld b,017h		;6020
+en_pagina_2:
+	ld h,080h		;601b   ; H = 0x80: la pagina 2
+	jp 00024h		;601d   ; BIOS ENASLT - Switches to specified slot and page definitively | ENASLT
+
+; ----------------------------------------------------------------------
+; El VDP: todos los registros a 0, SCREEN 5 (256x212, 16 colores),
+; pantalla apagada y los 12 registros de p01:605F.
+; ----------------------------------------------------------------------
+prepara_vdp:
+	ld b,017h		;6020   ; de R#23 a R#1...
 L_6022:
 	push bc			;6022
-	ld c,b			;6023
+	ld c,b			;6023   ; ...a 0
 	ld b,000h		;6024
 	call 00047h		;6026   ; BIOS WRTVDP - Writes data in the VDP-register
 	pop bc			;6029
 	djnz L_6022		;602a
-	ld c,000h		;602c
+	ld c,000h		;602c   ; y R#0 = 0
 	ld b,000h		;602e
 	call 00047h		;6030   ; BIOS WRTVDP - Writes data in the VDP-register
-	ld a,005h		;6033
+	ld a,005h		;6033   ; SCREEN 5
 	call 0005fh		;6035   ; BIOS CHGMOD - Switches to given screen mode
-	ld a,(0f3e0h)		;6038
+	ld a,(0f3e0h)		;6038   ; R#1: sprites de 16x16 y pantalla apagada (bits 6, 5 y 1)
 	or 062h		;603b
 	and 0beh		;603d
 	ld (0f3e0h),a		;603f
-	ld c,001h		;6042
+	ld c,001h		;6042   ; escrito
 	ld b,a			;6044
 	call 00047h		;6045   ; BIOS WRTVDP - Writes data in the VDP-register
-	ld hl,0605fh		;6048
+	ld hl,0605fh		;6048   ; los 12 pares (registro, valor) de p01:605F
 	ld b,00ch		;604b
 L_604D:
 	push bc			;604d
@@ -70,62 +80,81 @@ L_604D:
 	pop hl			;6056
 	pop bc			;6057
 	djnz L_604D		;6058
-	xor a			;605a
+	xor a			;605a   ; CLIKSW (F3DB) = 0: las teclas no hacen clic
 	ld (0f3dbh),a		;605b
 	ret			;605e
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x605f..0x6077  (24 bytes)
-DATA_605F:
-	defb 002h,01fh,00bh,001h,005h,00fh,006h,011h,007h,000h,008h,028h,009h,080h,00eh,003h	; 605f  ...........(....
-	defb 012h,000h,014h,000h,015h,03bh,016h,005h	; 606f  .....;..
+; DATOS registros_vdp: 12 pares (registro, valor): R#2 0x1F, R#11 1, R#5 0x0F,
+;   R#6 0x11, R#7 0, R#8 0x28, R#9 0x80 (212 lineas), R#14 3, R#18 0, R#20 0,
+;   R#21 0x3B, R#22 5
+;   0x605f..0x6077  (24 bytes)
+DATA_registros_vdp:
+	defb 002h,01fh	; 605f
+	defb 00bh,001h	; 6061
+	defb 005h,00fh	; 6063
+	defb 006h,011h	; 6065
+	defb 007h,000h	; 6067
+	defb 008h,028h	; 6069
+	defb 009h,080h	; 606b
+	defb 00eh,003h	; 606d
+	defb 012h,000h	; 606f
+	defb 014h,000h	; 6071
+	defb 015h,03bh	; 6073
+	defb 016h,005h	; 6075
 
 ; ======================================================================
 ; CODIGO 0x6077..0x6478  (1025 bytes)
 ; ======================================================================
 
 
-L_6077:
-	ld hl,00000h		;6077
+
+; ----------------------------------------------------------------------
+; Los graficos a la VRAM: la borra entera, copia los bancos 0x12-0x15 a la
+; pagina 0 y de ahi a la 2, los 0x16-0x19 igual a la 3, y los 0x10-0x11 a
+; la mitad de abajo de la pagina 1 (los tiles de 8x8).
+; ----------------------------------------------------------------------
+carga_graficos:
+	ld hl,00000h		;6077   ; los primeros 64 KB de VRAM a 0...
 	ld bc,0ffffh		;607a
 	xor a			;607d
 	call 0016bh		;607e   ; BIOS BIGFIL - Same function as FILVRM (with 16-bit VRAM-address)
-	ld hl,0ffffh		;6081
+	ld hl,0ffffh		;6081   ; ...y los otros 64 KB
 	ld bc,0ffffh		;6084
 	call 0016bh		;6087   ; BIOS BIGFIL - Same function as FILVRM (with 16-bit VRAM-address)
-	ld a,012h		;608a
+	ld a,012h		;608a   ; bancos 0x12 y 0x13 en 0x8000/0xA000
 	ld (0d191h),a		;608c   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;608f   ; registro del mapper: banco A en 0x8000
 	ld a,013h		;6092
 	ld (0d192h),a		;6094   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;6097   ; registro del mapper: banco A en 0xA000
-	ld hl,08000h		;609a
+	ld hl,08000h		;609a   ; 16 KB a VRAM 0x0000
 	ld de,00000h		;609d
 	ld bc,03fffh		;60a0
 	call 0005ch		;60a3   ; BIOS LDIRVM - Block transfers to VRAM from memory
-	ld a,014h		;60a6
+	ld a,014h		;60a6   ; bancos 0x14 y 0x15
 	ld (0d191h),a		;60a8   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;60ab   ; registro del mapper: banco A en 0x8000
 	ld a,015h		;60ae
 	ld (0d192h),a		;60b0   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;60b3   ; registro del mapper: banco A en 0xA000
-	ld hl,08000h		;60b6
+	ld hl,08000h		;60b6   ; 16 KB a VRAM 0x4000
 	ld de,04000h		;60b9
 	ld bc,03fffh		;60bc
 	call 0005ch		;60bf   ; BIOS LDIRVM - Block transfers to VRAM from memory
-	ld a,000h		;60c2
+	ld a,000h		;60c2   ; de la pagina 0 a la 2 (A' = 2)...
 	ex af,af'			;60c4
 	ld a,002h		;60c5
 	ex af,af'			;60c7
-	ld hl,00000h		;60c8
+	ld hl,00000h		;60c8   ; ...las 128 primeras lineas...
 	ld de,080ffh		;60cb
 	ld bc,00000h		;60ce
 	call 044f1h		;60d1   ; p00 copia_bloque
-	ld hl,08000h		;60d4
+	ld hl,08000h		;60d4   ; ...y las 128 siguientes
 	ld de,080ffh		;60d7
 	ld bc,08000h		;60da
 	call 044f1h		;60dd   ; p00 copia_bloque
-	ld a,016h		;60e0
+	ld a,016h		;60e0   ; bancos 0x16 y 0x17 a VRAM 0x0000
 	ld (0d191h),a		;60e2   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;60e5   ; registro del mapper: banco A en 0x8000
 	ld a,017h		;60e8
@@ -135,7 +164,7 @@ L_6077:
 	ld de,00000h		;60f3
 	ld bc,03fffh		;60f6
 	call 0005ch		;60f9   ; BIOS LDIRVM - Block transfers to VRAM from memory
-	ld a,018h		;60fc
+	ld a,018h		;60fc   ; bancos 0x18 y 0x19 a VRAM 0x4000
 	ld (0d191h),a		;60fe   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;6101   ; registro del mapper: banco A en 0x8000
 	ld a,019h		;6104
@@ -145,7 +174,7 @@ L_6077:
 	ld de,04000h		;610f
 	ld bc,03fffh		;6112
 	call 0005ch		;6115   ; BIOS LDIRVM - Block transfers to VRAM from memory
-	ld a,000h		;6118
+	ld a,000h		;6118   ; y de la pagina 0 a la 3
 	ex af,af'			;611a
 	ld a,003h		;611b
 	ex af,af'			;611d
@@ -157,74 +186,80 @@ L_6077:
 	ld de,080ffh		;612d
 	ld bc,08000h		;6130
 	call 044f1h		;6133   ; p00 copia_bloque
-	ld a,010h		;6136
+	ld a,010h		;6136   ; bancos 0x10 y 0x11...
 	ld (0d191h),a		;6138   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;613b   ; registro del mapper: banco A en 0x8000
 	ld a,011h		;613e
 	ld (0d192h),a		;6140   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;6143   ; registro del mapper: banco A en 0xA000
-	ld hl,08000h		;6146
+	ld hl,08000h		;6146   ; ...a VRAM 0xC000: la mitad de abajo de la pagina 1
 	ld de,0c000h		;6149   ; de -> contador de la tarea 0
 	ld bc,03fffh		;614c
 	call 0005ch		;614f   ; BIOS LDIRVM - Block transfers to VRAM from memory
 	ret			;6152
-L_6153:
-	ld a,(0d069h)		;6153
+
+; ----------------------------------------------------------------------
+; EL SONIDO, cada cuadro (desde la interrupcion). Primero los registros del
+; PSG con lo que dejo el cuadro anterior (D161-D16B), luego cuatro voces de
+; 25 bytes en D08E: tres de musica y la de los efectos.
+; ----------------------------------------------------------------------
+sonido:
+	ld a,(0d069h)		;6153   ; D069 bit 7: sonido apagado
 	or a			;6156
 	ret m			;6157
-	ld hl,0d16bh		;6158
+	ld hl,0d16bh		;6158   ; los volumenes de los tres canales (D169-D16B)...
 	ld b,003h		;615b
 L_615D:
-	ld a,(0d067h)		;615d   ; a = 3 al empezar
+	ld a,(0d067h)		;615d   ; ...mas el ajuste de D067...
 	add a,(hl)			;6160
 	dec hl			;6161
-	jp p,L_6166		;6162
+	jp p,L_6166		;6162   ; ...sin bajar de 0
 	sub a			;6165
 L_6166:
 	ld e,a			;6166
-	ld a,b			;6167
+	ld a,b			;6167   ; a los registros 8, 9 y 10 del PSG
 	add a,007h		;6168
-	call L_64C4		;616a
+	call escribe_psg		;616a
 	djnz L_615D		;616d
 	ld b,008h		;616f
-L_6171:
-	ld e,(hl)			;6171
+registros_psg:
+	ld e,(hl)			;6171   ; y los registros 7 a 0 (mezclador, ruido y tonos)
 	dec hl			;6172
 	ld a,b			;6173
 	dec a			;6174
-	call L_64C4		;6175
-	djnz L_6171		;6178
-	ld iy,0d08eh		;617a
-	ld de,00019h		;617e
+	call escribe_psg		;6175
+	djnz registros_psg		;6178
+	ld iy,0d08eh		;617a   ; IY = la primera voz
+	ld de,00019h		;617e   ; 25 bytes por voz, cuatro voces
 	ld b,004h		;6181
-L_6183:
+cada_voz:
 	exx			;6183
-	ld a,(iy+000h)		;6184
+	ld a,(iy+000h)		;6184   ; voz apagada
 	or a			;6187
-	jp z,L_624B		;6188
-	dec (iy+002h)		;618b
-	jp z,L_6253		;618e
-	dec (iy+006h)		;6191
-	jr nz,L_61ED		;6194
-	dec (iy+004h)		;6196
-	jr nz,L_61CA		;6199
-	ld l,(iy+00ch)		;619b
+	jp z,siguiente_voz		;6188
+	dec (iy+002h)		;618b   ; la nota sigue sonando?
+	jp z,partitura		;618e   ; ...acabada: la siguiente (p01:6253)
+	dec (iy+006h)		;6191   ; la envolvente de volumen: aun no toca cambiar
+	jr nz,vibrato		;6194
+	dec (iy+004h)		;6196   ; el paso de la envolvente se acaba?
+	jr nz,cambia_volumen		;6199
+	ld l,(iy+00ch)		;619b   ; la envolvente (+0C/+0D)...
 	ld h,(iy+00dh)		;619e
-	ld a,(iy+005h)		;61a1
+	ld a,(iy+005h)		;61a1   ; ...en su paso (+5)
 	add a,a			;61a4
 	ld c,a			;61a5
 	ld b,000h		;61a6
 	add hl,bc			;61a8
-	ld a,(hl)			;61a9
+	ld a,(hl)			;61a9   ; un 0 la hace volver al principio
 	or a			;61aa
-	jr nz,L_61B3		;61ab
+	jr nz,paso_envolvente		;61ab
 	ld (iy+005h),a		;61ad
 	sbc hl,bc		;61b0
 	ld a,(hl)			;61b2
-L_61B3:
-	and 00fh		;61b3
+paso_envolvente:
+	and 00fh		;61b3   ; nibble bajo: cuantos cuadros dura cada cambio
 	ld (iy+014h),a		;61b5
-	ld a,(hl)			;61b8
+	ld a,(hl)			;61b8   ; nibble alto: cuantos cambios
 	inc hl			;61b9
 	rrca			;61ba
 	rrca			;61bb
@@ -232,32 +267,32 @@ L_61B3:
 	rrca			;61bd
 	and 00fh		;61be
 	ld (iy+004h),a		;61c0
-	ld a,(hl)			;61c3
+	ld a,(hl)			;61c3   ; el byte de despues: cuanto cambia el volumen cada vez
 	ld (iy+013h),a		;61c4
 	inc (iy+005h)		;61c7
-L_61CA:
-	ld a,(iy+012h)		;61ca
+cambia_volumen:
+	ld a,(iy+012h)		;61ca   ; volumen + cambio...
 	add a,(iy+013h)		;61cd
-	jp pe,L_61E7		;61d0
+	jp pe,cuenta_envolvente		;61d0   ; ...si se desborda, no se toca
 	ld (iy+012h),a		;61d3
-	ld e,a			;61d6
+	ld e,a			;61d6   ; entre 0 y 15
 	and 0f0h		;61d7
-	jr z,L_61E4		;61d9
-	jp m,L_61E2		;61db
+	jr z,pon_volumen		;61d9
+	jp m,volumen_cero		;61db
 	ld e,00fh		;61de
-	jr L_61E4		;61e0
-L_61E2:
+	jr pon_volumen		;61e0
+volumen_cero:
 	ld e,000h		;61e2
-L_61E4:
-	call L_63A7		;61e4
-L_61E7:
+pon_volumen:
+	call volumen_canal		;61e4   ; al canal
+cuenta_envolvente:
 	ld a,(iy+014h)		;61e7
 	ld (iy+006h),a		;61ea
-L_61ED:
-	dec (iy+009h)		;61ed
-	jr nz,L_624B		;61f0
+vibrato:
+	dec (iy+009h)		;61ed   ; la envolvente de tono (+0E/+0F), igual
+	jr nz,siguiente_voz		;61f0
 	dec (iy+007h)		;61f2
-	jr nz,L_6226		;61f5
+	jr nz,cambia_tono		;61f5
 	ld l,(iy+00eh)		;61f7
 	ld h,(iy+00fh)		;61fa
 	ld a,(iy+008h)		;61fd
@@ -267,11 +302,11 @@ L_61ED:
 	add hl,bc			;6204
 	ld a,(hl)			;6205
 	or a			;6206
-	jr nz,L_620F		;6207
+	jr nz,paso_vibrato		;6207
 	ld (iy+008h),a		;6209
 	sbc hl,bc		;620c
 	ld a,(hl)			;620e
-L_620F:
+paso_vibrato:
 	and 00fh		;620f
 	ld (iy+018h),a		;6211
 	ld a,(hl)			;6214
@@ -285,8 +320,8 @@ L_620F:
 	ld a,(hl)			;621f
 	ld (iy+017h),a		;6220
 	inc (iy+008h)		;6223
-L_6226:
-	ld l,(iy+015h)		;6226
+cambia_tono:
+	ld l,(iy+015h)		;6226   ; el tono (+15/+16) + el cambio con signo
 	ld h,(iy+016h)		;6229
 	ld a,(iy+017h)		;622c
 	or a			;622f
@@ -301,94 +336,101 @@ L_623A:
 	ld (iy+015h),l		;623b
 	ld (iy+016h),h		;623e
 	ex de,hl			;6241
-	call L_63C0		;6242
+	call tono_canal		;6242   ; al canal
 	ld a,(iy+018h)		;6245
 	ld (iy+009h),a		;6248
-L_624B:
+siguiente_voz:
 	exx			;624b
 	add iy,de		;624c
 	dec b			;624e
-	jp nz,L_6183		;624f
+	jp nz,cada_voz		;624f
 	ret			;6252
-L_6253:
+
+; ----------------------------------------------------------------------
+; La partitura de una voz (+10/+11): bytes 1-0x7F = duracion y nota; 0 =
+; fin; 0x80 elige envolvente, 0x81 la de tono, 0x82 salta, 0x83 llama,
+; 0x84 vuelve, 0x85 repite, 0x90-0xBF empieza una repeticion, 0xC0-0xDF ruido,
+; 0xE0-0xEF mezclador y 0xF0-0xFF volumen.
+; ----------------------------------------------------------------------
+partitura:
 	ld l,(iy+010h)		;6253
 	ld h,(iy+011h)		;6256
-L_6259:
+lee_partitura:
 	ld a,(hl)			;6259
 	inc hl			;625a
-	or a			;625b
-	jr z,L_62A4		;625c
-	jp p,L_6363		;625e
-	cp 0f0h		;6261
-	jr nc,L_629D		;6263
-	cp 0e0h		;6265
-	jp nc,L_62F3		;6267
-	cp 0c0h		;626a
-	jr nc,L_6290		;626c
-	cp 090h		;626e
-	jp nc,L_6310		;6270
-	cp 081h		;6273
-	jp z,L_634C		;6275
-	jp c,L_6335		;6278
-	cp 083h		;627b
-	jr z,L_62E2		;627d
-	jr c,L_6297		;627f
-	cp 085h		;6281
-	jp z,L_631F		;6283
-	jr c,L_62D0		;6286
-L_6288:
-	ld (iy+010h),l		;6288
+	or a			;625b   ; 0: se acabo
+	jr z,fin_partitura		;625c
+	jp p,nota		;625e   ; 1-0x7F: una nota
+	cp 0f0h		;6261   ; 0xF0-0xFF: volumen
+	jr nc,pon_volumen_voz		;6263
+	cp 0e0h		;6265   ; 0xE0-0xEF: mezclador
+	jp nc,pon_mezclador		;6267
+	cp 0c0h		;626a   ; 0xC0-0xDF: ruido
+	jr nc,pon_ruido		;626c
+	cp 090h		;626e   ; 0x90-0xBF: empieza repeticion
+	jp nc,empieza_repeticion		;6270
+	cp 081h		;6273   ; 0x81: envolvente de tono
+	jp z,pon_envolvente_tono		;6275
+	jp c,pon_envolvente		;6278   ; 0x80: envolvente de volumen
+	cp 083h		;627b   ; 0x83: llamada
+	jr z,llamada_partitura		;627d
+	jr c,salta_partitura		;627f   ; 0x82: salto
+	cp 085h		;6281   ; 0x85: repeticion
+	jp z,repite		;6283
+	jr c,vuelta_partitura		;6286   ; 0x84: vuelta
+guarda_partitura:
+	ld (iy+010h),l		;6288   ; por donde va
 	ld (iy+011h),h		;628b
-	jr L_624B		;628e
-L_6290:
-	and 01fh		;6290
+	jr siguiente_voz		;628e
+pon_ruido:
+	and 01fh		;6290   ; la frecuencia del ruido (D167)
 	ld (0d167h),a		;6292
-	jr L_6259		;6295
-L_6297:
+	jr lee_partitura		;6295
+salta_partitura:
 	ld a,(hl)			;6297
 	inc hl			;6298
 	ld h,(hl)			;6299
 	ld l,a			;629a
-	jr L_6259		;629b
-L_629D:
-	and 00fh		;629d
+	jr lee_partitura		;629b
+pon_volumen_voz:
+	and 00fh		;629d   ; el volumen de partida (+3)
 	ld (iy+003h),a		;629f
-	jr L_6259		;62a2
-L_62A4:
-	ld e,000h		;62a4
+	jr lee_partitura		;62a2
+fin_partitura:
+	ld e,000h		;62a4   ; voz apagada: volumen y tono a 0
 	ld d,000h		;62a6
 	ld (iy+000h),e		;62a8
-	call L_63A7		;62ab
-	call L_63C0		;62ae
-	exx			;62b1
+	call volumen_canal		;62ab
+	call tono_canal		;62ae
+	exx			;62b1   ; la voz 2...
 	ld a,b			;62b2
 	exx			;62b3
 	cp 002h		;62b4
-	jr nz,L_624B		;62b6
-	ld hl,0d068h		;62b8
+	jr nz,siguiente_voz		;62b6
+	ld hl,0d068h		;62b8   ; ...si habia una musica guardada (D068 bit 7)...
 	ld a,(hl)			;62bb
 	or a			;62bc
-	jp p,L_624B		;62bd
+	jp p,siguiente_voz		;62bd
 	ld (hl),000h		;62c0
-	ld hl,0d0f2h		;62c2
+	ld hl,0d0f2h		;62c2   ; ...se recupera (D0F2 -> D06A): vuelve la musica de antes
 	ld de,0d06ah		;62c5
 	ld bc,0006fh		;62c8
 	ldir		;62cb
-	jp L_624B		;62cd
-L_62D0:
-	call L_63DA		;62d0
-	ld a,(de)			;62d3
+	jp siguiente_voz		;62cd
+vuelta_partitura:
+	call pila_voz		;62d0   ; la pila de la voz (+0A/+0B)...
+	ld a,(de)			;62d3   ; ...devuelve la direccion
 	dec de			;62d4
 	ld h,a			;62d5
 	ld a,(de)			;62d6
 	dec de			;62d7
 	ld l,a			;62d8
-L_62D9:
+guarda_pila:
 	ld (iy+00ah),e		;62d9
 	ld (iy+00bh),d		;62dc
-	jp L_6259		;62df
-L_62E2:
-	call L_63DA		;62e2
+	jp lee_partitura		;62df
+llamada_partitura:
+	call pila_voz		;62e2   ; guarda la vuelta en la pila de la voz...
 	inc de			;62e5
 	ld c,(hl)			;62e6
 	inc hl			;62e7
@@ -399,30 +441,30 @@ L_62E2:
 	inc hl			;62ec
 	ld (hl),d			;62ed
 	ex de,hl			;62ee
-	ld h,b			;62ef
+	ld h,b			;62ef   ; ...y salta
 	ld l,c			;62f0
-	jr L_62D9		;62f1
-L_62F3:
-	and 009h		;62f3
+	jr guarda_pila		;62f1
+pon_mezclador:
+	and 009h		;62f3   ; los bits de ruido y tono del canal...
 	ld b,a			;62f5
 	ld c,0f6h		;62f6
-	ld a,(iy+001h)		;62f8
+	ld a,(iy+001h)		;62f8   ; ...corridos segun la voz (+1)
 	and 003h		;62fb
-	jr z,L_6306		;62fd
-L_62FF:
+	jr z,guarda_mezclador		;62fd
+corre_mezclador:
 	rlc b		;62ff
 	rlc c		;6301
 	dec a			;6303
-	jr nz,L_62FF		;6304
-L_6306:
-	ld de,0d168h		;6306
+	jr nz,corre_mezclador		;6304
+guarda_mezclador:
+	ld de,0d168h		;6306   ; en D168 (el registro 7)
 	ld a,(de)			;6309
 	and c			;630a
 	or b			;630b
 	ld (de),a			;630c
-	jp L_6259		;630d
-L_6310:
-	call L_63DA		;6310
+	jp lee_partitura		;630d
+empieza_repeticion:
+	call pila_voz		;6310   ; a la pila: la direccion y la cuenta (byte - 0x90)
 	inc de			;6313
 	ex de,hl			;6314
 	ld (hl),e			;6315
@@ -432,150 +474,155 @@ L_6310:
 	sub 090h		;6319
 	ld (hl),a			;631b
 	ex de,hl			;631c
-	jr L_62D9		;631d
-L_631F:
-	call L_63DA		;631f
+	jr guarda_pila		;631d
+repite:
+	call pila_voz		;631f   ; una vuelta menos...
 	ld a,(de)			;6322
 	dec a			;6323
-	jr z,L_6330		;6324
-	ld (de),a			;6326
+	jr z,fin_repeticion		;6324   ; ...ninguna: sigue
+	ld (de),a			;6326   ; ...si no, otra vez desde el principio
 	dec de			;6327
 	ld a,(de)			;6328
 	dec de			;6329
 	ld h,a			;632a
 	ld a,(de)			;632b
 	ld l,a			;632c
-	jp L_6259		;632d
-L_6330:
+	jp lee_partitura		;632d
+fin_repeticion:
 	dec de			;6330
 	dec de			;6331
 	dec de			;6332
-	jr L_62D9		;6333
-L_6335:
-	ld a,(hl)			;6335
+	jr guarda_pila		;6333
+pon_envolvente:
+	ld a,(hl)			;6335   ; el numero...
 	inc hl			;6336
 	add a,a			;6337
-	ld bc,06526h		;6338
+	ld bc,06526h		;6338   ; ...en la tabla de p01:6526
 	add a,c			;633b
 	ld c,a			;633c
-	jr nc,L_6340		;633d
+	jr nc,pon_envolvente_b		;633d
 	inc b			;633f
-L_6340:
+pon_envolvente_b:
 	ld a,(bc)			;6340
 	inc bc			;6341
 	ld (iy+00ch),a		;6342
 	ld a,(bc)			;6345
 	ld (iy+00dh),a		;6346
-	jp L_6259		;6349
-L_634C:
+	jp lee_partitura		;6349
+pon_envolvente_tono:
 	ld a,(hl)			;634c
 	inc hl			;634d
 	add a,a			;634e
-	ld bc,06571h		;634f
+	ld bc,06571h		;634f   ; en la tabla de p01:6571
 	add a,c			;6352
 	ld c,a			;6353
-	jr nc,L_6357		;6354
+	jr nc,pon_envolvente_tono_b		;6354
 	inc b			;6356
-L_6357:
+pon_envolvente_tono_b:
 	ld a,(bc)			;6357
 	inc bc			;6358
 	ld (iy+00eh),a		;6359
 	ld a,(bc)			;635c
 	ld (iy+00fh),a		;635d
-	jp L_6259		;6360
-L_6363:
-	ld (iy+002h),a		;6363
-	ld a,(hl)			;6366
+	jp lee_partitura		;6360
+nota:
+	ld (iy+002h),a		;6363   ; la duracion
+	ld a,(hl)			;6366   ; el tono (o, con el bit 7, un silencio)
 	inc hl			;6367
 	or a			;6368
-	jp m,L_639C		;6369
+	jp m,silencio		;6369
 	ld d,a			;636c
 	ld a,(hl)			;636d
 	inc hl			;636e
 	ld e,a			;636f
 	push hl			;6370
-	call L_63C0		;6371
-	ld (iy+015h),e		;6374
+	call tono_canal		;6371   ; al canal
+	ld (iy+015h),e		;6374   ; apuntado en +15/+16
 	ld (iy+016h),d		;6377
-	ld a,(iy+003h)		;637a
+	ld a,(iy+003h)		;637a   ; el volumen de partida
 	ld (iy+012h),a		;637d
 	ld e,a			;6380
-	call L_63A7		;6381
+	call volumen_canal		;6381
 	pop hl			;6384
-	sub a			;6385
+	sub a			;6385   ; las envolventes desde el principio
 	ld (iy+005h),a		;6386
 	ld (iy+008h),a		;6389
 	inc a			;638c
-L_638D:
+cuentas_a_uno:
 	ld (iy+004h),a		;638d
 	ld (iy+007h),a		;6390
 	ld (iy+009h),a		;6393
 	ld (iy+006h),a		;6396
-	jp L_6288		;6399
-L_639C:
-	push hl			;639c
+	jp guarda_partitura		;6399
+silencio:
+	push hl			;639c   ; volumen 0
 	ld e,000h		;639d
-	call L_63A7		;639f
+	call volumen_canal		;639f
 	pop hl			;63a2
 	ld a,0ffh		;63a3
-	jr L_638D		;63a5
-L_63A7:
-	ld a,008h		;63a7
+	jr cuentas_a_uno		;63a5
+volumen_canal:
+	ld a,008h		;63a7   ; registro 8 + canal
 	add a,(iy+001h)		;63a9
 	ld c,a			;63ac
-	jp p,L_63B8		;63ad
+	jp p,guarda_volumen		;63ad   ; la voz de efectos (bit 7) solo suena si no hay efecto (D0D9)
 	and 00fh		;63b0
 	ld c,a			;63b2
 	ld a,(0d0d9h)		;63b3
 	or a			;63b6
 	ret nz			;63b7
-L_63B8:
-	ld b,000h		;63b8
+guarda_volumen:
+	ld b,000h		;63b8   ; en D161 + registro
 	ld hl,0d161h		;63ba
 	add hl,bc			;63bd
 	ld (hl),e			;63be
 	ret			;63bf
-L_63C0:
-	ld a,(iy+001h)		;63c0
+tono_canal:
+	ld a,(iy+001h)		;63c0   ; registro 2 * canal
 	add a,a			;63c3
 	ld c,a			;63c4
-	jp p,L_63D0		;63c5
+	jp p,guarda_tono		;63c5
 	and 00fh		;63c8
 	ld c,a			;63ca
 	ld a,(0d0d9h)		;63cb
 	or a			;63ce
 	ret nz			;63cf
-L_63D0:
-	ld b,000h		;63d0
+guarda_tono:
+	ld b,000h		;63d0   ; los dos bytes del tono
 	ld hl,0d161h		;63d2
 	add hl,bc			;63d5
 	ld (hl),e			;63d6
 	inc hl			;63d7
 	ld (hl),d			;63d8
 	ret			;63d9
-L_63DA:
+pila_voz:
 	ld e,(iy+00ah)		;63da
 	ld d,(iy+00bh)		;63dd
 	ret			;63e0
-L_63E1:
+
+; ----------------------------------------------------------------------
+; EFECTO A (D178): la voz de efectos (D0D9) con la cabecera de p01:64B1 y la
+; partitura del efecto (tabla p01:64CC).
+; ----------------------------------------------------------------------
+efecto:
 	push hl			;63e1
 	push de			;63e2
 	push bc			;63e3
-	ld hl,0d069h		;63e4
+	ld hl,0d069h		;63e4   ; D069 bit 0: sin sonido
 	bit 0,(hl)		;63e7
 	jr nz,L_640B		;63e9
-	ld hl,064b1h		;63eb
+	ld hl,064b1h		;63eb   ; la cabecera de la voz de efectos
 	ld de,0d0d9h		;63ee
 	ld bc,00010h		;63f1
 	ldir		;63f4
-	add a,a			;63f6
+	add a,a			;63f6   ; el efecto * 2...
 	ld c,a			;63f7
 	ld b,000h		;63f8
-	ld hl,064cch		;63fa
+	ld hl,064cch		;63fa   ; ...su partitura
 	add hl,bc			;63fd
 	ldi		;63fe
 	ldi		;6400
-	ld hl,0d168h		;6402
+	ld hl,0d168h		;6402   ; el mezclador: ruido y tono del canal 3
 	ld a,(hl)			;6405
 	and 03dh		;6406
 	or 090h		;6408
@@ -585,25 +632,30 @@ L_640B:
 	pop de			;640c
 	pop hl			;640d
 	ret			;640e
-L_640F:
+
+; ----------------------------------------------------------------------
+; MUSICA A (D17A). Si es una melodia corta (bit 7) y suena otra larga, la
+; guarda en D0F2 para volver a ella al acabar.
+; ----------------------------------------------------------------------
+musica:
 	push hl			;640f
 	push de			;6410
 	push bc			;6411
-	ld hl,0d069h		;6412
+	ld hl,0d069h		;6412   ; sin sonido
 	bit 0,(hl)		;6415
 	jr nz,L_640B		;6417
-	ld hl,0d068h		;6419
+	ld hl,0d068h		;6419   ; la que sonaba...
 	bit 7,(hl)		;641c
-	ld (hl),a			;641e
-	jr nz,L_6430		;641f
-	bit 7,a		;6421
-	jr z,L_6430		;6423
+	ld (hl),a			;641e   ; ...pasa a ser esta
+	jr nz,empieza_musica		;641f
+	bit 7,a		;6421   ; corta (bit 7) sobre larga: se guarda la larga
+	jr z,empieza_musica		;6423
 	ld hl,0d06ah		;6425
 	ld de,0d0f2h		;6428
 	ld bc,0006fh		;642b
 	ldir		;642e
-L_6430:
-	add a,a			;6430
+empieza_musica:
+	add a,a			;6430   ; musica * 6 en p01:64F0: las tres partituras
 	ld c,a			;6431
 	add a,a			;6432
 	add a,c			;6433
@@ -611,21 +663,21 @@ L_6430:
 	ld b,000h		;6435
 	ld hl,064f0h		;6437
 	add hl,bc			;643a
-	ld a,003h		;643b
+	ld a,003h		;643b   ; tres voces
 	ld de,0d09eh		;643d
-L_6440:
-	ldi		;6440
+pon_partitura:
+	ldi		;6440   ; la partitura de la voz
 	ldi		;6442
 	ld bc,00017h		;6444
 	ex de,hl			;6447
 	add hl,bc			;6448
 	ex de,hl			;6449
 	dec a			;644a
-	jr nz,L_6440		;644b
-	ld hl,06481h		;644d
+	jr nz,pon_partitura		;644b
+	ld hl,06481h		;644d   ; las cabeceras de p01:6481
 	ld de,0d08eh		;6450
 	ld a,003h		;6453
-L_6455:
+pon_cabecera:
 	ld bc,00010h		;6455
 	ldir		;6458
 	ld bc,00009h		;645a
@@ -633,39 +685,57 @@ L_6455:
 	add hl,bc			;645e
 	ex de,hl			;645f
 	dec a			;6460
-	jr nz,L_6455		;6461
-	ld a,0b8h		;6463
+	jr nz,pon_cabecera		;6461
+	ld a,0b8h		;6463   ; mezclador = 0xB8
 	ld (0d168h),a		;6465
 	pop bc			;6468
 	pop de			;6469
 	pop hl			;646a
 	ret			;646b
-L_646C:
-	ld a,080h		;646c
+huerfana_silencio:
+	ld a,080h		;646c   ; nadie la llama: sonido apagado y el mezclador todo cerrado
 	ld (0d069h),a		;646e
 	ld a,007h		;6471
 	ld e,0bfh		;6473
-	jp L_64C4		;6475
+	jp escribe_psg		;6475
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6478..0x64c4  (76 bytes)
-DATA_6478:
-	defb 097h,032h,069h,0d0h,0c9h,03eh,001h,018h,0f8h,0ffh,000h,001h,00bh,001h,000h,001h	; 6478  .2i..>..........
-	defb 001h,000h,001h,06ah,0d0h,0c1h,064h,0c1h,064h,0ffh,0c1h,001h,00bh,001h,000h,001h	; 6488  ...j..d.d.......
-	defb 001h,000h,001h,076h,0d0h,0c1h,064h,0c1h,064h,0ffh,002h,001h,00bh,001h,000h,001h	; 6498  ...v..d.d.......
-	defb 001h,000h,001h,082h,0d0h,0c1h,064h,0c1h,064h,0ffh,001h,001h,00bh,001h,000h,001h	; 64a8  ......d.d.......
-	defb 001h,000h,001h,06ch,0d1h,0c1h,064h,0c1h,064h,0f0h,000h,000h	; 64b8  ...l..d.d...
+; DATOS resto_6478: datos sin uso delante de las cabeceras
+;   0x6478..0x6481  (9 bytes)
+DATA_resto_6478:
+	defb 097h,032h,069h,0d0h,0c9h,03eh,001h,018h,0f8h	; 6478  .2i..>...
+
+; ----------------------------------------------------------------------
+; DATOS voces_cabecera: Las cabeceras de las tres voces de musica (16 bytes
+;   cada una)
+;   0x6481..0x64b1  (48 bytes)
+DATA_voces_cabecera:
+	defb 0ffh,000h,001h,00bh,001h,000h,001h,001h,000h,001h,06ah,0d0h,0c1h,064h,0c1h,064h	; 6481  ..........j..d.d
+	defb 0ffh,0c1h,001h,00bh,001h,000h,001h,001h,000h,001h,076h,0d0h,0c1h,064h,0c1h,064h	; 6491  ..........v..d.d
+	defb 0ffh,002h,001h,00bh,001h,000h,001h,001h,000h,001h,082h,0d0h,0c1h,064h,0c1h,064h	; 64a1  .............d.d
+
+; ----------------------------------------------------------------------
+; DATOS voz_efectos: La cabecera de la voz de efectos (16 bytes)
+;   0x64b1..0x64c1  (16 bytes)
+DATA_voz_efectos:
+	defb 0ffh,001h,001h,00bh,001h,000h,001h,001h,000h,001h,06ch,0d1h,0c1h,064h,0c1h,064h	; 64b1  ..........l..d.d
+
+; ----------------------------------------------------------------------
+; DATOS resto_64C1: tres bytes sin uso
+;   0x64c1..0x64c4  (3 bytes)
+DATA_resto_64C1:
+	defb 0f0h,000h,000h	; 64c1
 
 ; ======================================================================
 ; CODIGO 0x64c4..0x64cc  (8 bytes)
 ; ======================================================================
 
 
-L_64C4:
-	out (0a0h),a		;64c4
+escribe_psg:
+	out (0a0h),a		;64c4   ; el registro A del PSG...
 	push af			;64c6
 	ld a,e			;64c7
-	out (0a1h),a		;64c8
+	out (0a1h),a		;64c8   ; ...vale E
 	pop af			;64ca
 	ret			;64cb
 

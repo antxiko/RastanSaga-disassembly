@@ -1,4 +1,5 @@
 
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 D 0x8000 0x8002 cruce_8000  los dos ultimos bytes del `ld (nn),hl` que empieza en p03:7FFF (ld (0xD189),hl)
 B 0x8002 (Sigue de p03:7FDA, con HL = 0x0130 ya guardado en D189.)

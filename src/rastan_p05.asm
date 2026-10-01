@@ -14,135 +14,154 @@
 ; ======================================================================
 
 
-L_6000:
-	ld ix,(0da1dh)		;6000
-	ld a,(0da1fh)		;6004
+
+; ----------------------------------------------------------------------
+; TAREA 4: las cosas de DA20 (8, de 38 bytes), una por cuadro (DA1D apunta a
+; la que toca, DA1F cuenta). Segun su tipo: las que siguen a otra, las que
+; salen al azar, una puerta, piedras que caen, las que saltan en arco, gotas,
+; y con el bit 7 un trozo de decorado animado.
+; ----------------------------------------------------------------------
+cosas:
+	ld ix,(0da1dh)		;6000   ; la que toca
+	ld a,(0da1fh)		;6004   ; cuantas quedan en la vuelta
 	ld b,a			;6007
 	push bc			;6008
-	ld a,(ix+000h)		;6009
+	ld a,(ix+000h)		;6009   ; su tipo: bit 7, decorado animado (p05:6543)
 	bit 7,a		;600c
-	jp nz,L_6543		;600e
-	cp 018h		;6011
-	jr z,L_6049		;6013
-	cp 01ch		;6015
-	jp z,L_6521		;6017
+	jp nz,decorado_animado		;600e
+	cp 018h		;6011   ; 0x18 y 0x22: pegadas a su sitio
+	jr z,cosa_fija		;6013
+	cp 01ch		;6015   ; 0x1C: p05:6521
+	jp z,tipo_1c		;6017
 	cp 022h		;601a
-	jr z,L_6049		;601c
-	cp 019h		;601e
-	jp z,L_6079		;6020
+	jr z,cosa_fija		;601c
+	cp 019h		;601e   ; 0x19 y 0x1D: salen al azar (p05:6079)
+	jp z,sale_al_azar		;6020
 	cp 01dh		;6023
-	jp z,L_6079		;6025
-	cp 01fh		;6028
-	jp z,L_60CF		;602a
-	cp 021h		;602d
-	jp z,L_62BE		;602f
-	cp 01eh		;6032
-	jp z,L_634E		;6034
+	jp z,sale_al_azar		;6025
+	cp 01fh		;6028   ; 0x1F: la puerta (p05:60CF)
+	jp z,puerta		;602a
+	cp 021h		;602d   ; 0x21: cae (p05:62BE)
+	jp z,cae_de_arriba		;602f
+	cp 01eh		;6032   ; 0x1E y 0x17: saltan en arco (p05:634E)
+	jp z,salta_en_arco		;6034
 	cp 017h		;6037
-	jp z,L_634E		;6039
-	cp 01ah		;603c
-	jp z,L_647B		;603e
+	jp z,salta_en_arco		;6039
+	cp 01ah		;603c   ; 0x1A y 0x1B: gotas (p05:647B)
+	jp z,gota		;603e
 	cp 01bh		;6041
-	jp z,L_647B		;6043
-	jp L_605E		;6046
-L_6049:
-	ld a,(ix+005h)		;6049
+	jp z,gota		;6043
+	jp siguiente_cosa		;6046   ; las demas: nada
+cosa_fija:
+	ld a,(ix+005h)		;6049   ; sin sprites: nada
 	and a			;604c
-	jr z,L_605E		;604d
-	ld a,(ix+010h)		;604f
+	jr z,siguiente_cosa		;604d
+	ld a,(ix+010h)		;604f   ; en su sitio (+10, +11)...
 	ld (ix+006h),a		;6052
 	ld a,(ix+011h)		;6055
 	ld (ix+007h),a		;6058
-	call 057bbh		;605b   ; p00 pinta_actor_b5
-L_605E:
+	call 057bbh		;605b   ; ...y pintada
+siguiente_cosa:
 	pop bc			;605e
-	ld de,00026h		;605f
+	ld de,00026h		;605f   ; 38 bytes por cosa
 	add ix,de		;6062
-	djnz L_6069		;6064
-	call L_6072		;6066
+	djnz L_6069		;6064   ; acabada la vuelta...
+	call primera_cosa		;6066   ; ...desde la primera
 L_6069:
-	ld (0da1dh),ix		;6069
+	ld (0da1dh),ix		;6069   ; apunta la siguiente
 	ld a,b			;606d
 	ld (0da1fh),a		;606e
 	ret			;6071
-L_6072:
-	ld ix,0da20h		;6072   ; ix -> los 8 enemigos de la pantalla
+primera_cosa:
+	ld ix,0da20h		;6072   ; DA20, ocho
 	ld b,008h		;6076
 	ret			;6078
-L_6079:
-	ld a,(ix+005h)		;6079
+
+; ----------------------------------------------------------------------
+; Tipos 0x19 y 0x1D: aparecen en su sitio una vez de cada 32 (R & 0x1F =
+; 0x0A), se animan los cuadros en que R tiene el bit 3 y, al acabar la
+; animacion, se dan de baja guardando tipo, pose y sitio para volver.
+; ----------------------------------------------------------------------
+sale_al_azar:
+	ld a,(ix+005h)		;6079   ; ya tiene sprites: p05:609E
 	and a			;607c
-	jr nz,L_609E		;607d
-	ld a,(ix+010h)		;607f
+	jr nz,anima_al_azar		;607d
+	ld a,(ix+010h)		;607f   ; en su sitio
 	ld (ix+006h),a		;6082
 	ld a,(ix+011h)		;6085
 	ld (ix+007h),a		;6088
-	ld a,r		;608b
+	ld a,r		;608b   ; al azar, una vez de cada 32...
 	and 01fh		;608d
 	cp 00ah		;608f
-	jp nz,L_605E		;6091
-	call 057afh		;6094   ; p00 alta_actor_b5
-	ld a,(0da19h)		;6097   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+	jp nz,siguiente_cosa		;6091
+	call 057afh		;6094   ; ...alta
+	ld a,(0da19h)		;6097   ; no habia sprites libres: nada
 	bit 0,a		;609a
-	jr nz,L_605E		;609c
-L_609E:
-	ld a,r		;609e
+	jr nz,siguiente_cosa		;609c
+anima_al_azar:
+	ld a,r		;609e   ; con R bit 3...
 	bit 3,a		;60a0
-	jp z,L_605E		;60a2
-	call 057bbh		;60a5   ; p00 pinta_actor_b5
-	bit 7,(ix+002h)		;60a8
-	jr z,L_605E		;60ac
-	ld h,(ix+000h)		;60ae
+	jp z,siguiente_cosa		;60a2
+	call 057bbh		;60a5   ; ...un paso de animacion
+	bit 7,(ix+002h)		;60a8   ; aun no ha acabado: nada
+	jr z,siguiente_cosa		;60ac
+	ld h,(ix+000h)		;60ae   ; se guardan tipo, pose y sitio...
 	ld l,(ix+001h)		;60b1
 	ld d,(ix+010h)		;60b4
 	ld e,(ix+011h)		;60b7
 	push hl			;60ba
 	push de			;60bb
-	call 057c7h		;60bc   ; p00 baja_actor_b5
+	call 057c7h		;60bc   ; ...baja (que borra los 38 bytes)...
 	pop de			;60bf
 	pop hl			;60c0
-	ld (ix+000h),h		;60c1
+	ld (ix+000h),h		;60c1   ; ...y se devuelven
 	ld (ix+001h),l		;60c4
 	ld (ix+010h),d		;60c7
 	ld (ix+011h),e		;60ca
-	jr L_605E		;60cd
-L_60CF:
-	bit 0,(ix+001h)		;60cf
-	jp nz,L_60E4		;60d3
-	ld a,(0d8fch)		;60d6   ; a = la x de Rastan
+	jr siguiente_cosa		;60cd
+
+; ----------------------------------------------------------------------
+; Tipo 0x1F: una puerta que se abre y se cierra segun donde este Rastan
+; (16x32 pixeles de tiles: p05:627E/628E/629E/62AE), y por la que sale un
+; actor que avanza de 3 en 3 pixeles 15 cuadros.
+; ----------------------------------------------------------------------
+puerta:
+	bit 0,(ix+001h)		;60cf   ; mirando a la izquierda: p05:60E4
+	jp nz,puerta_izq		;60d3
+	ld a,(0d8fch)		;60d6   ; Rastan a 0x40 o mas a la derecha (sin pasar de 0xC0): p05:61A1
 	sub (ix+010h)		;60d9
 	cp 0c0h		;60dc
-	jp c,L_61A1		;60de
-	jp L_61CE		;60e1
-L_60E4:
-	ld a,(0d8fch)		;60e4   ; a = la x de Rastan
+	jp c,puerta_der_cierra		;60de
+	jp puerta_der_abre		;60e1   ; si no, p05:61CE
+puerta_izq:
+	ld a,(0d8fch)		;60e4   ; Rastan a menos de 0x40: p05:611F
 	sub (ix+010h)		;60e7
 	cp 040h		;60ea
-	jp nc,L_60F2		;60ec
-	jp L_611F		;60ef
-L_60F2:
-	ld a,(ix+012h)		;60f2
+	jp nc,puerta_cierra		;60ec
+	jp puerta_abre		;60ef
+puerta_cierra:
+	ld a,(ix+012h)		;60f2   ; ya cerrada: p05:616C
 	and a			;60f5
-	jp z,L_616C		;60f6
-	ld a,000h		;60f9
+	jp z,puerta_actor		;60f6
+	ld a,000h		;60f9   ; se cierra...
 	ld (ix+012h),a		;60fb
 	push ix		;60fe
-	ld a,(ix+010h)		;6100
+	ld a,(ix+010h)		;6100   ; ...en (x, y + 0x10)...
 	ld (0d5d6h),a		;6103   ; x donde se pinta = a
 	ld a,(ix+011h)		;6106
 	add a,010h		;6109
 	ld (0d5d7h),a		;610b   ; y donde se pinta = a
-	ld hl,0628eh		;610e
+	ld hl,0628eh		;610e   ; ...con los tiles de p05:628E (16 x 32)
 	ld bc,01020h		;6111
 	ld de,00000h		;6114
 	call 046c9h		;6117   ; p00 pinta_bloque_tiles
 	pop ix		;611a
-	jp L_616C		;611c
-L_611F:
-	ld a,(ix+012h)		;611f
+	jp puerta_actor		;611c
+puerta_abre:
+	ld a,(ix+012h)		;611f   ; ya abierta: p05:616C
 	cp 001h		;6122
-	jp z,L_616C		;6124
-	ld a,001h		;6127
+	jp z,puerta_actor		;6124
+	ld a,001h		;6127   ; se abre...
 	ld (ix+012h),a		;6129
 	push ix		;612c
 	ld a,(ix+010h)		;612e
@@ -150,36 +169,36 @@ L_611F:
 	ld a,(ix+011h)		;6134
 	add a,010h		;6137
 	ld (0d5d7h),a		;6139   ; y donde se pinta = a
-	ld hl,0627eh		;613c
+	ld hl,0627eh		;613c   ; ...con los tiles de p05:627E
 	ld bc,01020h		;613f
 	ld de,00000h		;6142
 	call 046c9h		;6145   ; p00 pinta_bloque_tiles
 	pop ix		;6148
-	ld a,(ix+005h)		;614a
+	ld a,(ix+005h)		;614a   ; sin el actor de dentro...
 	and a			;614d
-	jp nz,L_616C		;614e
-	ld a,(ix+010h)		;6151
+	jp nz,puerta_actor		;614e
+	ld a,(ix+010h)		;6151   ; ...sale en (x + 0x10, y + 8)
 	add a,010h		;6154
 	ld (ix+006h),a		;6156
 	ld a,(ix+011h)		;6159
 	add a,008h		;615c
 	ld (ix+007h),a		;615e
-	call 057afh		;6161   ; p00 alta_actor_b5
-	ld a,(0da19h)		;6164   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+	call 057afh		;6161   ; alta
+	ld a,(0da19h)		;6164   ; sin sitio para el sprite: nada
 	bit 1,a		;6167
-	jp nz,L_605E		;6169
-L_616C:
-	ld a,(ix+005h)		;616c
+	jp nz,siguiente_cosa		;6169
+puerta_actor:
+	ld a,(ix+005h)		;616c   ; sin el actor: nada
 	and a			;616f
-	jp z,L_605E		;6170
-	inc (ix+006h)		;6173
+	jp z,siguiente_cosa		;6170
+	inc (ix+006h)		;6173   ; 3 pixeles a la derecha
 	inc (ix+006h)		;6176
 	inc (ix+006h)		;6179
-	inc (ix+013h)		;617c
+	inc (ix+013h)		;617c   ; +13 cuenta los cuadros: a 15...
 	ld a,(ix+013h)		;617f
 	cp 00fh		;6182
-	jp nc,L_6254		;6184
-	ld b,(ix+010h)		;6187
+	jp nc,cosa_vuelve		;6184   ; ...se acaba (p05:6254)
+	ld b,(ix+010h)		;6187   ; pintado con la y + 8 un momento...
 	ld a,(ix+011h)		;618a
 	ld c,a			;618d
 	add a,008h		;618e
@@ -187,13 +206,13 @@ L_616C:
 	push bc			;6193
 	call 057bbh		;6194   ; p00 pinta_actor_b5
 	pop bc			;6197
-	ld (ix+010h),b		;6198
+	ld (ix+010h),b		;6198   ; ...y devuelta
 	ld (ix+011h),c		;619b
-	jp L_605E		;619e
-L_61A1:
-	ld a,(ix+012h)		;61a1
+	jp siguiente_cosa		;619e
+puerta_der_cierra:
+	ld a,(ix+012h)		;61a1   ; lo mismo hacia el otro lado: se cierra con p05:62AE
 	and a			;61a4
-	jp z,L_6219		;61a5
+	jp z,puerta_der_actor		;61a5
 	ld a,000h		;61a8
 	ld (ix+012h),a		;61aa
 	push ix		;61ad
@@ -207,11 +226,11 @@ L_61A1:
 	ld de,00000h		;61c3
 	call 046c9h		;61c6   ; p00 pinta_bloque_tiles
 	pop ix		;61c9
-	jp L_6219		;61cb
-L_61CE:
-	ld a,(ix+012h)		;61ce
+	jp puerta_der_actor		;61cb
+puerta_der_abre:
+	ld a,(ix+012h)		;61ce   ; se abre con p05:629E
 	cp 001h		;61d1
-	jp z,L_6219		;61d3
+	jp z,puerta_der_actor		;61d3
 	ld a,001h		;61d6
 	ld (ix+012h),a		;61d8
 	push ix		;61db
@@ -227,8 +246,8 @@ L_61CE:
 	pop ix		;61f7
 	ld a,(ix+005h)		;61f9
 	and a			;61fc
-	jp nz,L_6219		;61fd
-	ld a,(ix+010h)		;6200
+	jp nz,puerta_der_actor		;61fd
+	ld a,(ix+010h)		;6200   ; el actor sale en (x, y + 8)
 	ld (ix+006h),a		;6203
 	ld a,(ix+011h)		;6206
 	add a,008h		;6209
@@ -236,18 +255,18 @@ L_61CE:
 	call 057afh		;620e   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6211   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6214
-	jp nz,L_605E		;6216
-L_6219:
+	jp nz,siguiente_cosa		;6216
+puerta_der_actor:
 	ld a,(ix+005h)		;6219
 	and a			;621c
-	jp z,L_605E		;621d
-	dec (ix+006h)		;6220
+	jp z,siguiente_cosa		;621d
+	dec (ix+006h)		;6220   ; 3 pixeles a la izquierda
 	dec (ix+006h)		;6223
 	dec (ix+006h)		;6226
-	inc (ix+013h)		;6229
+	inc (ix+013h)		;6229   ; 15 cuadros
 	ld a,(ix+013h)		;622c
 	cp 00fh		;622f
-	jp nc,L_6254		;6231
+	jp nc,cosa_vuelve		;6231
 	ld b,(ix+010h)		;6234
 	ld a,(ix+011h)		;6237
 	ld c,a			;623a
@@ -260,9 +279,9 @@ L_6219:
 	pop bc			;624a
 	ld (ix+010h),b		;624b
 	ld (ix+011h),c		;624e
-	jp L_605E		;6251
-L_6254:
-	ld b,(ix+012h)		;6254
+	jp siguiente_cosa		;6251
+cosa_vuelve:
+	ld b,(ix+012h)		;6254   ; se guardan pose (+12), tipo, sitio...
 	ld h,(ix+000h)		;6257
 	ld l,(ix+001h)		;625a
 	ld d,(ix+010h)		;625d
@@ -270,56 +289,63 @@ L_6254:
 	push hl			;6263
 	push de			;6264
 	push bc			;6265
-	call 057c7h		;6266   ; p00 baja_actor_b5
+	call 057c7h		;6266   ; ...baja...
 	pop bc			;6269
 	pop de			;626a
 	pop hl			;626b
-	ld (ix+000h),h		;626c
+	ld (ix+000h),h		;626c   ; ...y se devuelven: vuelve a empezar
 	ld (ix+001h),l		;626f
 	ld (ix+010h),d		;6272
 	ld (ix+011h),e		;6275
 	ld (ix+012h),b		;6278
-	jp L_605E		;627b
+	jp siguiente_cosa		;627b
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x627e..0x62be  (64 bytes)
-DATA_627E:
-	defb 0f8h,003h,0f9h,003h,0fah,003h,0fbh,003h,0feh,003h,0ffh,003h,000h,004h,001h,004h	; 627e  ................
-	defb 0eeh,003h,0efh,003h,0f6h,003h,0f7h,003h,0f4h,003h,0f5h,003h,0fch,003h,0fdh,003h	; 628e  ................
-	defb 04bh,006h,04ch,006h,04dh,006h,04eh,006h,058h,006h,059h,006h,05ah,006h,05bh,006h	; 629e  K.L.M.N.X.Y.Z.[.
-	defb 047h,006h,048h,006h,049h,006h,04ah,006h,054h,006h,055h,006h,056h,006h,057h,006h	; 62ae  G.H.I.J.T.U.V.W.
+; DATOS puerta_tiles: Los tiles de la puerta: cuatro listas de 2 x 4 palabras
+;   (abierta y cerrada a cada lado)
+;   0x627e..0x62be  (64 bytes)
+DATA_puerta_tiles:
+	defw 003f8h,003f9h,003fah,003fbh,003feh,003ffh,00400h,00401h	; 627e
+	defw 003eeh,003efh,003f6h,003f7h,003f4h,003f5h,003fch,003fdh	; 628e
+	defw 0064bh,0064ch,0064dh,0064eh,00658h,00659h,0065ah,0065bh	; 629e
+	defw 00647h,00648h,00649h,0064ah,00654h,00655h,00656h,00657h	; 62ae
 
 ; ======================================================================
 ; CODIGO 0x62be..0x6468  (426 bytes)
 ; ======================================================================
 
 
-L_62BE:
-	ld a,(ix+005h)		;62be
+
+; ----------------------------------------------------------------------
+; Tipo 0x21: aparece arriba, acaba su animacion y cae de 8 en 8 pixeles;
+; cambia de pose al pasar por y = 0xA3 y 0xB3 y a 0xD3 vuelve a empezar.
+; ----------------------------------------------------------------------
+cae_de_arriba:
+	ld a,(ix+005h)		;62be   ; ya tiene sprites: p05:62DB
 	and a			;62c1
-	jr nz,L_62DB		;62c2
-	ld a,(ix+010h)		;62c4
+	jr nz,cae_animando		;62c2
+	ld a,(ix+010h)		;62c4   ; en su sitio
 	ld (ix+006h),a		;62c7
 	ld a,(ix+011h)		;62ca
 	ld (ix+007h),a		;62cd
-	call 057afh		;62d0   ; p00 alta_actor_b5
-	ld a,(0da19h)		;62d3   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+	call 057afh		;62d0   ; alta
+	ld a,(0da19h)		;62d3   ; sin sitio: nada
 	bit 0,a		;62d6
-	jp nz,L_605E		;62d8
-L_62DB:
-	ld a,(ix+001h)		;62db
+	jp nz,siguiente_cosa		;62d8
+cae_animando:
+	ld a,(ix+001h)		;62db   ; pose 0: animandose arriba
 	and a			;62de
-	jr nz,L_62F8		;62df
-	call 057bbh		;62e1   ; p00 pinta_actor_b5
-	bit 7,(ix+002h)		;62e4
-	jp z,L_605E		;62e8
-	ld a,001h		;62eb
+	jr nz,cae_8		;62df
+	call 057bbh		;62e1   ; un paso
+	bit 7,(ix+002h)		;62e4   ; no ha acabado: nada
+	jp z,siguiente_cosa		;62e8
+	ld a,001h		;62eb   ; pose 1...
 	ld (ix+001h),a		;62ed
-	ld a,(ix+011h)		;62f0
+	ld a,(ix+011h)		;62f0   ; ...y 0x20 mas abajo
 	add a,020h		;62f3
 	ld (ix+007h),a		;62f5
-L_62F8:
-	inc (ix+007h)		;62f8
+cae_8:
+	inc (ix+007h)		;62f8   ; 8 pixeles abajo
 	inc (ix+007h)		;62fb
 	inc (ix+007h)		;62fe
 	inc (ix+007h)		;6301
@@ -328,139 +354,144 @@ L_62F8:
 	inc (ix+007h)		;630a
 	inc (ix+007h)		;630d
 	push bc			;6310
-	call 057bbh		;6311   ; p00 pinta_actor_b5
+	call 057bbh		;6311   ; pintado
 	pop bc			;6314
-	ld a,(ix+007h)		;6315
+	ld a,(ix+007h)		;6315   ; por debajo de 0xD3: vuelve a empezar
 	cp 0d3h		;6318
-	jp nc,L_632A		;631a
-	cp 0b3h		;631d
-	jp nc,L_6335		;631f
-	cp 0a3h		;6322
-	jp nc,L_6340		;6324
-	jp L_605E		;6327
-L_632A:
-	res 0,(ix+001h)		;632a
+	jp nc,cae_fin		;631a
+	cp 0b3h		;631d   ; de 0xB3: pose 2
+	jp nc,cae_pose_2		;631f
+	cp 0a3h		;6322   ; de 0xA3: pose 3
+	jp nc,cae_pose_3		;6324
+	jp siguiente_cosa		;6327
+cae_fin:
+	res 0,(ix+001h)		;632a   ; pose 0 y vuelve
 	res 1,(ix+001h)		;632e
-	jp L_6254		;6332
-L_6335:
+	jp cosa_vuelve		;6332
+cae_pose_2:
 	res 0,(ix+001h)		;6335
 	set 1,(ix+001h)		;6339
-	jp L_605E		;633d
-L_6340:
-	set 1,(ix+001h)		;6340
+	jp siguiente_cosa		;633d
+cae_pose_3:
+	set 1,(ix+001h)		;6340   ; (el `set 1` repetido)
 	set 1,(ix+001h)		;6344
-	jp L_605E		;6348
-L_634B:
-	jp L_605E		;634b
-L_634E:
-	ld a,(ix+001h)		;634e
+	jp siguiente_cosa		;6348
+huerfana_cosa_nada:
+	jp siguiente_cosa		;634b   ; nadie llega aqui
+
+; ----------------------------------------------------------------------
+; Tipos 0x1E y 0x17: saltan en arco (los pasos en y de p05:6468) hacia
+; arriba (pose 0), a la derecha (1) o a la izquierda (2).
+; ----------------------------------------------------------------------
+salta_en_arco:
+	ld a,(ix+001h)		;634e   ; pose 0: p05:6360
 	cp 000h		;6351
-	jp z,L_6360		;6353
-	cp 001h		;6356
-	jp z,L_63C6		;6358
-	cp 002h		;635b
-	jp z,L_6417		;635d
-L_6360:
-	ld a,(ix+005h)		;6360
+	jp z,arco_arriba		;6353
+	cp 001h		;6356   ; 1: p05:63C6
+	jp z,arco_der		;6358
+	cp 002h		;635b   ; 2: p05:6417
+	jp z,arco_izq		;635d
+arco_arriba:
+	ld a,(ix+005h)		;6360   ; ya tiene sprites: sigue
 	and a			;6363
-	jr nz,L_6386		;6364
-	ld a,r		;6366
+	jr nz,arco_paso		;6364
+	ld a,r		;6366   ; al azar, una vez de cada 16
 	and 00fh		;6368
 	cp 005h		;636a
-	jp nz,L_605E		;636c
-	ld a,(ix+010h)		;636f
+	jp nz,siguiente_cosa		;636c
+	ld a,(ix+010h)		;636f   ; en su sitio, alta
 	ld (ix+006h),a		;6372
 	ld a,(ix+011h)		;6375
 	ld (ix+007h),a		;6378
 	call 057afh		;637b   ; p00 alta_actor_b5
-	ld a,(0da19h)		;637e   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+	ld a,(0da19h)		;637e   ; sin sitio: nada
 	bit 1,a		;6381
-	jp nz,L_605E		;6383
-L_6386:
-	ld l,(ix+013h)		;6386
+	jp nz,siguiente_cosa		;6383
+arco_paso:
+	ld l,(ix+013h)		;6386   ; el paso del arco (+13) en p05:6468
 	ld h,000h		;6389
 	ld de,06468h		;638b
 	add hl,de			;638e
-	ld a,(hl)			;638f
+	ld a,(hl)			;638f   ; y + paso
 	add a,(ix+007h)		;6390
 	ld (ix+007h),a		;6393
-	inc (ix+013h)		;6396
-	call 057bbh		;6399   ; p00 pinta_actor_b5
-	ld a,(ix+013h)		;639c
+	inc (ix+013h)		;6396   ; siguiente paso
+	call 057bbh		;6399   ; pintado
+	ld a,(ix+013h)		;639c   ; 19 pasos: se acaba
 	cp 013h		;639f
-	jp c,L_605E		;63a1
-L_63A4:
-	ld h,(ix+000h)		;63a4
+	jp c,siguiente_cosa		;63a1
+arco_vuelve:
+	ld h,(ix+000h)		;63a4   ; tipo, pose y sitio guardados...
 	ld l,(ix+001h)		;63a7
 	ld d,(ix+010h)		;63aa
 	ld e,(ix+011h)		;63ad
 	push hl			;63b0
 	push de			;63b1
-	call 057c7h		;63b2   ; p00 baja_actor_b5
+	call 057c7h		;63b2   ; ...baja...
 	pop de			;63b5
 	pop hl			;63b6
-	ld (ix+000h),h		;63b7
+	ld (ix+000h),h		;63b7   ; ...y devueltos
 	ld (ix+001h),l		;63ba
 	ld (ix+010h),d		;63bd
 	ld (ix+011h),e		;63c0
-	jp L_605E		;63c3
-L_63C6:
-	ld a,(ix+005h)		;63c6
+	jp siguiente_cosa		;63c3
+arco_der:
+	ld a,(ix+005h)		;63c6   ; al azar (R & 9)
 	and a			;63c9
-	jr nz,L_63EA		;63ca
+	jr nz,arco_der_paso		;63ca
 	ld a,r		;63cc
 	and 009h		;63ce
-	jp z,L_605E		;63d0
-	ld a,(ix+010h)		;63d3
+	jp z,siguiente_cosa		;63d0
+	ld a,(ix+010h)		;63d3   ; alta
 	ld (ix+006h),a		;63d6
 	ld a,(ix+011h)		;63d9
 	ld (ix+007h),a		;63dc
 	call 057afh		;63df   ; p00 alta_actor_b5
 	ld a,(0da19h)		;63e2   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;63e5
-	jp nz,L_605E		;63e7
-L_63EA:
-	ld l,(ix+013h)		;63ea
+	jp nz,siguiente_cosa		;63e7
+arco_der_paso:
+	ld l,(ix+013h)		;63ea   ; el paso en y...
 	ld h,000h		;63ed
 	ld de,06468h		;63ef
 	add hl,de			;63f2
 	ld a,(hl)			;63f3
 	add a,(ix+007h)		;63f4
 	ld (ix+007h),a		;63f7
-	inc (ix+006h)		;63fa
+	inc (ix+006h)		;63fa   ; ...y 4 a la derecha
 	inc (ix+006h)		;63fd
 	inc (ix+006h)		;6400
 	inc (ix+006h)		;6403
-	inc (ix+013h)		;6406
+	inc (ix+013h)		;6406   ; siguiente
 	call 057bbh		;6409   ; p00 pinta_actor_b5
-	ld a,(ix+013h)		;640c
+	ld a,(ix+013h)		;640c   ; 19 pasos
 	cp 013h		;640f
-	jp c,L_605E		;6411
-	jp L_63A4		;6414
-L_6417:
-	ld a,(ix+005h)		;6417
+	jp c,siguiente_cosa		;6411
+	jp arco_vuelve		;6414
+arco_izq:
+	ld a,(ix+005h)		;6417   ; al azar (R & 9)
 	and a			;641a
-	jr nz,L_643B		;641b
+	jr nz,arco_izq_paso		;641b
 	ld a,r		;641d
 	and 009h		;641f
-	jp z,L_605E		;6421
-	ld a,(ix+010h)		;6424
+	jp z,siguiente_cosa		;6421
+	ld a,(ix+010h)		;6424   ; (aqui guarda la x en +16 y la y en la x: un error)
 	ld (ix+016h),a		;6427
 	ld a,(ix+011h)		;642a
 	ld (ix+010h),a		;642d
-	call 057afh		;6430   ; p00 alta_actor_b5
+	call 057afh		;6430   ; alta
 	ld a,(0da19h)		;6433   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6436
-	jp nz,L_605E		;6438
-L_643B:
-	ld l,(ix+013h)		;643b
+	jp nz,siguiente_cosa		;6438
+arco_izq_paso:
+	ld l,(ix+013h)		;643b   ; el paso en y...
 	ld h,000h		;643e
 	ld de,06468h		;6440
 	add hl,de			;6443
 	ld a,(hl)			;6444
 	add a,(ix+007h)		;6445
 	ld (ix+007h),a		;6448
-	dec (ix+006h)		;644b
+	dec (ix+006h)		;644b   ; ...y 4 a la izquierda
 	dec (ix+006h)		;644e
 	dec (ix+006h)		;6451
 	dec (ix+006h)		;6454
@@ -468,12 +499,13 @@ L_643B:
 	call 057bbh		;645a   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;645d
 	cp 013h		;6460
-	jp c,L_605E		;6462
-	jp L_63A4		;6465
+	jp c,siguiente_cosa		;6462
+	jp arco_vuelve		;6465
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6468..0x647b  (19 bytes)
-DATA_6468:
+; DATOS arco_pasos: Los 19 pasos en y del arco (de -8 a +8)
+;   0x6468..0x647b  (19 bytes)
+DATA_arco_pasos:
 	defb 0ech,0eeh,0f1h,0f2h,0f6h,0fah,0fch,0feh,0feh,000h,002h,002h,004h,006h,00ah,00eh	; 6468  ................
 	defb 00fh,012h,014h	; 6478
 
@@ -482,43 +514,48 @@ DATA_6468:
 ; ======================================================================
 
 
-L_647B:
-	ld a,(ix+005h)		;647b
+
+; ----------------------------------------------------------------------
+; Tipos 0x1A y 0x1B: gotas. Aparecen al azar, caen de 4 en 4 hasta una
+; casilla de clase 0x20 y alli se deshacen (pose 1, 10 cuadros).
+; ----------------------------------------------------------------------
+gota:
+	ld a,(ix+005h)		;647b   ; ya tiene sprites: sigue
 	and a			;647e
-	jr nz,L_649F		;647f
-	ld a,r		;6481
+	jr nz,gota_cae		;647f
+	ld a,r		;6481   ; al azar (R & 0x2A = 0)
 	and 02ah		;6483
-	jp nz,L_605E		;6485
-	ld a,(ix+010h)		;6488
+	jp nz,siguiente_cosa		;6485
+	ld a,(ix+010h)		;6488   ; en su sitio, alta
 	ld (ix+006h),a		;648b
 	ld a,(ix+011h)		;648e
 	ld (ix+007h),a		;6491
 	call 057afh		;6494   ; p00 alta_actor_b5
-	ld a,(0da19h)		;6497   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+	ld a,(0da19h)		;6497   ; sin sitio: nada
 	bit 0,a		;649a
-	jp nz,L_605E		;649c
-L_649F:
-	bit 0,(ix+001h)		;649f
-	jr nz,L_64C8		;64a3
-	inc (ix+007h)		;64a5
+	jp nz,siguiente_cosa		;649c
+gota_cae:
+	bit 0,(ix+001h)		;649f   ; pose 1: deshaciendose
+	jr nz,gota_se_deshace		;64a3
+	inc (ix+007h)		;64a5   ; 4 pixeles abajo
 	inc (ix+007h)		;64a8
 	inc (ix+007h)		;64ab
 	inc (ix+007h)		;64ae
-	call 057bbh		;64b1   ; p00 pinta_actor_b5
-	call L_64F2		;64b4
-	jp nz,L_605E		;64b7
-	set 0,(ix+001h)		;64ba
+	call 057bbh		;64b1   ; pintada
+	call suelo_bajo_gota		;64b4   ; suelo debajo?
+	jp nz,siguiente_cosa		;64b7
+	set 0,(ix+001h)		;64ba   ; si: pose 1, desde el cuadro 0
 	xor a			;64be
 	ld (ix+013h),a		;64bf
 	call 057bbh		;64c2   ; p00 pinta_actor_b5
-	jp L_605E		;64c5
-L_64C8:
-	inc (ix+013h)		;64c8
+	jp siguiente_cosa		;64c5
+gota_se_deshace:
+	inc (ix+013h)		;64c8   ; un cuadro mas
 	call 057bbh		;64cb   ; p00 pinta_actor_b5
-	ld a,(ix+013h)		;64ce
+	ld a,(ix+013h)		;64ce   ; 10: se acaba
 	cp 00ah		;64d1
-	jp nz,L_605E		;64d3
-	ld h,(ix+000h)		;64d6
+	jp nz,siguiente_cosa		;64d3
+	ld h,(ix+000h)		;64d6   ; tipo y sitio guardados, baja y devueltos
 	ld d,(ix+010h)		;64d9
 	ld e,(ix+011h)		;64dc
 	push hl			;64df
@@ -529,20 +566,20 @@ L_64C8:
 	ld (ix+000h),h		;64e6
 	ld (ix+010h),d		;64e9
 	ld (ix+011h),e		;64ec
-	jp L_605E		;64ef
-L_64F2:
-	ld a,(ix+006h)		;64f2
+	jp siguiente_cosa		;64ef
+suelo_bajo_gota:
+	ld a,(ix+006h)		;64f2   ; la casilla de (x + 1, y + 1)...
 	ld h,a			;64f5
 	ld a,(ix+007h)		;64f6
 	ld l,a			;64f9
 	inc h			;64fa
 	inc l			;64fb
-	ld a,l			;64fc
+	ld a,l			;64fc   ; ...fila...
 	sub 020h		;64fd
 	and 0f0h		;64ff
 	ld b,000h		;6501
 	ld c,a			;6503
-	srl h		;6504
+	srl h		;6504   ; ...columna...
 	srl h		;6506
 	srl h		;6508
 	srl h		;650a
@@ -551,48 +588,54 @@ L_64F2:
 	add hl,hl			;650f
 	add hl,bc			;6510
 	add hl,bc			;6511
-	ld de,0d774h		;6512   ; de -> lo de delante desempaquetado: 11 x 16 bloques
+	ld de,0d774h		;6512   ; ...en D774...
 	add hl,de			;6515
 	inc hl			;6516
-	ld de,00020h		;6517
+	ld de,00020h		;6517   ; ...una fila mas abajo
 	add hl,de			;651a
-	ld a,(hl)			;651b
+	ld a,(hl)			;651b   ; clase 0x20?
 	and 0f0h		;651c
 	cp 020h		;651e
 	ret			;6520
-L_6521:
-	ld a,r		;6521
+tipo_1c:
+	ld a,r		;6521   ; tipo 0x1C: tres de cada cuatro cuadros...
 	and 003h		;6523
 	cp 001h		;6525
-	jp z,L_605E		;6527
-	ld a,(ix+005h)		;652a
+	jp z,siguiente_cosa		;6527
+	ld a,(ix+005h)		;652a   ; ...si tiene sprites, en su sitio y pintado
 	and a			;652d
-	jp z,L_605E		;652e
+	jp z,siguiente_cosa		;652e
 	ld a,(ix+010h)		;6531
 	ld (ix+006h),a		;6534
 	ld a,(ix+011h)		;6537
 	ld (ix+007h),a		;653a
 	call 057bbh		;653d   ; p00 pinta_actor_b5
-	jp L_605E		;6540
-L_6543:
-	inc (ix+012h)		;6543
+	jp siguiente_cosa		;6540
+
+; ----------------------------------------------------------------------
+; Bit 7: un trozo de decorado animado. Cada 8 cuadros copia a su sitio un
+; trozo de la pagina 1, alternando dos origenes (filas 0x28 y 0x30) con la x
+; que dice el nibble bajo del tipo: un decorado de dos cuadros.
+; ----------------------------------------------------------------------
+decorado_animado:
+	inc (ix+012h)		;6543   ; +12 cuenta los cuadros...
 	ld a,(ix+012h)		;6546
-	and 007h		;6549
-	jp nz,L_605E		;654b
-	ld a,(ix+000h)		;654e
+	and 007h		;6549   ; ...cada 8
+	jp nz,siguiente_cosa		;654b
+	ld a,(ix+000h)		;654e   ; x de origen = nibble bajo * 16
 	and 00fh		;6551
 	add a,a			;6553
 	add a,a			;6554
 	add a,a			;6555
 	add a,a			;6556
 	ld e,a			;6557
-	ld l,000h		;6558
+	ld l,000h		;6558   ; una vuelta, filas 0x28-0x30...
 	ld a,(ix+012h)		;655a
 	bit 3,a		;655d
 	ld h,028h		;655f
 	ld d,030h		;6561
-	jr z,L_6575		;6563
-	inc h			;6565
+	jr z,decorado_destino		;6563
+	inc h			;6565   ; ...y la otra, 8 mas abajo
 	inc d			;6566
 	inc h			;6567
 	inc d			;6568
@@ -608,8 +651,8 @@ L_6543:
 	inc d			;6572
 	inc h			;6573
 	inc d			;6574
-L_6575:
-	ld c,(ix+010h)		;6575
+decorado_destino:
+	ld c,(ix+010h)		;6575   ; el destino: su sitio, 8 lineas mas abajo
 	ld b,(ix+011h)		;6578
 	inc b			;657b
 	inc b			;657c
@@ -619,12 +662,12 @@ L_6575:
 	inc b			;6580
 	inc b			;6581
 	inc b			;6582
-	ld a,001h		;6583
+	ld a,001h		;6583   ; de la pagina 1 a la 0
 	ex af,af'			;6585
 	ld a,000h		;6586
 	ex af,af'			;6588
-	call 043afh		;6589   ; p00 copia_vram_vram
-	jp L_605E		;658c
+	call 043afh		;6589   ; copiado
+	jp siguiente_cosa		;658c
 
 ; ----------------------------------------------------------------------
 ; DATOS sin identificar  0x658f..0x8000  (6769 bytes)

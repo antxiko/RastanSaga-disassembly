@@ -3,6 +3,7 @@
 
 
 
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 LOS ACTORES (tarea 3, cada cuadro). En las fases de jefe (2, 5, 8, 0x0B,
 B 0x6000 0x0E y 0x12-0x17) salta a la rutina del jefe en p04. Si no, mueve UN actor
