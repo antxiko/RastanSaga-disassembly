@@ -1,4 +1,9 @@
 
+
+
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 Pone en la pagina 2 (0x8000) el slot del cartucho, el mismo que la pagina 1
 B 0x6000 en la que corre: asi los bancos de 0x8000 y 0xA000 se ven.
@@ -193,6 +198,167 @@ D 0x64C1 0x64C4 resto_64C1  tres bytes sin uso
 L 0x64C4 escribe_psg
 C 0x64C4 el registro A del PSG...
 C 0x64C8 ...vale E
+C 0x6005 0-3
+C 0x6007 BC = el slot primario
+C 0x600D EXPTBL + slot
+C 0x600E con su bit de expandido
+C 0x600F no expandido: ya esta
+C 0x6013 SLTTBL (EXPTBL + 4)
+C 0x6017 el registro de subslots de ese slot...
+C 0x6018 ...el subslot de la pagina 1 (bits 2-3)
+C 0x601A A = 1000SSPP: slot y subslot
+C 0x6022 B, guardado
+C 0x6024 B = 0: el valor
+C 0x6029 B de vuelta
+C 0x602A hasta R#1
+C 0x602E R#0 = 0
+C 0x603B bits 6 (pantalla), 5 (interrupcion) y 1 (sprites de 16x16)...
+C 0x603D ...sin el 6 ni el 0: pantalla apagada, sin ampliar
+C 0x603F RG1SAV
+C 0x6044 B = el valor
+C 0x604B 12 pares
+C 0x604D B guardado
+C 0x604E C = registro
+C 0x6050 B = valor
+C 0x6052 HL guardado
+C 0x6056 HL de vuelta
+C 0x6057 B de vuelta
+C 0x6058 el siguiente
+C 0x605B CLIKSW
+C 0x605E vuelve
+C 0x607A 64 KB
+C 0x607D de 0
+C 0x6084 64 KB mas
+C 0x6092 banco 0x13 en 0xA000
+C 0x609D a VRAM 0x0000
+C 0x60A0 16 KB
+C 0x60AE banco 0x15 en 0xA000
+C 0x60B9 a VRAM 0x4000
+C 0x60BC 16 KB
+C 0x60C4 A' = 2: la pagina de destino
+C 0x60C5 (y A = 0: la de origen)
+C 0x60CB 256 x 128
+C 0x60CE al mismo sitio de la pagina 2
+C 0x60D7 256 x 128
+C 0x60DA y = 128
+C 0x60E8 banco 0x17 en 0xA000
+C 0x60F0 de 0x8000...
+C 0x60F3 ...a VRAM 0x0000...
+C 0x60F6 ...16 KB
+C 0x6104 banco 0x19
+C 0x610C de 0x8000...
+C 0x610F ...a VRAM 0x4000...
+C 0x6112 ...16 KB
+C 0x611B A' = 3: la pagina de destino
+C 0x611E de (0, 0)...
+C 0x6121 ...256 x 128...
+C 0x6124 ...a (0, 0) de la pagina 3
+C 0x612A de (0, 128)...
+C 0x612D ...256 x 128...
+C 0x6130 ...a (0, 128)
+C 0x613E banco 0x11 en 0xA000
+C 0x614C 16 KB
+C 0x6152 vuelve
+C 0x6156 bit 7?
+C 0x6157 si: apagado
+C 0x615B tres canales
+C 0x6160 volumen del canal + ajuste
+C 0x6161 el canal anterior
+C 0x6165 negativo: 0
+C 0x6166 E = el volumen
+C 0x6168 registro 8, 9 o 10
+C 0x616A escrito
+C 0x616D los tres
+C 0x616F 8 registros
+C 0x6172 hacia atras
+C 0x6173 registro 7 al 0
+C 0x6175 escrito
+C 0x6178 los ocho
+C 0x6181 cuatro voces
+C 0x6183 B' = las que quedan
+C 0x6187 0?
+C 0x6188 si: la siguiente
+C 0x6194 aun no: el vibrato
+C 0x6199 aun quedan cambios en este paso
+C 0x619E HL = la envolvente
+C 0x61A4 paso * 2
+C 0x61A8 HL = su paso
+C 0x61AA 0: fin de la envolvente
+C 0x61AB no: este paso
+C 0x61AD paso 0...
+C 0x61B0 ...HL al principio...
+C 0x61B2 ...su primer byte
+C 0x61B5 +14 = cuadros por cambio
+C 0x61B9 el mismo byte, nibble alto
+C 0x61C0 +4 = cuantos cambios
+C 0x61C4 +13 = cuanto cambia
+C 0x61C7 paso siguiente
+C 0x61CD volumen + cambio
+C 0x61D3 apuntado
+C 0x61D7 entre 0 y 15?
+C 0x61D9 si: tal cual
+C 0x61DB negativo: 0
+C 0x61DE mas de 15: 15
+C 0x61E0 a ponerlo
+C 0x61E2 E = 0
+C 0x61E7 la cuenta de cuadros...
+C 0x61EA ...otra vez desde el principio
+C 0x61F0 aun no: la siguiente voz
+C 0x61F2 quedan cambios?
+C 0x61F5 si: cambia el tono
+C 0x61F7 HL = la envolvente de tono
+C 0x61FD su paso
+C 0x6205 el byte
+C 0x6207 no es 0: este paso
+C 0x6209 0: vuelta al principio
+C 0x620E el primer byte
+C 0x6211 +18 = cuadros por cambio
+C 0x621A cuantos cambios...
+C 0x621C ...en +7
+C 0x6220 +17 = cuanto cambia el tono
+C 0x6223 paso siguiente
+C 0x6229 HL = el tono
+C 0x622C el cambio...
+C 0x6230 ...con signo:
+C 0x6234 positivo: B = 0
+C 0x6238 negativo: B = 0xFF
+C 0x623A tono + cambio
+C 0x623B guardado
+C 0x6241 DE = el tono
+C 0x6245 la cuenta...
+C 0x6248 ...desde el principio
+C 0x624B B' de vuelta
+C 0x624C la voz siguiente (25 bytes)
+C 0x624E una menos
+C 0x624F quedan
+C 0x6313 un byte mas alla
+C 0x6314 HL = la pila, DE = la partitura
+C 0x6315 la direccion...
+C 0x6317 ...de vuelta
+C 0x6319 la cuenta: el byte - 0x90...
+C 0x631B ...guardada
+C 0x631C DE = la pila
+C 0x631D guardada
+C 0x6340 la envolvente, byte bajo...
+C 0x6342 ...+0C
+C 0x6345 byte alto...
+C 0x6346 ...+0D
+C 0x6349 el byte siguiente de la partitura
+C 0x6357 la de tono, byte bajo...
+C 0x6359 ...+0E
+C 0x635C byte alto...
+C 0x635D ...+0F
+C 0x6360 sigue leyendo
+C 0x6455 16 bytes de cabecera
+C 0x6458 copiados
+C 0x645A y 9 bytes que no se tocan
+C 0x645D hasta la voz siguiente
+C 0x6460 una menos
+C 0x6461 las tres
+C 0x6468 BC...
+C 0x6469 ...DE...
+C 0x646A ...HL de vuelta
+C 0x646B vuelve
 # --- fin de las notas por tandas ---
 
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---

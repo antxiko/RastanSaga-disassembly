@@ -158,8 +158,8 @@ jefe_1_fin_ataque:
 jefe_1_suelo:
 	call 07d56h		;811a   ; las casillas
 	ld a,(ix+023h)		;811d   ; la de +23 (debajo) es clase 0x20?
-	and 0f0h		;8120
-	cp 020h		;8122
+	and 0f0h		;8120   ; la clase de la casilla (+23)
+	cp 020h		;8122   ; clase 0x20?
 	jr nz,jefe_1_sin_suelo		;8124
 	ld a,000h		;8126   ; si: A = 0
 	ret			;8128
@@ -753,8 +753,8 @@ coloca_jefe_3_y:
 mueve_proyectil_jefe_3:
 	call 07d56h		;86e4   ; las casillas
 	ld a,(ix+020h)		;86e7   ; toca una de clase 0x20: se acaba
-	and 0f0h		;86ea
-	cp 020h		;86ec
+	and 0f0h		;86ea   ; la clase de la casilla (+20)
+	cp 020h		;86ec   ; clase 0x20?
 	jp z,choca_proyectil_jefe_3		;86ee
 	ld a,(0d8fch)		;86f1   ; C = x de Rastan + 0x18
 	add a,018h		;86f4

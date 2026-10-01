@@ -7,6 +7,11 @@
 
 
 
+
+
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 RASTAN, el jugador: lo que la tarea 2 (p00:56F2) hace cada cuadro. Si esta
 B 0x6000 muriendo (D90F bit 7) solo cuenta y al final avisa; si no, p06:68A7, la
@@ -1182,6 +1187,446 @@ L 0x7FF2 toca_especial
 C 0x7FF2 ninguno
 C 0x7FF7 solo los tipos 1-3
 C 0x7FFA dentro de su caja?
+C 0x6207 IX se guarda: p00:4777 lo pisa
+C 0x620C E = x
+C 0x6210 sin el marcador...
+C 0x6212 ...D = y en la pantalla de juego
+C 0x6214 x / 16...
+C 0x621C ...+ la fila (los 4 bits de abajo de y valen 0: casillas alineadas)
+C 0x621D HL = la casilla
+C 0x6221 guardada para las otras tres
+C 0x6225 en el fondo
+C 0x6226 E...
+C 0x6228 ...y D: el bloque
+C 0x6229 HL = el bloque
+C 0x622D E = x
+C 0x622E D = y
+C 0x6233 B' = 0: opaco
+C 0x6236 IX guardado
+C 0x623B IX de vuelta
+C 0x623D la casilla otra vez...
+C 0x623E ...y guardada
+C 0x6242 la casilla de la derecha (+2)
+C 0x6246 HL = el bloque
+C 0x624A x + 16
+C 0x624D D = y
+C 0x6252 B' = 0: opaco
+C 0x625C la casilla...
+C 0x6261 la de debajo (+0x20)
+C 0x6265 HL = el bloque
+C 0x6269 E = x
+C 0x626D y + 16
+C 0x6271 opaco
+C 0x627B la casilla
+C 0x627F abajo a la derecha (+0x22)
+C 0x6283 HL = el bloque
+C 0x6287 x + 16
+C 0x628D y + 16
+C 0x6291 opaco
+C 0x6299 IX
+C 0x629B IX de la entrada
+C 0x629D vuelve
+C 0x62A1 E = x
+C 0x62A5 sin el marcador
+C 0x62A7 D = y
+C 0x62B2 HL = la casilla
+C 0x62B5 * 2: palabra
+C 0x62B9 en el fondo...
+C 0x62BA ...el bloque
+C 0x62BD HL = el bloque
+C 0x62C1 E = x
+C 0x62C5 D = y
+C 0x62C7 B' = 0
+C 0x62D0 E = x
+C 0x62D4 sin el marcador
+C 0x62D6 D = y
+C 0x62D7 x / 16...
+C 0x62E0 ...+ la fila
+C 0x62E1 HL = la casilla
+C 0x62E4 * 2
+C 0x62E8 en lo de delante...
+C 0x62E9 ...el numero de bloque (sin la clase)
+C 0x62EB D = 0
+C 0x62ED HL = el bloque
+C 0x62EF 0xFF?
+C 0x62F1 si: vuelve
+C 0x62F5 E = x
+C 0x62F9 D = y
+C 0x6301 vuelve
+C 0x616F sin el bit 7
+C 0x6171 DE = la pose
+C 0x6174 HL = DE...
+C 0x6177 ...* 3
+C 0x6178 la tabla de la capa 1
+C 0x617D la definicion en DE
+C 0x617F el tercer byte
+C 0x6181 A = el tercer byte...
+C 0x6182 ...a la pila
+C 0x6183 A de vuelta
+C 0x6184 IX = la definicion
+C 0x619A B = A'
+C 0x619B A de vuelta
+C 0x619C ha dado la vuelta?
+C 0x619E no: la capa 2
+C 0x61A3 D904 bit 5 a 0: acabo la accion
+C 0x61A8 sin el bit 7
+C 0x61AA DE = pose
+C 0x61AD HL = pose...
+C 0x61B0 ...* 3
+C 0x61B1 la tabla de la capa 2
+C 0x61B7 DE = la definicion
+C 0x61BA A = el tercer byte
+C 0x61BB ...a A'
+C 0x61BC IX = la definicion
+C 0x61D4 los bits 0-1
+C 0x61D6 HL = ...
+C 0x61DA la tabla de tablas
+C 0x61DE DE = la tabla de esta capa
+C 0x61E4 sin el bit 7
+C 0x61E6 HL = pose...
+C 0x61E9 ...* 2
+C 0x61EA en la tabla
+C 0x61EB DE = la definicion
+C 0x61EE IX = la definicion
+C 0x61F2 A = el tercer byte de la capa 1, de la pila
+C 0x61F3 ...a A'
+C 0x6206 vuelve
+C 0x7CA7 vida 0...
+C 0x7CA8 ...no se le puede dar
+C 0x7CAE tipo 0...
+C 0x7CAF ...hueco
+C 0x7CB6 si: el siguiente
+C 0x7CBB tipo 1: caja a
+C 0x7CBE 2: b
+C 0x7CC1 3: c
+C 0x7CC6 4: b
+C 0x7CC9 5: b
+C 0x7CCE 6: a
+C 0x7CD1 7: b
+C 0x7CD6 8: i
+C 0x7CD9 9: e
+C 0x7CDE 0x0A: i
+C 0x7CE1 0x0B y 0x0C: f
+C 0x7CE9 0x0D: e
+C 0x7CEE 0x0E: g
+C 0x7CF1 0x0F: h
+C 0x7CF6 0x10: g
+C 0x7CF9 0x11, 0x12 y 0x13: a
+C 0x7D06 0x14: c
+C 0x7D09 0x15: c
+C 0x7D0E 0x16: la suya
+C 0x7D11 0x17 o mas: no se le da
+C 0x7D1F y del objeto
+C 0x7D2A le da
+C 0x7D2D y del objeto
+C 0x7D37 x del objeto
+C 0x7D42 le da
+C 0x7D45 por debajo: otra caja
+C 0x7D50 x
+C 0x7D5B le da
+C 0x7D5E y
+C 0x7D68 x
+C 0x7D73 le da
+C 0x7D76 por debajo: otra caja
+C 0x7D81 x
+C 0x7D8C le da
+C 0x7D9A y
+C 0x7DA5 le da
+C 0x7DA8 x
+C 0x7DB3 y
+C 0x7DBE le da
+C 0x7DC1 x
+C 0x7DCC y
+C 0x7DD7 le da
+C 0x6B50 giro 10 o mas?
+C 0x6B52 no: tal cual
+C 0x6B54 giro - 10...
+C 0x6B56 ...negado...
+C 0x6B58 ...+ 8: el espejo
+C 0x6B5A E = el giro
+C 0x6B5D giro 0
+C 0x6B5F giro 1
+C 0x6B61 2-7: sin correccion
+C 0x6B65 giro 8
+C 0x6B67 giro 9
+C 0x6B6C L - y del actor...
+C 0x6B6F ...0x2F o mas abajo?
+C 0x6B71 no: tal cual
+C 0x6B73 si: un pixel arriba
+C 0x6B76 giros 0 y 9...
+C 0x6B77 ...distancia en y...
+C 0x6B7A ...0x1F o mas?
+C 0x6B7E si: un pixel arriba
+C 0x6B80 la distancia en y...
+C 0x6B83 ...en B
+C 0x6B85 giro * 4...
+C 0x6B87 ...+ giro (* 5)...
+C 0x6B88 ...* 4 (* 20)
+C 0x6B8A HL guardado
+C 0x6B8B HL = giro * 20...
+C 0x6B8E ...* 2 (40 bytes por giro)
+C 0x6B92 HL = la fila del giro
+C 0x6B94 distancia / 2
+C 0x6B98 la columna
+C 0x6B9A + x del actor
+C 0x6B9D - 16
+C 0x6B9F HL de vuelta
+C 0x6BA0 H = la x nueva
+C 0x6BA1 y se coloca
+C 0x6BA5 el mismo espejo de giros
+C 0x6BB0 segun el giro...
+C 0x6BC1 distancia en y: 0x20 o mas, un pixel arriba
+C 0x6BCC 0x18 o mas: uno...
+C 0x6BD4 ...0x30 o mas: otro
+C 0x6BDA la distancia...
+C 0x6BDD ...en B
+C 0x6BDF giro * 16...
+C 0x6BE7 ...* 2 (32 bytes por giro)
+C 0x6BED distancia / 2
+C 0x6BF2 la x relativa...
+C 0x6BF3 ...+ x del actor - 16
+C 0x6BF9 H = x
+C 0x6BFE el espejo de giros
+C 0x6C09 segun el giro, otra correccion
+C 0x6C0B giro 0
+C 0x6C0D giro 1
+C 0x6C0F giro 2
+C 0x6C13 3-6: sin correccion
+C 0x6C17 giro 7
+C 0x6C19 8: a
+C 0x6C1D 9: b
+C 0x6C20 L - y del agarradero...
+C 0x6C23 ...0x10 o mas?
+C 0x6C27 si: un pixel arriba
+C 0x6C2B la distancia...
+C 0x6C2E ...0x0A o mas: uno arriba...
+C 0x6C33 ...0x1C o mas: otro
+C 0x6C44 la distancia en y...
+C 0x6C47 ...en B
+C 0x6C49 giro * 3...
+C 0x6C4B ...* 8 = 24 bytes por giro
+C 0x6C4E HL guardado
+C 0x6C4F HL = la fila
+C 0x6C55 en la tabla
+C 0x6C57 distancia / 2
+C 0x6C5B la columna
+C 0x6C5C la x relativa...
+C 0x6C5D ...+ x del actor...
+C 0x6C60 ...- 16
+C 0x6C62 HL de vuelta
+C 0x6C63 H = la x
+C 0x6C64 se coloca
+C 0x6C73 giro 0
+C 0x6C77 giro 1
+C 0x6C79 2
+C 0x6C7D 3
+C 0x6C7F 4-5: sin correccion
+C 0x6C83 6
+C 0x6C85 7
+C 0x6C89 9 o mas: b
+C 0x6C8C la distancia en y
+C 0x6C8F 5 o mas: uno arriba
+C 0x6C94 0x0D o mas: otro
+C 0x6C99 0x16 o mas: otro
+C 0x6CA4 3 o mas: uno
+C 0x6CA9 8 o mas: otro
+C 0x6CAE 0x0D o mas: otro
+C 0x6CB3 0x13 o mas: otro
+C 0x6CBB la distancia
+C 0x6CBE 9 o mas: uno
+C 0x6CC3 0x19 o mas: otro
+C 0x6E87 la clase
+C 0x6E89 0x10 o menos...
+C 0x6E8E ...nada
+C 0x6E91 0x20-0x3F: pared
+C 0x6E95 0x40-0x5F: cuesta
+C 0x6E99 0x60-0x7F: la otra cuesta
+C 0x6E9E 0xA0: como pared; lo demas, nada
+C 0x723E la clase
+C 0x7240 0x10 o menos: la tercera
+C 0x7246 0x20-0x3F: choca
+C 0x724A 0x40-0x5F: choca
+C 0x724F 0x60-0x7F: choca
+C 0x7254 0xA0: choca
+C 0x74CB la clase
+C 0x74CD 0x10 o menos: la tercera
+C 0x74D3 0x20-0x3F: choca
+C 0x74D7 0x40-0x5F: choca
+C 0x74DC 0x60-0x7F: choca
+C 0x74E1 0xA0: choca
+C 0x74E6 la clase
+C 0x74E8 0x10 o menos: nada
+C 0x74EF 0x20-0x3F: pared
+C 0x74F3 0x40-0x5F: cuesta
+C 0x74F7 0x60-0x7F: la otra
+C 0x74FB 0xA0: pared
+C 0x774E HL y...
+C 0x774F ...BC de vuelta
+C 0x7755 mitad derecha: p06:7760
+C 0x7757 la y de la casilla...
+C 0x775A ...+ 0x10
+C 0x775D a la cuesta
+C 0x794E B = 0
+C 0x7950 C = la fila
+C 0x7951 E = la y
+C 0x7953 D = la x
+C 0x7954 x / 16...
+C 0x7956 ...* 2
+C 0x7959 HL = la columna
+C 0x795C + fila * 2...
+C 0x795D ...(una fila son 0x20 bytes)
+C 0x7961 HL = la casilla
+C 0x7962 el byte alto
+C 0x7963 tres casillas
+C 0x7993 B = 0
+C 0x7995 C = la fila
+C 0x7996 E = la y
+C 0x7998 D = la x
+C 0x799B en casillas
+C 0x799D * 2
+C 0x79A0 HL = la columna
+C 0x79A3 + la fila
+C 0x79A9 el byte alto
+C 0x79AA A' = si la fila salio de la pantalla
+C 0x79AB dentro?
+C 0x79AD si: dos casillas
+C 0x79B0 fuera: 0xA0 en las tres
+C 0x79B6 vuelve
+C 0x79D1 B = 0
+C 0x79D3 C = la fila
+C 0x79D4 E = la y
+C 0x79D6 D = la x
+C 0x79D7 x + 16...
+C 0x79D9 ...en casillas
+C 0x79DB * 2
+C 0x79DE HL = la columna
+C 0x79E1 + la fila
+C 0x79E3 en D774
+C 0x79E7 el byte alto
+C 0x79E8 dos casillas
+C 0x7BE1 cuadros 1 y 5 a la izquierda: y + 8...
+C 0x7BE5 ...x - 4
+C 0x7BE9 la fuerza
+C 0x7BEC cuadros 2 y 4: y + 8...
+C 0x7BF0 ...x + 0x0F
+C 0x7BF4 la fuerza
+C 0x7FA6 el siguiente objeto
+C 0x7FA8 los tres
+C 0x7FAD la direccion
+C 0x7FAF 0: arriba
+C 0x7FB3 1: derecha
+C 0x7FB5 2: abajo
+C 0x7FB9 3: izquierda, x - 3
+C 0x6003 bit 7?
+C 0x6005 si: la cuenta de la muerte
+C 0x6026 bit 6?
+C 0x6028 no: sigue
+C 0x603B D188 = 0x80
+C 0x603C vuelve
+C 0x604C bit 1 del contador?
+C 0x604E no: se borran
+C 0x6053 a contar
+C 0x6059 las 11 fichas del jugador
+C 0x6061 D188 - 1
+C 0x6063 a 0?
+C 0x6068 bit 6 del estado
+C 0x606A vuelve
+C 0x606E B = la pintada
+C 0x6072 la misma?
+C 0x6073 si: nada
+C 0x607D H = vida / 2, L = 0
+C 0x607F + (0x1A, 0x50)
+C 0x6086 DE = la esquina de abajo, HL = 0x5014
+C 0x6087 guardada
+C 0x6089 sin vida: sin parte llena
+C 0x6094 vida / 2
+C 0x6096 B = vida / 2
+C 0x609A maximo / 2...
+C 0x609C ...- vida / 2
+C 0x609E nada vacio: ya esta
+C 0x60A2 H = lo vacio, L = 0
+C 0x60A4 DE = la esquina de antes
+C 0x60A5 E = 0x1A
+C 0x60A7 + la esquina: el final
+C 0x60A8 E = 0x14
+C 0x60AC DE..HL
+C 0x60B0 vuelve
+C 0x60B1 DE fuera de la pila
+C 0x60B2 vuelve
+C 0x60B4 B' = 0: opaco
+C 0x60B7 D = 0x18
+C 0x60B9 E = 0
+C 0x60C9 x = 0...
+C 0x60CB ...y = 0x18
+C 0x60D0 seis cifras
+C 0x60D3 vuelve
+C 0x60D9 sin cambio: nada
+C 0x60E0 y = 0x18
+C 0x60E8 vuelve
+C 0x60F9 vuelve
+C 0x60FD el nibble alto de C...
+C 0x6101 BC guardado
+C 0x6102 escrito
+C 0x6105 BC de vuelta
+C 0x6107 el nibble bajo de C
+C 0x610B el alto de D
+C 0x610F escrito
+C 0x6113 el bajo de D
+C 0x6117 el alto de E
+C 0x611B escrito
+C 0x6124 H otra vez: 0?
+C 0x6125 si: espacio
+C 0x612C HL...
+C 0x612D ...y DE guardados
+C 0x6131 DE...
+C 0x6132 ...y HL de vuelta
+C 0x6133 vuelve
+C 0x6137 B = el de ahora
+C 0x613B iguales?
+C 0x613C no: juego nuevo
+C 0x6142 B = la anterior
+C 0x6146 iguales?
+C 0x6164 las cuentas a 1...
+C 0x6166 ...de las dos animaciones
+C 0x6173 E = la pose
+C 0x6175 HL = DE
+C 0x617B HL = la entrada
+C 0x617E D...
+C 0x6185 IX = la definicion
+C 0x61AC E = la pose
+C 0x61AE HL = DE
+C 0x61AF * 2
+C 0x61B4 HL = la entrada
+C 0x61B6 el byte alto
+C 0x61B8 el tercer byte
+C 0x61BD IX = la definicion
+C 0x61D7 H = 0
+C 0x61DD HL = la palabra
+C 0x61DF el byte alto
+C 0x61E0 D
+C 0x61E8 L = la pose
+C 0x61EC el byte alto
+C 0x61ED D
+C 0x61EF IX = la definicion
+C 0x6216 x / 4...
+C 0x6218 ...x / 8...
+C 0x621A ...x / 16
+C 0x621E H = 0
+C 0x6227 el byte alto
+C 0x6231 D = y
+C 0x6235 normales
+C 0x6243 E...
+C 0x6244 ...
+C 0x6245 D: el bloque
+C 0x624C E = x + 16
+C 0x6250 D = y
+C 0x6251 alternativos
+C 0x6254 normales
+C 0x6255 IX guardado
+C 0x625A IX de vuelta
+C 0x625D guardada
+C 0x6262 E...
+C 0x6264 ...D: el bloque
 # --- fin de las notas por tandas ---
 
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
@@ -1282,11 +1727,135 @@ C 0x7c68 la y de la ficha 10 del jugador = hl
 C 0x7c6d bit 7: el jugador usa la ficha 10 = a
 C 0x7c95 p07 golpe_a_jefe
 C 0x7ca0 ix -> los 6 actores de la pantalla
+C 0x7d17 la diferencia en x...
+C 0x7d18 ...corrida +20...
+C 0x7d1a ...cabe en la caja si va de -20 a 3
+C 0x7d1c no cabe: fuera
+C 0x7d22 la diferencia en y...
+C 0x7d23 ...corrida +30...
+C 0x7d25 ...cabe en la caja si va de -30 a 13
+C 0x7d27 no cabe: fuera
+C 0x7d30 la diferencia en y...
+C 0x7d31 ...corrida +15...
+C 0x7d33 ...cabe en la caja si va de -15 a 11
+C 0x7d35 no cabe: fuera
+C 0x7d3a la diferencia en x...
+C 0x7d3b ...corrida +28...
+C 0x7d3d ...cabe en la caja si va de -28 a 12
+C 0x7d3f no cabe: fuera
+C 0x7d48 la diferencia en y...
+C 0x7d49 ...corrida +27...
+C 0x7d4b ...cabe en la caja si va de -27 a 2
+C 0x7d4d no cabe: fuera
+C 0x7d53 la diferencia en x...
+C 0x7d54 ...corrida +22...
+C 0x7d56 ...cabe en la caja si va de -22 a 6
+C 0x7d58 no cabe: fuera
+C 0x7d61 la diferencia en y...
+C 0x7d62 ...corrida +15...
+C 0x7d64 ...cabe en la caja si va de -15 a 11
+C 0x7d66 no cabe: fuera
+C 0x7d6b la diferencia en x...
+C 0x7d6c ...corrida +22...
+C 0x7d6e ...cabe en la caja si va de -22 a 6
+C 0x7d70 no cabe: fuera
+C 0x7d79 la diferencia en y...
+C 0x7d7a ...corrida +27...
+C 0x7d7c ...cabe en la caja si va de -27 a 2
+C 0x7d7e no cabe: fuera
+C 0x7d84 la diferencia en x...
+C 0x7d85 ...corrida +29...
+C 0x7d87 ...cabe en la caja si va de -29 a 13
+C 0x7d89 no cabe: fuera
+C 0x7d92 la diferencia en x...
+C 0x7d93 ...corrida +31...
+C 0x7d95 ...cabe en la caja si va de -31 a -3
+C 0x7d97 no cabe: fuera
+C 0x7d9d la diferencia en y...
+C 0x7d9e ...corrida +31...
+C 0x7da0 ...cabe en la caja si va de -31 a -9
+C 0x7da2 no cabe: fuera
+C 0x7dab la diferencia en x...
+C 0x7dac ...corrida +28...
+C 0x7dae ...cabe en la caja si va de -28 a 12
+C 0x7db0 no cabe: fuera
+C 0x7db6 la diferencia en y...
+C 0x7db7 ...corrida +29...
+C 0x7db9 ...cabe en la caja si va de -29 a 11
+C 0x7dbb no cabe: fuera
+C 0x7dc4 la diferencia en x...
+C 0x7dc5 ...corrida +14...
+C 0x7dc7 ...cabe en la caja si va de -14 a 14
+C 0x7dc9 no cabe: fuera
+C 0x7dcf la diferencia en y...
+C 0x7dd0 ...corrida +14...
+C 0x7dd2 ...cabe en la caja si va de -14 a 14
+C 0x7dd4 no cabe: fuera
+C 0x7ddd la diferencia en x...
+C 0x7dde ...corrida +14...
+C 0x7de0 ...cabe en la caja si va de -14 a 14
+C 0x7de2 no cabe: fuera
+C 0x7de8 la diferencia en y...
+C 0x7de9 ...corrida +30...
+C 0x7deb ...cabe en la caja si va de -30 a 13
+C 0x7ded no cabe: fuera
+C 0x7df6 la diferencia en x...
+C 0x7df7 ...corrida +30...
+C 0x7df9 ...cabe en la caja si va de -30 a 14
+C 0x7dfb no cabe: fuera
+C 0x7e01 la diferencia en y...
+C 0x7e02 ...corrida +31...
+C 0x7e04 ...cabe en la caja si va de -31 a -3
+C 0x7e06 no cabe: fuera
+C 0x7e1d la diferencia en x...
+C 0x7e1e ...corrida +21...
+C 0x7e20 ...cabe en la caja si va de -21 a 6
+C 0x7e22 no cabe: fuera
+C 0x7e28 la diferencia en y...
+C 0x7e29 ...corrida +25...
+C 0x7e2b ...cabe en la caja si va de -25 a 25
+C 0x7e2d no cabe: fuera
+C 0x7e3a la diferencia en x...
+C 0x7e3b ...corrida +30...
+C 0x7e3d ...cabe en la caja si va de -30 a 14
+C 0x7e3f no cabe: fuera
+C 0x7e45 la diferencia en y...
+C 0x7e46 ...corrida +9...
+C 0x7e48 ...cabe en la caja si va de -9 a 20
+C 0x7e4a no cabe: fuera
+C 0x7e53 la diferencia en x...
+C 0x7e54 ...corrida +14...
+C 0x7e56 ...cabe en la caja si va de -14 a 14
+C 0x7e58 no cabe: fuera
+C 0x7e5e la diferencia en y...
+C 0x7e5f ...corrida +12...
+C 0x7e61 ...cabe en la caja si va de -12 a 11
+C 0x7e63 no cabe: fuera
 C 0x7e71 p07 puntos_por_actor
 C 0x7e8b a = la pose de Rastan
 C 0x7e9b ix -> los 8 enemigos de la pantalla
+C 0x7eae la diferencia en x...
+C 0x7eaf ...corrida +14...
+C 0x7eb1 ...cabe en la caja si va de -14 a 1
+C 0x7eb3 no cabe: fuera
+C 0x7eb8 la diferencia en y...
+C 0x7eb9 ...corrida +31...
+C 0x7ebb ...cabe en la caja si va de -31 a 13
+C 0x7ebd no cabe: fuera
+C 0x7ec5 la diferencia en x...
+C 0x7ec6 ...corrida +31...
+C 0x7ec8 ...cabe en la caja si va de -31 a 9
+C 0x7eca no cabe: fuera
 C 0x7edf p07 clase_en
 C 0x7f5c bit 7: el jugador usa la ficha 10 = a
 C 0x7f67 ix -> los 6 actores de la pantalla
+C 0x7f83 la diferencia en x...
+C 0x7f84 ...corrida +14...
+C 0x7f86 ...cabe en la caja si va de -14 a 14
+C 0x7f88 no cabe: fuera
+C 0x7f8d la diferencia en y...
+C 0x7f8e ...corrida +27...
+C 0x7f90 ...cabe en la caja si va de -27 a 11
+C 0x7f92 no cabe: fuera
 C 0x7fcf la y de la ficha 10 del jugador = hl
 # --- fin de anota ---

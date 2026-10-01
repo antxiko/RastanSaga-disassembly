@@ -24,58 +24,58 @@
 cosas:
 	ld ix,(0da1dh)		;6000   ; la que toca
 	ld a,(0da1fh)		;6004   ; cuantas quedan en la vuelta
-	ld b,a			;6007
-	push bc			;6008
+	ld b,a			;6007   ; B = la cuenta
+	push bc			;6008   ; guardada
 	ld a,(ix+000h)		;6009   ; su tipo: bit 7, decorado animado (p05:6543)
 	bit 7,a		;600c
-	jp nz,decorado_animado		;600e
+	jp nz,decorado_animado		;600e   ; si: decorado
 	cp 018h		;6011   ; 0x18 y 0x22: pegadas a su sitio
-	jr z,cosa_fija		;6013
+	jr z,cosa_fija		;6013   ; si: fija
 	cp 01ch		;6015   ; 0x1C: p05:6521
-	jp z,tipo_1c		;6017
-	cp 022h		;601a
-	jr z,cosa_fija		;601c
+	jp z,tipo_1c		;6017   ; si
+	cp 022h		;601a   ; 0x22?
+	jr z,cosa_fija		;601c   ; si: fija
 	cp 019h		;601e   ; 0x19 y 0x1D: salen al azar (p05:6079)
-	jp z,sale_al_azar		;6020
-	cp 01dh		;6023
-	jp z,sale_al_azar		;6025
+	jp z,sale_al_azar		;6020   ; si
+	cp 01dh		;6023   ; 0x1D?
+	jp z,sale_al_azar		;6025   ; si
 	cp 01fh		;6028   ; 0x1F: la puerta (p05:60CF)
-	jp z,puerta		;602a
+	jp z,puerta		;602a   ; si
 	cp 021h		;602d   ; 0x21: cae (p05:62BE)
-	jp z,cae_de_arriba		;602f
+	jp z,cae_de_arriba		;602f   ; si
 	cp 01eh		;6032   ; 0x1E y 0x17: saltan en arco (p05:634E)
-	jp z,salta_en_arco		;6034
-	cp 017h		;6037
-	jp z,salta_en_arco		;6039
+	jp z,salta_en_arco		;6034   ; si
+	cp 017h		;6037   ; 0x17?
+	jp z,salta_en_arco		;6039   ; si
 	cp 01ah		;603c   ; 0x1A y 0x1B: gotas (p05:647B)
-	jp z,gota		;603e
-	cp 01bh		;6041
-	jp z,gota		;6043
+	jp z,gota		;603e   ; si
+	cp 01bh		;6041   ; 0x1B?
+	jp z,gota		;6043   ; si
 	jp siguiente_cosa		;6046   ; las demas: nada
 cosa_fija:
 	ld a,(ix+005h)		;6049   ; sin sprites: nada
-	and a			;604c
-	jr z,siguiente_cosa		;604d
+	and a			;604c   ; sin sprites?
+	jr z,siguiente_cosa		;604d   ; si: nada
 	ld a,(ix+010h)		;604f   ; en su sitio (+10, +11)...
-	ld (ix+006h),a		;6052
-	ld a,(ix+011h)		;6055
+	ld (ix+006h),a		;6052   ; x...
+	ld a,(ix+011h)		;6055   ; ...e y de su sitio
 	ld (ix+007h),a		;6058
 	call 057bbh		;605b   ; ...y pintada
 siguiente_cosa:
-	pop bc			;605e
+	pop bc			;605e   ; la cuenta de vuelta
 	ld de,00026h		;605f   ; 38 bytes por cosa
-	add ix,de		;6062
+	add ix,de		;6062   ; la siguiente
 	djnz L_6069		;6064   ; acabada la vuelta...
 	call primera_cosa		;6066   ; ...desde la primera
 L_6069:
 	ld (0da1dh),ix		;6069   ; apunta la siguiente
-	ld a,b			;606d
-	ld (0da1fh),a		;606e
-	ret			;6071
+	ld a,b			;606d   ; la cuenta...
+	ld (0da1fh),a		;606e   ; ...guardada
+	ret			;6071   ; vuelve
 primera_cosa:
 	ld ix,0da20h		;6072   ; DA20, ocho
-	ld b,008h		;6076
-	ret			;6078
+	ld b,008h		;6076   ; ocho
+	ret			;6078   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Tipos 0x19 y 0x1D: aparecen en su sitio una vez de cada 32 (R & 0x1F =
@@ -84,41 +84,41 @@ primera_cosa:
 ; ----------------------------------------------------------------------
 sale_al_azar:
 	ld a,(ix+005h)		;6079   ; ya tiene sprites: p05:609E
-	and a			;607c
-	jr nz,anima_al_azar		;607d
+	and a			;607c   ; tiene sprites?
+	jr nz,anima_al_azar		;607d   ; si: se anima
 	ld a,(ix+010h)		;607f   ; en su sitio
-	ld (ix+006h),a		;6082
-	ld a,(ix+011h)		;6085
+	ld (ix+006h),a		;6082   ; x...
+	ld a,(ix+011h)		;6085   ; ...e y
 	ld (ix+007h),a		;6088
 	ld a,r		;608b   ; al azar, una vez de cada 32...
-	and 01fh		;608d
-	cp 00ah		;608f
-	jp nz,siguiente_cosa		;6091
+	and 01fh		;608d   ; R & 0x1F...
+	cp 00ah		;608f   ; ...= 0x0A?
+	jp nz,siguiente_cosa		;6091   ; no: nada
 	call 057afh		;6094   ; ...alta
 	ld a,(0da19h)		;6097   ; no habia sprites libres: nada
-	bit 0,a		;609a
-	jr nz,siguiente_cosa		;609c
+	bit 0,a		;609a   ; DA19 bit 0: sin grupo libre
+	jr nz,siguiente_cosa		;609c   ; nada
 anima_al_azar:
 	ld a,r		;609e   ; con R bit 3...
-	bit 3,a		;60a0
-	jp z,siguiente_cosa		;60a2
+	bit 3,a		;60a0   ; R bit 3...
+	jp z,siguiente_cosa		;60a2   ; ...a 0: este cuadro no
 	call 057bbh		;60a5   ; ...un paso de animacion
 	bit 7,(ix+002h)		;60a8   ; aun no ha acabado: nada
-	jr z,siguiente_cosa		;60ac
+	jr z,siguiente_cosa		;60ac   ; no ha acabado: nada
 	ld h,(ix+000h)		;60ae   ; se guardan tipo, pose y sitio...
-	ld l,(ix+001h)		;60b1
-	ld d,(ix+010h)		;60b4
+	ld l,(ix+001h)		;60b1   ; H = tipo, L = pose
+	ld d,(ix+010h)		;60b4   ; D, E = su sitio
 	ld e,(ix+011h)		;60b7
-	push hl			;60ba
+	push hl			;60ba   ; guardados
 	push de			;60bb
 	call 057c7h		;60bc   ; ...baja (que borra los 38 bytes)...
-	pop de			;60bf
+	pop de			;60bf   ; devueltos
 	pop hl			;60c0
 	ld (ix+000h),h		;60c1   ; ...y se devuelven
-	ld (ix+001h),l		;60c4
-	ld (ix+010h),d		;60c7
+	ld (ix+001h),l		;60c4   ; la pose
+	ld (ix+010h),d		;60c7   ; el sitio
 	ld (ix+011h),e		;60ca
-	jr siguiente_cosa		;60cd
+	jr siguiente_cosa		;60cd   ; la siguiente
 
 ; ----------------------------------------------------------------------
 ; Tipo 0x1F: una puerta que se abre y se cierra segun donde este Rastan
@@ -127,178 +127,178 @@ anima_al_azar:
 ; ----------------------------------------------------------------------
 puerta:
 	bit 0,(ix+001h)		;60cf   ; mirando a la izquierda: p05:60E4
-	jp nz,puerta_izq		;60d3
+	jp nz,puerta_izq		;60d3   ; mirando a la izquierda: la otra mitad
 	ld a,(0d8fch)		;60d6   ; Rastan a 0x40 o mas a la derecha (sin pasar de 0xC0): p05:61A1
-	sub (ix+010h)		;60d9
-	cp 0c0h		;60dc
-	jp c,puerta_der_cierra		;60de
+	sub (ix+010h)		;60d9   ; x de Rastan - x de la puerta...
+	cp 0c0h		;60dc   ; ...menos de 0xC0 (Rastan a la derecha)?
+	jp c,puerta_der_cierra		;60de   ; si: se cierra
 	jp puerta_der_abre		;60e1   ; si no, p05:61CE
 puerta_izq:
 	ld a,(0d8fch)		;60e4   ; Rastan a menos de 0x40: p05:611F
-	sub (ix+010h)		;60e7
-	cp 040h		;60ea
-	jp nc,puerta_cierra		;60ec
-	jp puerta_abre		;60ef
+	sub (ix+010h)		;60e7   ; la diferencia en y...
+	cp 040h		;60ea   ; ...cabe si va de 0 a 63
+	jp nc,puerta_cierra		;60ec   ; no cabe: fuera
+	jp puerta_abre		;60ef   ; si no, se abre
 puerta_cierra:
 	ld a,(ix+012h)		;60f2   ; ya cerrada: p05:616C
-	and a			;60f5
-	jp z,puerta_actor		;60f6
+	and a			;60f5   ; abierta?
+	jp z,puerta_actor		;60f6   ; no: el actor
 	ld a,000h		;60f9   ; se cierra...
-	ld (ix+012h),a		;60fb
-	push ix		;60fe
+	ld (ix+012h),a		;60fb   ; +12 = 0: cerrada
+	push ix		;60fe   ; IX guardado
 	ld a,(ix+010h)		;6100   ; ...en (x, y + 0x10)...
 	ld (0d5d6h),a		;6103   ; x donde se pinta = a
-	ld a,(ix+011h)		;6106
-	add a,010h		;6109
+	ld a,(ix+011h)		;6106   ; y...
+	add a,010h		;6109   ; ...+ 0x10
 	ld (0d5d7h),a		;610b   ; y donde se pinta = a
 	ld hl,0628eh		;610e   ; ...con los tiles de p05:628E (16 x 32)
-	ld bc,01020h		;6111
-	ld de,00000h		;6114
+	ld bc,01020h		;6111   ; 16 de ancho, 32 de alto
+	ld de,00000h		;6114   ; sin desplazamiento de tile
 	call 046c9h		;6117   ; p00 pinta_bloque_tiles
-	pop ix		;611a
-	jp puerta_actor		;611c
+	pop ix		;611a   ; IX de vuelta
+	jp puerta_actor		;611c   ; al actor
 puerta_abre:
 	ld a,(ix+012h)		;611f   ; ya abierta: p05:616C
-	cp 001h		;6122
-	jp z,puerta_actor		;6124
+	cp 001h		;6122   ; ya abierta?
+	jp z,puerta_actor		;6124   ; si: al actor
 	ld a,001h		;6127   ; se abre...
-	ld (ix+012h),a		;6129
-	push ix		;612c
-	ld a,(ix+010h)		;612e
+	ld (ix+012h),a		;6129   ; +12 = 1: abierta
+	push ix		;612c   ; IX guardado
+	ld a,(ix+010h)		;612e   ; x
 	ld (0d5d6h),a		;6131   ; x donde se pinta = a
-	ld a,(ix+011h)		;6134
-	add a,010h		;6137
+	ld a,(ix+011h)		;6134   ; y...
+	add a,010h		;6137   ; ...+ 0x10
 	ld (0d5d7h),a		;6139   ; y donde se pinta = a
 	ld hl,0627eh		;613c   ; ...con los tiles de p05:627E
-	ld bc,01020h		;613f
-	ld de,00000h		;6142
+	ld bc,01020h		;613f   ; 16 x 32
+	ld de,00000h		;6142   ; sin desplazamiento
 	call 046c9h		;6145   ; p00 pinta_bloque_tiles
-	pop ix		;6148
+	pop ix		;6148   ; IX de vuelta
 	ld a,(ix+005h)		;614a   ; sin el actor de dentro...
-	and a			;614d
-	jp nz,puerta_actor		;614e
+	and a			;614d   ; el actor ya esta?
+	jp nz,puerta_actor		;614e   ; si: se mueve
 	ld a,(ix+010h)		;6151   ; ...sale en (x + 0x10, y + 8)
-	add a,010h		;6154
-	ld (ix+006h),a		;6156
-	ld a,(ix+011h)		;6159
-	add a,008h		;615c
-	ld (ix+007h),a		;615e
+	add a,010h		;6154   ; x + 0x10...
+	ld (ix+006h),a		;6156   ; ...su x
+	ld a,(ix+011h)		;6159   ; y...
+	add a,008h		;615c   ; ...+ 8
+	ld (ix+007h),a		;615e   ; su y
 	call 057afh		;6161   ; alta
 	ld a,(0da19h)		;6164   ; sin sitio para el sprite: nada
-	bit 1,a		;6167
-	jp nz,siguiente_cosa		;6169
+	bit 1,a		;6167   ; DA19 bit 1: sin sitio
+	jp nz,siguiente_cosa		;6169   ; nada
 puerta_actor:
 	ld a,(ix+005h)		;616c   ; sin el actor: nada
-	and a			;616f
-	jp z,siguiente_cosa		;6170
+	and a			;616f   ; sin sprites...
+	jp z,siguiente_cosa		;6170   ; ...nada
 	inc (ix+006h)		;6173   ; 3 pixeles a la derecha
-	inc (ix+006h)		;6176
+	inc (ix+006h)		;6176   ; 3 pixeles...
 	inc (ix+006h)		;6179
 	inc (ix+013h)		;617c   ; +13 cuenta los cuadros: a 15...
-	ld a,(ix+013h)		;617f
-	cp 00fh		;6182
+	ld a,(ix+013h)		;617f   ; la cuenta...
+	cp 00fh		;6182   ; ...15?
 	jp nc,cosa_vuelve		;6184   ; ...se acaba (p05:6254)
 	ld b,(ix+010h)		;6187   ; pintado con la y + 8 un momento...
-	ld a,(ix+011h)		;618a
-	ld c,a			;618d
-	add a,008h		;618e
-	ld (ix+011h),a		;6190
-	push bc			;6193
+	ld a,(ix+011h)		;618a   ; la y de su sitio...
+	ld c,a			;618d   ; ...guardada en C
+	add a,008h		;618e   ; + 8...
+	ld (ix+011h),a		;6190   ; ...para pintarlo
+	push bc			;6193   ; BC guardado
 	call 057bbh		;6194   ; p00 pinta_actor_b5
-	pop bc			;6197
+	pop bc			;6197   ; BC de vuelta
 	ld (ix+010h),b		;6198   ; ...y devuelta
-	ld (ix+011h),c		;619b
-	jp siguiente_cosa		;619e
+	ld (ix+011h),c		;619b   ; la y de su sitio otra vez
+	jp siguiente_cosa		;619e   ; la siguiente
 puerta_der_cierra:
 	ld a,(ix+012h)		;61a1   ; lo mismo hacia el otro lado: se cierra con p05:62AE
-	and a			;61a4
-	jp z,puerta_der_actor		;61a5
-	ld a,000h		;61a8
+	and a			;61a4   ; abierta?
+	jp z,puerta_der_actor		;61a5   ; no: al actor
+	ld a,000h		;61a8   ; cerrada
 	ld (ix+012h),a		;61aa
-	push ix		;61ad
-	ld a,(ix+010h)		;61af
+	push ix		;61ad   ; IX guardado
+	ld a,(ix+010h)		;61af   ; x
 	ld (0d5d6h),a		;61b2   ; x donde se pinta = a
-	ld a,(ix+011h)		;61b5
-	add a,010h		;61b8
+	ld a,(ix+011h)		;61b5   ; y...
+	add a,010h		;61b8   ; ...+ 0x10
 	ld (0d5d7h),a		;61ba   ; y donde se pinta = a
-	ld hl,062aeh		;61bd
-	ld bc,01020h		;61c0
+	ld hl,062aeh		;61bd   ; los tiles de cerrada
+	ld bc,01020h		;61c0   ; 16 x 32
 	ld de,00000h		;61c3
 	call 046c9h		;61c6   ; p00 pinta_bloque_tiles
-	pop ix		;61c9
-	jp puerta_der_actor		;61cb
+	pop ix		;61c9   ; IX de vuelta
+	jp puerta_der_actor		;61cb   ; al actor
 puerta_der_abre:
 	ld a,(ix+012h)		;61ce   ; se abre con p05:629E
-	cp 001h		;61d1
-	jp z,puerta_der_actor		;61d3
-	ld a,001h		;61d6
+	cp 001h		;61d1   ; ya abierta?
+	jp z,puerta_der_actor		;61d3   ; si: al actor
+	ld a,001h		;61d6   ; abierta
 	ld (ix+012h),a		;61d8
-	push ix		;61db
-	ld a,(ix+010h)		;61dd
+	push ix		;61db   ; IX guardado
+	ld a,(ix+010h)		;61dd   ; x
 	ld (0d5d6h),a		;61e0   ; x donde se pinta = a
-	ld a,(ix+011h)		;61e3
-	add a,010h		;61e6
+	ld a,(ix+011h)		;61e3   ; y...
+	add a,010h		;61e6   ; ...+ 0x10
 	ld (0d5d7h),a		;61e8   ; y donde se pinta = a
-	ld hl,0629eh		;61eb
-	ld bc,01020h		;61ee
+	ld hl,0629eh		;61eb   ; los tiles de abierta
+	ld bc,01020h		;61ee   ; 16 x 32
 	ld de,00000h		;61f1
 	call 046c9h		;61f4   ; p00 pinta_bloque_tiles
-	pop ix		;61f7
-	ld a,(ix+005h)		;61f9
+	pop ix		;61f7   ; IX de vuelta
+	ld a,(ix+005h)		;61f9   ; el actor ya esta?
 	and a			;61fc
-	jp nz,puerta_der_actor		;61fd
+	jp nz,puerta_der_actor		;61fd   ; si: se mueve
 	ld a,(ix+010h)		;6200   ; el actor sale en (x, y + 8)
-	ld (ix+006h),a		;6203
-	ld a,(ix+011h)		;6206
-	add a,008h		;6209
+	ld (ix+006h),a		;6203   ; x
+	ld a,(ix+011h)		;6206   ; y...
+	add a,008h		;6209   ; ...+ 8
 	ld (ix+007h),a		;620b
 	call 057afh		;620e   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6211   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-	bit 1,a		;6214
-	jp nz,siguiente_cosa		;6216
+	bit 1,a		;6214   ; sin sitio
+	jp nz,siguiente_cosa		;6216   ; nada
 puerta_der_actor:
-	ld a,(ix+005h)		;6219
+	ld a,(ix+005h)		;6219   ; sin sprites...
 	and a			;621c
-	jp z,siguiente_cosa		;621d
+	jp z,siguiente_cosa		;621d   ; ...nada
 	dec (ix+006h)		;6220   ; 3 pixeles a la izquierda
 	dec (ix+006h)		;6223
 	dec (ix+006h)		;6226
 	inc (ix+013h)		;6229   ; 15 cuadros
-	ld a,(ix+013h)		;622c
-	cp 00fh		;622f
-	jp nc,cosa_vuelve		;6231
-	ld b,(ix+010h)		;6234
-	ld a,(ix+011h)		;6237
-	ld c,a			;623a
-	add a,008h		;623b
+	ld a,(ix+013h)		;622c   ; la cuenta...
+	cp 00fh		;622f   ; ...15?
+	jp nc,cosa_vuelve		;6231   ; si: se acaba
+	ld b,(ix+010h)		;6234   ; B = x de su sitio
+	ld a,(ix+011h)		;6237   ; y...
+	ld c,a			;623a   ; ...guardada en C
+	add a,008h		;623b   ; + 8 para pintarlo
 	ld (ix+011h),a		;623d
-	ld a,(ix+006h)		;6240
-	ld (ix+010h),a		;6243
+	ld a,(ix+006h)		;6240   ; la x nueva...
+	ld (ix+010h),a		;6243   ; ...de sitio un momento
 	push bc			;6246
 	call 057bbh		;6247   ; p00 pinta_actor_b5
 	pop bc			;624a
-	ld (ix+010h),b		;624b
+	ld (ix+010h),b		;624b   ; el sitio de vuelta
 	ld (ix+011h),c		;624e
-	jp siguiente_cosa		;6251
+	jp siguiente_cosa		;6251   ; la siguiente
 cosa_vuelve:
 	ld b,(ix+012h)		;6254   ; se guardan pose (+12), tipo, sitio...
-	ld h,(ix+000h)		;6257
-	ld l,(ix+001h)		;625a
-	ld d,(ix+010h)		;625d
+	ld h,(ix+000h)		;6257   ; H = tipo
+	ld l,(ix+001h)		;625a   ; L = pose
+	ld d,(ix+010h)		;625d   ; D, E = sitio
 	ld e,(ix+011h)		;6260
-	push hl			;6263
+	push hl			;6263   ; guardados
 	push de			;6264
 	push bc			;6265
 	call 057c7h		;6266   ; ...baja...
-	pop bc			;6269
+	pop bc			;6269   ; devueltos
 	pop de			;626a
 	pop hl			;626b
 	ld (ix+000h),h		;626c   ; ...y se devuelven: vuelve a empezar
-	ld (ix+001h),l		;626f
-	ld (ix+010h),d		;6272
+	ld (ix+001h),l		;626f   ; la pose
+	ld (ix+010h),d		;6272   ; el sitio
 	ld (ix+011h),e		;6275
-	ld (ix+012h),b		;6278
-	jp siguiente_cosa		;627b
+	ld (ix+012h),b		;6278   ; +12
+	jp siguiente_cosa		;627b   ; la siguiente
 
 ; ----------------------------------------------------------------------
 ; DATOS puerta_tiles: Los tiles de la puerta: cuatro listas de 2 x 4 palabras
@@ -322,27 +322,27 @@ DATA_puerta_tiles:
 ; ----------------------------------------------------------------------
 cae_de_arriba:
 	ld a,(ix+005h)		;62be   ; ya tiene sprites: p05:62DB
-	and a			;62c1
+	and a			;62c1   ; tiene sprites?
 	jr nz,cae_animando		;62c2
 	ld a,(ix+010h)		;62c4   ; en su sitio
-	ld (ix+006h),a		;62c7
-	ld a,(ix+011h)		;62ca
+	ld (ix+006h),a		;62c7   ; x...
+	ld a,(ix+011h)		;62ca   ; ...e y
 	ld (ix+007h),a		;62cd
 	call 057afh		;62d0   ; alta
 	ld a,(0da19h)		;62d3   ; sin sitio: nada
-	bit 0,a		;62d6
-	jp nz,siguiente_cosa		;62d8
+	bit 0,a		;62d6   ; sin grupo libre
+	jp nz,siguiente_cosa		;62d8   ; nada
 cae_animando:
 	ld a,(ix+001h)		;62db   ; pose 0: animandose arriba
-	and a			;62de
-	jr nz,cae_8		;62df
+	and a			;62de   ; pose distinta de 0?
+	jr nz,cae_8		;62df   ; si: cayendo
 	call 057bbh		;62e1   ; un paso
 	bit 7,(ix+002h)		;62e4   ; no ha acabado: nada
-	jp z,siguiente_cosa		;62e8
+	jp z,siguiente_cosa		;62e8   ; no ha acabado: nada
 	ld a,001h		;62eb   ; pose 1...
-	ld (ix+001h),a		;62ed
+	ld (ix+001h),a		;62ed   ; pose 1
 	ld a,(ix+011h)		;62f0   ; ...y 0x20 mas abajo
-	add a,020h		;62f3
+	add a,020h		;62f3   ; su y + 0x20
 	ld (ix+007h),a		;62f5
 cae_8:
 	inc (ix+007h)		;62f8   ; 8 pixeles abajo
@@ -353,29 +353,29 @@ cae_8:
 	inc (ix+007h)		;6307
 	inc (ix+007h)		;630a
 	inc (ix+007h)		;630d
-	push bc			;6310
+	push bc			;6310   ; BC guardado
 	call 057bbh		;6311   ; pintado
-	pop bc			;6314
+	pop bc			;6314   ; BC de vuelta
 	ld a,(ix+007h)		;6315   ; por debajo de 0xD3: vuelve a empezar
-	cp 0d3h		;6318
-	jp nc,cae_fin		;631a
+	cp 0d3h		;6318   ; 0xD3 o mas?
+	jp nc,cae_fin		;631a   ; si: se acaba
 	cp 0b3h		;631d   ; de 0xB3: pose 2
-	jp nc,cae_pose_2		;631f
+	jp nc,cae_pose_2		;631f   ; 0xB3 o mas: pose 2
 	cp 0a3h		;6322   ; de 0xA3: pose 3
-	jp nc,cae_pose_3		;6324
-	jp siguiente_cosa		;6327
+	jp nc,cae_pose_3		;6324   ; 0xA3 o mas: pose 3
+	jp siguiente_cosa		;6327   ; la siguiente
 cae_fin:
 	res 0,(ix+001h)		;632a   ; pose 0 y vuelve
-	res 1,(ix+001h)		;632e
-	jp cosa_vuelve		;6332
+	res 1,(ix+001h)		;632e   ; pose 0...
+	jp cosa_vuelve		;6332   ; ...y vuelve a empezar
 cae_pose_2:
-	res 0,(ix+001h)		;6335
-	set 1,(ix+001h)		;6339
-	jp siguiente_cosa		;633d
+	res 0,(ix+001h)		;6335   ; pose...
+	set 1,(ix+001h)		;6339   ; ...2
+	jp siguiente_cosa		;633d   ; la siguiente
 cae_pose_3:
 	set 1,(ix+001h)		;6340   ; (el `set 1` repetido)
-	set 1,(ix+001h)		;6344
-	jp siguiente_cosa		;6348
+	set 1,(ix+001h)		;6344   ; (repetido)
+	jp siguiente_cosa		;6348   ; la siguiente
 huerfana_cosa_nada:
 	jp siguiente_cosa		;634b   ; nadie llega aqui
 
@@ -385,122 +385,122 @@ huerfana_cosa_nada:
 ; ----------------------------------------------------------------------
 salta_en_arco:
 	ld a,(ix+001h)		;634e   ; pose 0: p05:6360
-	cp 000h		;6351
-	jp z,arco_arriba		;6353
+	cp 000h		;6351   ; pose 0?
+	jp z,arco_arriba		;6353   ; arriba
 	cp 001h		;6356   ; 1: p05:63C6
-	jp z,arco_der		;6358
+	jp z,arco_der		;6358   ; 1: derecha
 	cp 002h		;635b   ; 2: p05:6417
-	jp z,arco_izq		;635d
+	jp z,arco_izq		;635d   ; 2: izquierda
 arco_arriba:
 	ld a,(ix+005h)		;6360   ; ya tiene sprites: sigue
-	and a			;6363
-	jr nz,arco_paso		;6364
+	and a			;6363   ; tiene sprites?
+	jr nz,arco_paso		;6364   ; si: un paso
 	ld a,r		;6366   ; al azar, una vez de cada 16
-	and 00fh		;6368
-	cp 005h		;636a
-	jp nz,siguiente_cosa		;636c
+	and 00fh		;6368   ; R & 0x0F...
+	cp 005h		;636a   ; ...= 5?
+	jp nz,siguiente_cosa		;636c   ; no: nada
 	ld a,(ix+010h)		;636f   ; en su sitio, alta
-	ld (ix+006h),a		;6372
-	ld a,(ix+011h)		;6375
+	ld (ix+006h),a		;6372   ; x...
+	ld a,(ix+011h)		;6375   ; ...e y
 	ld (ix+007h),a		;6378
 	call 057afh		;637b   ; p00 alta_actor_b5
 	ld a,(0da19h)		;637e   ; sin sitio: nada
-	bit 1,a		;6381
-	jp nz,siguiente_cosa		;6383
+	bit 1,a		;6381   ; sin sitio
+	jp nz,siguiente_cosa		;6383   ; nada
 arco_paso:
 	ld l,(ix+013h)		;6386   ; el paso del arco (+13) en p05:6468
-	ld h,000h		;6389
-	ld de,06468h		;638b
-	add hl,de			;638e
+	ld h,000h		;6389   ; HL = el paso
+	ld de,06468h		;638b   ; la tabla...
+	add hl,de			;638e   ; ...su paso
 	ld a,(hl)			;638f   ; y + paso
-	add a,(ix+007h)		;6390
-	ld (ix+007h),a		;6393
+	add a,(ix+007h)		;6390   ; y + paso
+	ld (ix+007h),a		;6393   ; guardada
 	inc (ix+013h)		;6396   ; siguiente paso
 	call 057bbh		;6399   ; pintado
 	ld a,(ix+013h)		;639c   ; 19 pasos: se acaba
-	cp 013h		;639f
-	jp c,siguiente_cosa		;63a1
+	cp 013h		;639f   ; 19 pasos?
+	jp c,siguiente_cosa		;63a1   ; aun no
 arco_vuelve:
 	ld h,(ix+000h)		;63a4   ; tipo, pose y sitio guardados...
-	ld l,(ix+001h)		;63a7
-	ld d,(ix+010h)		;63aa
+	ld l,(ix+001h)		;63a7   ; H = tipo, L = pose
+	ld d,(ix+010h)		;63aa   ; D, E = sitio
 	ld e,(ix+011h)		;63ad
-	push hl			;63b0
+	push hl			;63b0   ; guardados
 	push de			;63b1
 	call 057c7h		;63b2   ; ...baja...
-	pop de			;63b5
+	pop de			;63b5   ; devueltos
 	pop hl			;63b6
 	ld (ix+000h),h		;63b7   ; ...y devueltos
-	ld (ix+001h),l		;63ba
-	ld (ix+010h),d		;63bd
+	ld (ix+001h),l		;63ba   ; la pose
+	ld (ix+010h),d		;63bd   ; el sitio
 	ld (ix+011h),e		;63c0
-	jp siguiente_cosa		;63c3
+	jp siguiente_cosa		;63c3   ; la siguiente
 arco_der:
 	ld a,(ix+005h)		;63c6   ; al azar (R & 9)
-	and a			;63c9
-	jr nz,arco_der_paso		;63ca
-	ld a,r		;63cc
-	and 009h		;63ce
-	jp z,siguiente_cosa		;63d0
+	and a			;63c9   ; tiene sprites?
+	jr nz,arco_der_paso		;63ca   ; si: un paso
+	ld a,r		;63cc   ; R & 9...
+	and 009h		;63ce   ; ...= 0?
+	jp z,siguiente_cosa		;63d0   ; si: nada
 	ld a,(ix+010h)		;63d3   ; alta
-	ld (ix+006h),a		;63d6
-	ld a,(ix+011h)		;63d9
+	ld (ix+006h),a		;63d6   ; x...
+	ld a,(ix+011h)		;63d9   ; ...e y
 	ld (ix+007h),a		;63dc
 	call 057afh		;63df   ; p00 alta_actor_b5
 	ld a,(0da19h)		;63e2   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-	bit 1,a		;63e5
-	jp nz,siguiente_cosa		;63e7
+	bit 1,a		;63e5   ; sin sitio
+	jp nz,siguiente_cosa		;63e7   ; nada
 arco_der_paso:
 	ld l,(ix+013h)		;63ea   ; el paso en y...
-	ld h,000h		;63ed
-	ld de,06468h		;63ef
+	ld h,000h		;63ed   ; HL = el paso
+	ld de,06468h		;63ef   ; la tabla
 	add hl,de			;63f2
-	ld a,(hl)			;63f3
-	add a,(ix+007h)		;63f4
-	ld (ix+007h),a		;63f7
+	ld a,(hl)			;63f3   ; el paso
+	add a,(ix+007h)		;63f4   ; + y
+	ld (ix+007h),a		;63f7   ; guardada
 	inc (ix+006h)		;63fa   ; ...y 4 a la derecha
-	inc (ix+006h)		;63fd
+	inc (ix+006h)		;63fd   ; 4 pixeles...
 	inc (ix+006h)		;6400
 	inc (ix+006h)		;6403
 	inc (ix+013h)		;6406   ; siguiente
 	call 057bbh		;6409   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;640c   ; 19 pasos
-	cp 013h		;640f
-	jp c,siguiente_cosa		;6411
-	jp arco_vuelve		;6414
+	cp 013h		;640f   ; 19 pasos?
+	jp c,siguiente_cosa		;6411   ; aun no
+	jp arco_vuelve		;6414   ; vuelve a empezar
 arco_izq:
 	ld a,(ix+005h)		;6417   ; al azar (R & 9)
-	and a			;641a
-	jr nz,arco_izq_paso		;641b
-	ld a,r		;641d
+	and a			;641a   ; tiene sprites?
+	jr nz,arco_izq_paso		;641b   ; si: un paso
+	ld a,r		;641d   ; R & 9...
 	and 009h		;641f
-	jp z,siguiente_cosa		;6421
+	jp z,siguiente_cosa		;6421   ; ...= 0: nada
 	ld a,(ix+010h)		;6424   ; (aqui guarda la x en +16 y la y en la x: un error)
-	ld (ix+016h),a		;6427
-	ld a,(ix+011h)		;642a
-	ld (ix+010h),a		;642d
+	ld (ix+016h),a		;6427   ; x a +16 (sin uso)
+	ld a,(ix+011h)		;642a   ; y...
+	ld (ix+010h),a		;642d   ; ...a la x de su sitio
 	call 057afh		;6430   ; alta
 	ld a,(0da19h)		;6433   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
-	bit 1,a		;6436
-	jp nz,siguiente_cosa		;6438
+	bit 1,a		;6436   ; sin sitio
+	jp nz,siguiente_cosa		;6438   ; nada
 arco_izq_paso:
 	ld l,(ix+013h)		;643b   ; el paso en y...
-	ld h,000h		;643e
-	ld de,06468h		;6440
+	ld h,000h		;643e   ; HL = el paso
+	ld de,06468h		;6440   ; la tabla
 	add hl,de			;6443
-	ld a,(hl)			;6444
-	add a,(ix+007h)		;6445
-	ld (ix+007h),a		;6448
+	ld a,(hl)			;6444   ; el paso
+	add a,(ix+007h)		;6445   ; + y
+	ld (ix+007h),a		;6448   ; guardada
 	dec (ix+006h)		;644b   ; ...y 4 a la izquierda
-	dec (ix+006h)		;644e
+	dec (ix+006h)		;644e   ; 4 pixeles...
 	dec (ix+006h)		;6451
 	dec (ix+006h)		;6454
-	inc (ix+013h)		;6457
+	inc (ix+013h)		;6457   ; un paso mas
 	call 057bbh		;645a   ; p00 pinta_actor_b5
-	ld a,(ix+013h)		;645d
-	cp 013h		;6460
-	jp c,siguiente_cosa		;6462
-	jp arco_vuelve		;6465
+	ld a,(ix+013h)		;645d   ; cuantos lleva
+	cp 013h		;6460   ; 19?
+	jp c,siguiente_cosa		;6462   ; aun no
+	jp arco_vuelve		;6465   ; vuelve a empezar
 
 ; ----------------------------------------------------------------------
 ; DATOS arco_pasos: Los 19 pasos en y del arco (de -8 a +8)
@@ -521,96 +521,96 @@ DATA_arco_pasos:
 ; ----------------------------------------------------------------------
 gota:
 	ld a,(ix+005h)		;647b   ; ya tiene sprites: sigue
-	and a			;647e
-	jr nz,gota_cae		;647f
+	and a			;647e   ; tiene sprites?
+	jr nz,gota_cae		;647f   ; si: cae
 	ld a,r		;6481   ; al azar (R & 0x2A = 0)
-	and 02ah		;6483
-	jp nz,siguiente_cosa		;6485
+	and 02ah		;6483   ; R & 0x2A...
+	jp nz,siguiente_cosa		;6485   ; ...distinto de 0: nada
 	ld a,(ix+010h)		;6488   ; en su sitio, alta
-	ld (ix+006h),a		;648b
-	ld a,(ix+011h)		;648e
+	ld (ix+006h),a		;648b   ; x...
+	ld a,(ix+011h)		;648e   ; ...e y
 	ld (ix+007h),a		;6491
 	call 057afh		;6494   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6497   ; sin sitio: nada
-	bit 0,a		;649a
-	jp nz,siguiente_cosa		;649c
+	bit 0,a		;649a   ; sin grupo libre
+	jp nz,siguiente_cosa		;649c   ; nada
 gota_cae:
 	bit 0,(ix+001h)		;649f   ; pose 1: deshaciendose
-	jr nz,gota_se_deshace		;64a3
+	jr nz,gota_se_deshace		;64a3   ; si: deshaciendose
 	inc (ix+007h)		;64a5   ; 4 pixeles abajo
-	inc (ix+007h)		;64a8
+	inc (ix+007h)		;64a8   ; 4 pixeles
 	inc (ix+007h)		;64ab
 	inc (ix+007h)		;64ae
 	call 057bbh		;64b1   ; pintada
 	call suelo_bajo_gota		;64b4   ; suelo debajo?
-	jp nz,siguiente_cosa		;64b7
+	jp nz,siguiente_cosa		;64b7   ; aun no
 	set 0,(ix+001h)		;64ba   ; si: pose 1, desde el cuadro 0
-	xor a			;64be
+	xor a			;64be   ; desde el cuadro 0
 	ld (ix+013h),a		;64bf
 	call 057bbh		;64c2   ; p00 pinta_actor_b5
-	jp siguiente_cosa		;64c5
+	jp siguiente_cosa		;64c5   ; la siguiente
 gota_se_deshace:
 	inc (ix+013h)		;64c8   ; un cuadro mas
 	call 057bbh		;64cb   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;64ce   ; 10: se acaba
-	cp 00ah		;64d1
-	jp nz,siguiente_cosa		;64d3
+	cp 00ah		;64d1   ; 10?
+	jp nz,siguiente_cosa		;64d3   ; aun no
 	ld h,(ix+000h)		;64d6   ; tipo y sitio guardados, baja y devueltos
-	ld d,(ix+010h)		;64d9
+	ld d,(ix+010h)		;64d9   ; D, E = sitio
 	ld e,(ix+011h)		;64dc
-	push hl			;64df
+	push hl			;64df   ; guardados
 	push de			;64e0
 	call 057c7h		;64e1   ; p00 baja_actor_b5
-	pop de			;64e4
+	pop de			;64e4   ; devueltos
 	pop hl			;64e5
-	ld (ix+000h),h		;64e6
-	ld (ix+010h),d		;64e9
+	ld (ix+000h),h		;64e6   ; el tipo
+	ld (ix+010h),d		;64e9   ; el sitio
 	ld (ix+011h),e		;64ec
-	jp siguiente_cosa		;64ef
+	jp siguiente_cosa		;64ef   ; la siguiente
 suelo_bajo_gota:
 	ld a,(ix+006h)		;64f2   ; la casilla de (x + 1, y + 1)...
-	ld h,a			;64f5
-	ld a,(ix+007h)		;64f6
-	ld l,a			;64f9
-	inc h			;64fa
+	ld h,a			;64f5   ; H = x
+	ld a,(ix+007h)		;64f6   ; y...
+	ld l,a			;64f9   ; ...L
+	inc h			;64fa   ; los dos + 1
 	inc l			;64fb
 	ld a,l			;64fc   ; ...fila...
-	sub 020h		;64fd
-	and 0f0h		;64ff
-	ld b,000h		;6501
+	sub 020h		;64fd   ; sin el marcador
+	and 0f0h		;64ff   ; la fila
+	ld b,000h		;6501   ; BC = fila * 16
 	ld c,a			;6503
 	srl h		;6504   ; ...columna...
-	srl h		;6506
+	srl h		;6506   ; x / 16
 	srl h		;6508
 	srl h		;650a
-	ld l,h			;650c
+	ld l,h			;650c   ; HL = columna...
 	ld h,000h		;650d
-	add hl,hl			;650f
-	add hl,bc			;6510
+	add hl,hl			;650f   ; ...* 2
+	add hl,bc			;6510   ; + fila * 32
 	add hl,bc			;6511
 	ld de,0d774h		;6512   ; ...en D774...
-	add hl,de			;6515
-	inc hl			;6516
+	add hl,de			;6515   ; en D774
+	inc hl			;6516   ; el byte alto
 	ld de,00020h		;6517   ; ...una fila mas abajo
-	add hl,de			;651a
+	add hl,de			;651a   ; la fila de debajo
 	ld a,(hl)			;651b   ; clase 0x20?
-	and 0f0h		;651c
-	cp 020h		;651e
-	ret			;6520
+	and 0f0h		;651c   ; la clase...
+	cp 020h		;651e   ; ...0x20? (Z)
+	ret			;6520   ; vuelve
 tipo_1c:
 	ld a,r		;6521   ; tipo 0x1C: tres de cada cuatro cuadros...
-	and 003h		;6523
-	cp 001h		;6525
-	jp z,siguiente_cosa		;6527
+	and 003h		;6523   ; R & 3...
+	cp 001h		;6525   ; ...= 1?
+	jp z,siguiente_cosa		;6527   ; si: este cuadro no
 	ld a,(ix+005h)		;652a   ; ...si tiene sprites, en su sitio y pintado
-	and a			;652d
-	jp z,siguiente_cosa		;652e
-	ld a,(ix+010h)		;6531
+	and a			;652d   ; sin sprites...
+	jp z,siguiente_cosa		;652e   ; ...nada
+	ld a,(ix+010h)		;6531   ; x...
 	ld (ix+006h),a		;6534
-	ld a,(ix+011h)		;6537
+	ld a,(ix+011h)		;6537   ; ...e y de su sitio
 	ld (ix+007h),a		;653a
 	call 057bbh		;653d   ; p00 pinta_actor_b5
-	jp siguiente_cosa		;6540
+	jp siguiente_cosa		;6540   ; la siguiente
 
 ; ----------------------------------------------------------------------
 ; Bit 7: un trozo de decorado animado. Cada 8 cuadros copia a su sitio un
@@ -619,24 +619,24 @@ tipo_1c:
 ; ----------------------------------------------------------------------
 decorado_animado:
 	inc (ix+012h)		;6543   ; +12 cuenta los cuadros...
-	ld a,(ix+012h)		;6546
+	ld a,(ix+012h)		;6546   ; cuantos cuadros...
 	and 007h		;6549   ; ...cada 8
-	jp nz,siguiente_cosa		;654b
+	jp nz,siguiente_cosa		;654b   ; no toca: nada
 	ld a,(ix+000h)		;654e   ; x de origen = nibble bajo * 16
-	and 00fh		;6551
-	add a,a			;6553
+	and 00fh		;6551   ; el nibble bajo...
+	add a,a			;6553   ; ...* 16
 	add a,a			;6554
 	add a,a			;6555
 	add a,a			;6556
-	ld e,a			;6557
+	ld e,a			;6557   ; E = x
 	ld l,000h		;6558   ; una vuelta, filas 0x28-0x30...
-	ld a,(ix+012h)		;655a
-	bit 3,a		;655d
-	ld h,028h		;655f
-	ld d,030h		;6561
-	jr z,decorado_destino		;6563
+	ld a,(ix+012h)		;655a   ; la vuelta...
+	bit 3,a		;655d   ; ...bit 3: una u otra
+	ld h,028h		;655f   ; H = 0x28...
+	ld d,030h		;6561   ; ...D = 0x30
+	jr z,decorado_destino		;6563   ; la primera
 	inc h			;6565   ; ...y la otra, 8 mas abajo
-	inc d			;6566
+	inc d			;6566   ; la otra: H y D + 8
 	inc h			;6567
 	inc d			;6568
 	inc h			;6569
@@ -653,8 +653,8 @@ decorado_animado:
 	inc d			;6574
 decorado_destino:
 	ld c,(ix+010h)		;6575   ; el destino: su sitio, 8 lineas mas abajo
-	ld b,(ix+011h)		;6578
-	inc b			;657b
+	ld b,(ix+011h)		;6578   ; la y de su sitio...
+	inc b			;657b   ; ...+ 8
 	inc b			;657c
 	inc b			;657d
 	inc b			;657e
@@ -663,11 +663,11 @@ decorado_destino:
 	inc b			;6581
 	inc b			;6582
 	ld a,001h		;6583   ; de la pagina 1 a la 0
-	ex af,af'			;6585
+	ex af,af'			;6585   ; A' = 0: la pagina de destino
 	ld a,000h		;6586
-	ex af,af'			;6588
+	ex af,af'			;6588   ; (A = 1: la de origen)
 	call 043afh		;6589   ; copiado
-	jp siguiente_cosa		;658c
+	jp siguiente_cosa		;658c   ; la siguiente
 
 ; ----------------------------------------------------------------------
 ; DATOS sin identificar  0x658f..0x8000  (6769 bytes)

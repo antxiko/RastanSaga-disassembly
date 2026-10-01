@@ -129,16 +129,72 @@ def a_mano(p):
 BANCO, VECINOS = None, {}
 
 
+RE_N = re.compile(r"0([0-9a-f]{2})h$")
+
+
+def n8(txt):
+    m = RE_N.search(txt)
+    return int(m.group(1), 16) if m else None
+
+
+def patrones(lista):
+    """Comentarios por patron, mirando las instrucciones de alrededor.
+
+    - Las cajas de choque: `sub h|l|(ix+n)` / `add a,N` (o `sub N`) / `cp M` /
+      salto si no cabe. La diferencia cabe en la caja si va de -N a M-N-1.
+    - La clase de una casilla: `and 0f0h` tras leer una casilla de un actor
+      (ix+17..ix+24), y el `cp` que la compara.
+    - El lado de un actor: `bit 0,(ix+001h)` en los bancos de los actores.
+    """
+    out = {}
+    for i, (a, ins, com) in enumerate(lista):
+        sig = [x[1] for x in lista[i + 1:i + 4]]
+        if ins in ("sub h", "sub l") or ins.startswith("sub (ix+"):
+            eje = "x" if ins == "sub h" or "006h" in ins else "y"
+            if len(sig) >= 3 and sig[1].startswith("cp ") and (
+                    sig[0].startswith("add a,") or sig[0].startswith("sub ")):
+                n, m = n8(sig[0]), n8(sig[1])
+                if n is not None and m is not None and sig[2].split(" ")[1].startswith("nc"):
+                    lo = -n if sig[0].startswith("add") else n
+                    out[a] = "la diferencia en %s..." % eje
+                    out[lista[i + 1][0]] = "...corrida %+d..." % (n if sig[0].startswith("add") else -n)
+                    out[lista[i + 2][0]] = "...cabe en la caja si va de %d a %d" % (lo, lo + m - 1)
+                    out[lista[i + 3][0]] = "no cabe: fuera"
+            elif len(sig) >= 2 and sig[0].startswith("cp ") and " nc" in " " + sig[1].split(" ", 1)[-1][:2]:
+                m = n8(sig[0])
+                if m is not None:
+                    out[a] = "la diferencia en %s..." % eje
+                    out[lista[i + 1][0]] = "...cabe si va de 0 a %d" % (m - 1)
+                    out[lista[i + 2][0]] = "no cabe: fuera"
+        if ins == "and 0f0h" and i and "(ix+0" in lista[i - 1][1]:
+            k = n8(lista[i - 1][1].split("+")[1].rstrip(")"))
+            if k is not None and 0x17 <= k <= 0x24:
+                out[a] = "la clase de la casilla (+%02X)" % k
+                if sig and sig[0].startswith("cp "):
+                    c = n8(sig[0])
+                    if c is not None:
+                        out[lista[i + 1][0]] = "clase 0x%02X?" % c
+        if ins == "and 00fh" and i and "(ix+0" in lista[i - 1][1]:
+            k = n8(lista[i - 1][1].split("+")[1].rstrip(")"))
+            if k is not None and 0x17 <= k <= 0x24:
+                out[a] = "el tipo de la casilla (+%02X)" % k
+        if ins == "bit 0,(ix+001h)" and BANCO in (3, 4, 7):
+            out[a] = "mirando a la izquierda?"
+    return out
+
+
 def anota(p):
     global BANCO, VECINOS
     BANCO = p
     VECINOS = nombres(VECINO[p]) if p in VECINO else {}
     mano = a_mano(p)
     notas = []
-    for a, ins, com in lee_listado(p):
+    lista = lee_listado(p)
+    pat = patrones(lista)
+    for a, ins, com in lista:
         if a in mano:
             continue
-        t = comenta(ins)
+        t = comenta(ins) or pat.get(a)
         if t:
             notas.append("C %#06x %s" % (a, t))
     return notas

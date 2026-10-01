@@ -158,8 +158,8 @@ tipo_0b:
 	call z,da_la_vuelta		;6115   ; de espaldas: se da la vuelta
 	call casillas_actor		;6118   ; las casillas de alrededor
 	ld a,(ix+020h)		;611b   ; la de los pies: clase 0x20?
-	and 0f0h		;611e
-	cp 020h		;6120
+	and 0f0h		;611e   ; la clase de la casilla (+20)
+	cp 020h		;6120   ; clase 0x20?
 	jp z,tipo_0b_pinta		;6122
 	call acerca_y		;6125   ; se acerca 2 pixeles a la y de Rastan (p03:7B90)...
 	call anda		;6128   ; ...anda 2 pixeles (p03:7E83)...
@@ -198,8 +198,8 @@ tipo_0c_mueve:
 	call nc,tope_abajo		;6168
 	call casillas_actor		;616b   ; las casillas
 	ld a,(ix+019h)		;616e   ; delante, clase 0x20: se para
-	and 0f0h		;6171
-	cp 020h		;6173
+	and 0f0h		;6171   ; la clase de la casilla (+19)
+	cp 020h		;6173   ; clase 0x20?
 	jp z,tipo_0c_pinta		;6175
 	call anda		;6178   ; anda 2 pixeles...
 	call acerca_y		;617b   ; ...y se acerca a la y de Rastan
@@ -266,22 +266,22 @@ tipo_0e:
 	bit 0,(ix+001h)		;61d0   ; mirando a la izquierda...
 	jr z,tipo_0e_der		;61d4
 	ld a,(ix+018h)		;61d6   ; ...delante una pared (0x20): se para
-	and 0f0h		;61d9
-	cp 020h		;61db
+	and 0f0h		;61d9   ; la clase de la casilla (+18)
+	cp 020h		;61db   ; clase 0x20?
 	jr z,tipo_0e_pinta		;61dd
 	ld a,(ix+01bh)		;61df   ; ...si la de delante-abajo no es suelo: da la vuelta
-	and 0f0h		;61e2
-	cp 020h		;61e4
+	and 0f0h		;61e2   ; la clase de la casilla (+1B)
+	cp 020h		;61e4   ; clase 0x20?
 	jr nz,tipo_0e_pinta		;61e6
 	jp anda_2		;61e8
 tipo_0e_der:
 	ld a,(ix+018h)		;61eb   ; a la derecha, lo mismo
-	and 0f0h		;61ee
-	cp 020h		;61f0
+	and 0f0h		;61ee   ; la clase de la casilla (+18)
+	cp 020h		;61f0   ; clase 0x20?
 	jr z,tipo_0e_pinta		;61f2
 	ld a,(ix+01dh)		;61f4
-	and 0f0h		;61f7
-	cp 020h		;61f9
+	and 0f0h		;61f7   ; la clase de la casilla (+1D)
+	cp 020h		;61f9   ; clase 0x20?
 	jr nz,tipo_0e_pinta		;61fb
 	call anda		;61fd   ; anda
 	jp 04a8bh		;6200   ; p00 pinta_actor
@@ -320,22 +320,22 @@ tipo_10:
 	bit 0,(ix+001h)		;6245   ; mirando a la izquierda...
 	jr z,tipo_10_der		;6249
 	ld a,(ix+018h)		;624b   ; ...pared: se para
-	and 0f0h		;624e
-	cp 020h		;6250
+	and 0f0h		;624e   ; la clase de la casilla (+18)
+	cp 020h		;6250   ; clase 0x20?
 	jp z,tipo_10_parado		;6252
 	ld a,(ix+01ch)		;6255   ; ...sin suelo delante: se para
-	and 0f0h		;6258
-	cp 020h		;625a
+	and 0f0h		;6258   ; la clase de la casilla (+1C)
+	cp 020h		;625a   ; clase 0x20?
 	jp nz,tipo_10_parado		;625c
 	jr tipo_10_anda		;625f
 tipo_10_der:
 	ld a,(ix+01ah)		;6261
-	and 0f0h		;6264
-	cp 020h		;6266
+	and 0f0h		;6264   ; la clase de la casilla (+1A)
+	cp 020h		;6266   ; clase 0x20?
 	jp z,tipo_10_parado		;6268
 	ld a,(ix+01eh)		;626b
-	and 0f0h		;626e
-	cp 020h		;6270
+	and 0f0h		;626e   ; la clase de la casilla (+1E)
+	cp 020h		;6270   ; clase 0x20?
 	jp nz,tipo_10_parado		;6272
 tipo_10_anda:
 	ld a,(ix+010h)		;6275   ; +10: pasos dados; a 0x20, lanza
@@ -439,8 +439,8 @@ coloca_y:
 mueve_proyectil:
 	call casillas_actor		;6348   ; las casillas
 	ld a,(ix+021h)		;634b   ; toca una de clase 0x20: se acaba
-	and 0f0h		;634e
-	cp 020h		;6350
+	and 0f0h		;634e   ; la clase de la casilla (+21)
+	cp 020h		;6350   ; clase 0x20?
 	jp z,fin_proyectil		;6352
 	bit 0,(ix+012h)		;6355   ; hacia la izquierda...
 	jr z,mueve_proyectil_der		;6359
@@ -615,19 +615,19 @@ tipo_01_suelo:
 	bit 0,(ix+001h)		;64b7   ; mirando a la izquierda...
 	jr z,tipo_01_der		;64bb
 	ld a,(ix+018h)		;64bd   ; ...pared delante: da la vuelta
-	and 0f0h		;64c0
-	cp 020h		;64c2
+	and 0f0h		;64c0   ; la clase de la casilla (+18)
+	cp 020h		;64c2   ; clase 0x20?
 	push af			;64c4
 	call z,da_la_vuelta		;64c5
 	pop af			;64c8
 	jp z,tipo_01_fin		;64c9
 	ld a,(ix+01bh)		;64cc   ; ...casilla de tipo 2 debajo-delante: p03:661F
-	and 00fh		;64cf
+	and 00fh		;64cf   ; el tipo de la casilla (+1B)
 	cp 002h		;64d1
 	jp z,tipo_01_tipo2		;64d3
 tipo_01_delante:
 	ld a,(ix+01ch)		;64d6   ; la casilla de debajo-delante, nibble bajo:
-	and 00fh		;64d9
+	and 00fh		;64d9   ; el tipo de la casilla (+1C)
 	cp 00fh		;64db   ; 0x0F: p03:6558
 	jp z,tipo_01_cerca		;64dd
 	cp 001h		;64e0   ; 1: da la vuelta
@@ -651,19 +651,19 @@ tipo_01_vuelta:
 	jp tipo_01_cerca		;6509
 tipo_01_der:
 	ld a,(ix+019h)		;650c   ; a la derecha, lo mismo con las otras casillas
-	and 0f0h		;650f
-	cp 020h		;6511
+	and 0f0h		;650f   ; la clase de la casilla (+19)
+	cp 020h		;6511   ; clase 0x20?
 	push af			;6513
 	call z,da_la_vuelta		;6514
 	pop af			;6517
 	jp z,tipo_01_fin		;6518
 	ld a,(ix+01eh)		;651b
-	and 00fh		;651e
+	and 00fh		;651e   ; el tipo de la casilla (+1E)
 	cp 002h		;6520
 	jp z,tipo_01_tipo2_der		;6522
 tipo_01_der_delante:
 	ld a,(ix+01dh)		;6525
-	and 00fh		;6528
+	and 00fh		;6528   ; el tipo de la casilla (+1D)
 	cp 00fh		;652a
 	jp z,tipo_01_cerca		;652c
 	cp 001h		;652f
@@ -711,16 +711,16 @@ tipo_01_fin:
 	jp 04a8bh		;658e   ; p00 pinta_actor
 tipo_01_escalon:
 	ld a,(ix+017h)		;6591   ; la de encima-delante libre: salta un poco (+10 = 12)
-	and 0f0h		;6594
-	cp 020h		;6596
+	and 0f0h		;6594   ; la clase de la casilla (+17)
+	cp 020h		;6596   ; clase 0x20?
 	jp nz,tipo_01_anda		;6598
 tipo_01_salta:
 	ld (ix+010h),00ch		;659b
 	jp tipo_01_anda		;659f
 tipo_01_escalon_der:
 	ld a,(ix+01ah)		;65a2
-	and 0f0h		;65a5
-	cp 020h		;65a7
+	and 0f0h		;65a5   ; la clase de la casilla (+1A)
+	cp 020h		;65a7   ; clase 0x20?
 	jp nz,tipo_01_anda		;65a9
 	ld (ix+010h),00ch		;65ac
 	jp tipo_01_anda		;65b0
@@ -785,14 +785,14 @@ tipo_01_vuelta_cerca:
 	jp tipo_01_fin		;661c
 tipo_01_tipo2:
 	ld a,(ix+017h)		;661f   ; la de encima-delante libre: salta
-	and 0f0h		;6622
-	cp 020h		;6624
+	and 0f0h		;6622   ; la clase de la casilla (+17)
+	cp 020h		;6624   ; clase 0x20?
 	jp z,tipo_01_salta		;6626
 	jp tipo_01_delante		;6629
 tipo_01_tipo2_der:
 	ld a,(ix+01ah)		;662c
-	and 0f0h		;662f
-	cp 020h		;6631
+	and 0f0h		;662f   ; la clase de la casilla (+1A)
+	cp 020h		;6631   ; clase 0x20?
 	jp z,tipo_01_salta		;6633
 	jp tipo_01_der_delante		;6636
 
@@ -824,8 +824,8 @@ tipo_07_mueve:
 	call c,tipo_07_pinta		;6668
 	call casillas_actor		;666b   ; las casillas
 	ld a,(ix+018h)		;666e   ; pared: se para
-	and 0f0h		;6671
-	cp 020h		;6673
+	and 0f0h		;6671   ; la clase de la casilla (+18)
+	cp 020h		;6673   ; clase 0x20?
 	jp z,tipo_07_pinta		;6675
 	call anda		;6678   ; anda
 	call distancia_y		;667b   ; a cuanto esta en y
@@ -870,22 +870,22 @@ tipo_04_mueve:
 	bit 0,(ix+001h)		;66c9   ; mirando a la izquierda: pared o suelo raro, se para
 	jp z,tipo_04_der		;66cd
 	ld a,(ix+017h)		;66d0
-	and 0f0h		;66d3
-	cp 020h		;66d5
+	and 0f0h		;66d3   ; la clase de la casilla (+17)
+	cp 020h		;66d5   ; clase 0x20?
 	jr z,tipo_04_sube		;66d7
 	ld a,(ix+01bh)		;66d9
-	and 0f0h		;66dc
-	cp 020h		;66de
+	and 0f0h		;66dc   ; la clase de la casilla (+1B)
+	cp 020h		;66de   ; clase 0x20?
 	jr z,tipo_04_sube		;66e0
 	jr tipo_04_cerca		;66e2
 tipo_04_der:
 	ld a,(ix+01ah)		;66e4
-	and 0f0h		;66e7
-	cp 020h		;66e9
+	and 0f0h		;66e7   ; la clase de la casilla (+1A)
+	cp 020h		;66e9   ; clase 0x20?
 	jr z,tipo_04_sube		;66eb
 	ld a,(ix+01eh)		;66ed
-	and 0f0h		;66f0
-	cp 020h		;66f2
+	and 0f0h		;66f0   ; la clase de la casilla (+1E)
+	cp 020h		;66f2   ; clase 0x20?
 	jr z,tipo_04_sube		;66f4
 	call distancia_x		;66f6   ; a menos de 0x20 de Rastan...
 	cp 020h		;66f9
@@ -958,22 +958,22 @@ tipo_0d_anda:
 	bit 0,(ix+001h)		;6780   ; mirando a la izquierda: pared o sin suelo, para
 	jr z,tipo_0d_der		;6784
 	ld a,(ix+018h)		;6786
-	and 0f0h		;6789
-	cp 020h		;678b
+	and 0f0h		;6789   ; la clase de la casilla (+18)
+	cp 020h		;678b   ; clase 0x20?
 	jp z,tipo_0d_retrocede		;678d
 	ld a,(ix+01ch)		;6790
-	and 0f0h		;6793
-	cp 020h		;6795
+	and 0f0h		;6793   ; la clase de la casilla (+1C)
+	cp 020h		;6795   ; clase 0x20?
 	jp nz,tipo_0d_retrocede		;6797
 	jr tipo_0d_avanza		;679a
 tipo_0d_der:
 	ld a,(ix+01ah)		;679c
-	and 0f0h		;679f
-	cp 020h		;67a1
+	and 0f0h		;679f   ; la clase de la casilla (+1A)
+	cp 020h		;67a1   ; clase 0x20?
 	jp z,tipo_0d_retrocede		;67a3
 	ld a,(ix+01eh)		;67a6
-	and 0f0h		;67a9
-	cp 020h		;67ab
+	and 0f0h		;67a9   ; la clase de la casilla (+1E)
+	cp 020h		;67ab   ; clase 0x20?
 	jp nz,tipo_0d_retrocede		;67ad
 tipo_0d_avanza:
 	jp anda_1		;67b0   ; un pixel
@@ -1028,19 +1028,19 @@ tipo_03_suelo:
 	bit 0,(ix+001h)		;6823   ; mirando a la izquierda...
 	jr z,tipo_03_der		;6827
 	ld a,(ix+018h)		;6829   ; ...pared delante: da la vuelta y nada mas
-	and 0f0h		;682c
-	cp 020h		;682e
+	and 0f0h		;682c   ; la clase de la casilla (+18)
+	cp 020h		;682e   ; clase 0x20?
 	push af			;6830
 	call z,da_la_vuelta		;6831
 	pop af			;6834
 	jp z,tipo_03_fin		;6835
 	ld a,(ix+01bh)		;6838   ; ...casilla de tipo 2 debajo-delante: p03:6987
-	and 00fh		;683b
+	and 00fh		;683b   ; el tipo de la casilla (+1B)
 	cp 002h		;683d
 	jp z,tipo_03_tipo2		;683f
 tipo_03_delante:
 	ld a,(ix+01ch)		;6842   ; la de debajo-delante, nibble bajo:
-	and 00fh		;6845
+	and 00fh		;6845   ; el tipo de la casilla (+1C)
 	cp 00fh		;6847   ; 0x0F: p03:68BA
 	jp z,tipo_03_lejos		;6849
 	cp 001h		;684c   ; 1: da la vuelta
@@ -1061,34 +1061,34 @@ tipo_03_vuelta:
 	jp tipo_03_lejos		;6870
 tipo_03_der:
 	ld a,(ix+019h)		;6873   ; a la derecha, igual con las otras casillas
-	and 0f0h		;6876
-	cp 020h		;6878
+	and 0f0h		;6876   ; la clase de la casilla (+19)
+	cp 020h		;6878   ; clase 0x20?
 	push af			;687a
 	call z,da_la_vuelta		;687b
 	pop af			;687e
 	jp z,tipo_03_fin		;687f
 	ld a,(ix+01eh)		;6882
-	and 00fh		;6885
+	and 00fh		;6885   ; el tipo de la casilla (+1E)
 	cp 002h		;6887
 	jp z,tipo_03_tipo2_der		;6889
 tipo_03_der_delante:
-	ld a,(ix+01dh)		;688c
-	and 00fh		;688f
-	cp 00fh		;6891
-	jp z,tipo_03_lejos		;6893
-	cp 001h		;6896
-	jp z,da_la_vuelta		;6898
-	cp 002h		;689b
-	jp z,tipo_03_escalon_der		;689d
-	cp 003h		;68a0
-	jp z,tipo_03_escalon_der		;68a2
-	cp 004h		;68a5
-	jp z,tipo_03_anda		;68a7
-	cp 005h		;68aa
-	jp z,tipo_03_salto_alto		;68ac
-	cp 006h		;68af
-	jp z,tipo_03_salto_alto		;68b1
-	jp nc,tipo_03_otra_der		;68b4
+	ld a,(ix+01dh)		;688c   ; la de debajo-delante a la derecha
+	and 00fh		;688f   ; el tipo de la casilla (+1D)
+	cp 00fh		;6891   ; 0x0F?
+	jp z,tipo_03_lejos		;6893   ; si: como si no hubiera nada
+	cp 001h		;6896   ; 1?
+	jp z,da_la_vuelta		;6898   ; si: da la vuelta
+	cp 002h		;689b   ; 2?
+	jp z,tipo_03_escalon_der		;689d   ; escalon
+	cp 003h		;68a0   ; 3?
+	jp z,tipo_03_escalon_der		;68a2   ; escalon
+	cp 004h		;68a5   ; 4?
+	jp z,tipo_03_anda		;68a7   ; anda
+	cp 005h		;68aa   ; 5?
+	jp z,tipo_03_salto_alto		;68ac   ; salto alto
+	cp 006h		;68af   ; 6?
+	jp z,tipo_03_salto_alto		;68b1   ; salto alto
+	jp nc,tipo_03_otra_der		;68b4   ; mas: lo otro
 tipo_03_der_vuelta:
 	call da_la_vuelta		;68b7
 tipo_03_lejos:
@@ -1124,16 +1124,16 @@ tipo_03_fin:
 	jp 04a8bh		;68fe   ; p00 pinta_actor
 tipo_03_escalon:
 	ld a,(ix+017h)		;6901   ; encima-delante libre: salta un poco
-	and 0f0h		;6904
-	cp 020h		;6906
+	and 0f0h		;6904   ; la clase de la casilla (+17)
+	cp 020h		;6906   ; clase 0x20?
 	jp nz,tipo_03_anda		;6908
 tipo_03_salta:
 	ld (ix+010h),00ch		;690b   ; 12 cuadros subiendo
 	jp tipo_03_anda		;690f
 tipo_03_escalon_der:
 	ld a,(ix+01ah)		;6912
-	and 0f0h		;6915
-	cp 020h		;6917
+	and 0f0h		;6915   ; la clase de la casilla (+1A)
+	cp 020h		;6917   ; clase 0x20?
 	jp nz,tipo_03_anda		;6919
 	ld (ix+010h),00ch		;691c
 	jp tipo_03_anda		;6920
@@ -1192,14 +1192,14 @@ tipo_03_vuelta_cerca:
 	jp tipo_03_fin		;6984
 tipo_03_tipo2:
 	ld a,(ix+017h)		;6987
-	and 0f0h		;698a
-	cp 020h		;698c
+	and 0f0h		;698a   ; la clase de la casilla (+17)
+	cp 020h		;698c   ; clase 0x20?
 	jp z,tipo_03_salta		;698e
 	jp tipo_03_delante		;6991
 tipo_03_tipo2_der:
 	ld a,(ix+01ah)		;6994
-	and 0f0h		;6997
-	cp 020h		;6999
+	and 0f0h		;6997   ; la clase de la casilla (+1A)
+	cp 020h		;6999   ; clase 0x20?
 	jp z,tipo_03_salta		;699b
 	jp tipo_03_der_delante		;699e
 tipo_03_quieto:
@@ -1270,8 +1270,8 @@ coloca_03_y:
 mueve_proyectil_03:
 	call casillas_actor		;6a29   ; las casillas
 	ld a,(ix+021h)		;6a2c   ; toca una de clase 0x20: se acaba
-	and 0f0h		;6a2f
-	cp 020h		;6a31
+	and 0f0h		;6a2f   ; la clase de la casilla (+21)
+	cp 020h		;6a31   ; clase 0x20?
 	jp z,acaba_proyectil_03		;6a33
 	bit 0,(ix+012h)		;6a36   ; hacia la izquierda...
 	jr z,mueve_proyectil_03_der		;6a3a
@@ -1477,22 +1477,22 @@ tipo_05:
 	bit 0,(ix+001h)		;6b8e   ; mirando a la izquierda: pared o sin suelo, para
 	jr z,tipo_05_der		;6b92
 	ld a,(ix+018h)		;6b94
-	and 0f0h		;6b97
-	cp 020h		;6b99
+	and 0f0h		;6b97   ; la clase de la casilla (+18)
+	cp 020h		;6b99   ; clase 0x20?
 	jp z,tipo_05_parado		;6b9b
 	ld a,(ix+01ch)		;6b9e
-	and 0f0h		;6ba1
-	cp 020h		;6ba3
+	and 0f0h		;6ba1   ; la clase de la casilla (+1C)
+	cp 020h		;6ba3   ; clase 0x20?
 	jp nz,tipo_05_parado		;6ba5
 	jr tipo_05_anda		;6ba8
 tipo_05_der:
 	ld a,(ix+01ah)		;6baa
-	and 0f0h		;6bad
-	cp 020h		;6baf
+	and 0f0h		;6bad   ; la clase de la casilla (+1A)
+	cp 020h		;6baf   ; clase 0x20?
 	jp z,tipo_05_parado		;6bb1
 	ld a,(ix+01eh)		;6bb4
-	and 0f0h		;6bb7
-	cp 020h		;6bb9
+	and 0f0h		;6bb7   ; la clase de la casilla (+1E)
+	cp 020h		;6bb9   ; clase 0x20?
 	jp nz,tipo_05_parado		;6bbb
 tipo_05_anda:
 	call distancia_x		;6bbe   ; a menos de 0x40 en x: anda 2 pixeles
@@ -1573,8 +1573,8 @@ coloca_05_y:
 mueve_proyectil_05:
 	call casillas_actor		;6c66   ; las casillas
 	ld a,(ix+020h)		;6c69   ; toca una de clase 0x20: se acaba
-	and 0f0h		;6c6c
-	cp 020h		;6c6e
+	and 0f0h		;6c6c   ; la clase de la casilla (+20)
+	cp 020h		;6c6e   ; clase 0x20?
 	jp z,acaba_proyectil_05		;6c70
 	ld a,(0d8fch)		;6c73   ; C = x de Rastan + 8
 	add a,008h		;6c76
@@ -1657,22 +1657,22 @@ tipo_09:
 	bit 0,(ix+001h)		;6d0c   ; mirando a la izquierda...
 	jr z,tipo_09_der		;6d10
 	ld a,(ix+01ch)		;6d12   ; ...casilla de tipo 1 debajo-delante: quieto
-	and 00fh		;6d15
+	and 00fh		;6d15   ; el tipo de la casilla (+1C)
 	cp 001h		;6d17
 	jp z,tipo_09_quieto		;6d19
 	ld a,(ix+018h)		;6d1c   ; ...pared: quieto
-	and 0f0h		;6d1f
-	cp 020h		;6d21
+	and 0f0h		;6d1f   ; la clase de la casilla (+18)
+	cp 020h		;6d21   ; clase 0x20?
 	jp z,tipo_09_quieto		;6d23
 	jp tipo_09_anda		;6d26
 tipo_09_der:
 	ld a,(ix+01dh)		;6d29
-	and 00fh		;6d2c
+	and 00fh		;6d2c   ; el tipo de la casilla (+1D)
 	cp 001h		;6d2e
 	jp z,tipo_09_quieto		;6d30
 	ld a,(ix+019h)		;6d33
-	and 0f0h		;6d36
-	cp 020h		;6d38
+	and 0f0h		;6d36   ; la clase de la casilla (+19)
+	cp 020h		;6d38   ; clase 0x20?
 	jr z,tipo_09_quieto		;6d3a
 tipo_09_anda:
 	ld a,(0d9e0h)		;6d3c   ; con proyectil en vuelo no anda
@@ -1695,24 +1695,24 @@ tipo_09_cerca:
 	bit 0,(ix+001h)		;6d63   ; mirando a la izquierda: la de detras...
 	jp z,tipo_09_cerca_der		;6d67
 	ld a,(ix+01ah)		;6d6a   ; ...pared o sin suelo: lanza
-	and 0f0h		;6d6d
-	cp 020h		;6d6f
+	and 0f0h		;6d6d   ; la clase de la casilla (+1A)
+	cp 020h		;6d6f   ; clase 0x20?
 	jp z,tipo_09_lanza		;6d71
 	ld a,(ix+01eh)		;6d74
-	and 0f0h		;6d77
-	cp 020h		;6d79
+	and 0f0h		;6d77   ; la clase de la casilla (+1E)
+	cp 020h		;6d79   ; clase 0x20?
 	jp nz,tipo_09_lanza		;6d7b
 	res 1,(ix+001h)		;6d7e   ; si no, retrocede 2 pixeles
 	call retrocede_2		;6d82
 	jp 04a8bh		;6d85   ; p00 pinta_actor
 tipo_09_cerca_der:
 	ld a,(ix+017h)		;6d88
-	and 0f0h		;6d8b
-	cp 020h		;6d8d
+	and 0f0h		;6d8b   ; la clase de la casilla (+17)
+	cp 020h		;6d8d   ; clase 0x20?
 	jp z,tipo_09_lanza		;6d8f
 	ld a,(ix+01bh)		;6d92
-	and 0f0h		;6d95
-	cp 020h		;6d97
+	and 0f0h		;6d95   ; la clase de la casilla (+1B)
+	cp 020h		;6d97   ; clase 0x20?
 	jp nz,tipo_09_lanza		;6d99
 	res 1,(ix+001h)		;6d9c
 	call retrocede_2		;6da0
@@ -1786,8 +1786,8 @@ coloca_09_y:
 mueve_proyectil_09:
 	call casillas_actor		;6e37   ; las casillas
 	ld a,(ix+020h)		;6e3a   ; toca una de clase 0x20: se acaba
-	and 0f0h		;6e3d
-	cp 020h		;6e3f
+	and 0f0h		;6e3d   ; la clase de la casilla (+20)
+	cp 020h		;6e3f   ; clase 0x20?
 	jp z,acaba_proyectil_09_b		;6e41
 	ld a,(0d8fch)		;6e44   ; C = x de Rastan + 8
 	add a,008h		;6e47
@@ -1877,19 +1877,19 @@ tipo_13_suelo:
 	bit 0,(ix+001h)		;6ef8   ; mirando a la izquierda...
 	jr z,tipo_13_der		;6efc
 	ld a,(ix+018h)		;6efe   ; ...pared: da la vuelta y nada mas
-	and 0f0h		;6f01
-	cp 020h		;6f03
+	and 0f0h		;6f01   ; la clase de la casilla (+18)
+	cp 020h		;6f03   ; clase 0x20?
 	push af			;6f05
 	call z,da_la_vuelta		;6f06
 	pop af			;6f09
 	jp z,tipo_13_fin		;6f0a
 	ld a,(ix+01bh)		;6f0d   ; ...casilla de tipo 2 debajo-delante: p03:705C
-	and 00fh		;6f10
+	and 00fh		;6f10   ; el tipo de la casilla (+1B)
 	cp 002h		;6f12
 	jp z,tipo_13_tipo2		;6f14
 tipo_13_delante:
 	ld a,(ix+01ch)		;6f17   ; la de debajo-delante, nibble bajo:
-	and 00fh		;6f1a
+	and 00fh		;6f1a   ; el tipo de la casilla (+1C)
 	cp 00fh		;6f1c   ; 0x0F: p03:6F8F
 	jp z,tipo_13_lejos		;6f1e
 	cp 001h		;6f21   ; 1: da la vuelta
@@ -1910,34 +1910,34 @@ tipo_13_vuelta:
 	jp tipo_13_lejos		;6f45
 tipo_13_der:
 	ld a,(ix+019h)		;6f48   ; a la derecha, igual
-	and 0f0h		;6f4b
-	cp 020h		;6f4d
+	and 0f0h		;6f4b   ; la clase de la casilla (+19)
+	cp 020h		;6f4d   ; clase 0x20?
 	push af			;6f4f
 	call z,da_la_vuelta		;6f50
 	pop af			;6f53
 	jp z,tipo_13_fin		;6f54
 	ld a,(ix+01eh)		;6f57
-	and 00fh		;6f5a
+	and 00fh		;6f5a   ; el tipo de la casilla (+1E)
 	cp 002h		;6f5c
 	jp z,tipo_13_tipo2_der		;6f5e
 tipo_13_der_delante:
-	ld a,(ix+01dh)		;6f61
-	and 00fh		;6f64
-	cp 00fh		;6f66
-	jp z,tipo_13_lejos		;6f68
-	cp 001h		;6f6b
-	jp z,da_la_vuelta		;6f6d
-	cp 002h		;6f70
-	jp z,tipo_13_escalon_der		;6f72
-	cp 003h		;6f75
-	jp z,tipo_13_escalon_der		;6f77
-	cp 004h		;6f7a
-	jp z,tipo_13_anda		;6f7c
-	cp 005h		;6f7f
-	jp z,tipo_13_salto_alto		;6f81
-	cp 006h		;6f84
-	jp z,tipo_13_salto_alto		;6f86
-	jp nc,tipo_13_otra_der		;6f89
+	ld a,(ix+01dh)		;6f61   ; la de debajo-delante a la derecha
+	and 00fh		;6f64   ; el tipo de la casilla (+1D)
+	cp 00fh		;6f66   ; 0x0F?
+	jp z,tipo_13_lejos		;6f68   ; si: como si no hubiera nada
+	cp 001h		;6f6b   ; 1?
+	jp z,da_la_vuelta		;6f6d   ; si: da la vuelta
+	cp 002h		;6f70   ; 2?
+	jp z,tipo_13_escalon_der		;6f72   ; escalon
+	cp 003h		;6f75   ; 3?
+	jp z,tipo_13_escalon_der		;6f77   ; escalon
+	cp 004h		;6f7a   ; 4?
+	jp z,tipo_13_anda		;6f7c   ; anda
+	cp 005h		;6f7f   ; 5?
+	jp z,tipo_13_salto_alto		;6f81   ; salto alto
+	cp 006h		;6f84   ; 6?
+	jp z,tipo_13_salto_alto		;6f86   ; salto alto
+	jp nc,tipo_13_otra_der		;6f89   ; mas: lo otro
 tipo_13_der_vuelta:
 	call da_la_vuelta		;6f8c
 tipo_13_lejos:
@@ -1967,16 +1967,16 @@ tipo_13_fin:
 	jp 04a8bh		;6fcb   ; p00 pinta_actor
 tipo_13_escalon:
 	ld a,(ix+017h)		;6fce   ; encima-delante libre: salta un poco
-	and 0f0h		;6fd1
-	cp 020h		;6fd3
+	and 0f0h		;6fd1   ; la clase de la casilla (+17)
+	cp 020h		;6fd3   ; clase 0x20?
 	jp nz,tipo_13_anda		;6fd5
 tipo_13_salta:
 	ld (ix+010h),00ch		;6fd8   ; 12 cuadros subiendo
 	jp tipo_13_anda		;6fdc
 tipo_13_escalon_der:
 	ld a,(ix+01ah)		;6fdf
-	and 0f0h		;6fe2
-	cp 020h		;6fe4
+	and 0f0h		;6fe2   ; la clase de la casilla (+1A)
+	cp 020h		;6fe4   ; clase 0x20?
 	jp nz,tipo_13_anda		;6fe6
 	ld (ix+010h),00ch		;6fe9
 	jp tipo_13_anda		;6fed
@@ -2000,16 +2000,16 @@ tipo_13_bajando:
 	jp tipo_13_pinta		;7019
 tipo_13_subiendo:
 	res 1,(ix+001h)		;701c   ; 2 arriba, un cuadro menos
-	ld a,(ix+007h)		;7020
-	dec a			;7023
+	ld a,(ix+007h)		;7020   ; la y...
+	dec a			;7023   ; ...2 pixeles arriba
 	dec a			;7024
-	ld (ix+007h),a		;7025
-	ld a,(ix+011h)		;7028
-	dec a			;702b
+	ld (ix+007h),a		;7025   ; guardada
+	ld a,(ix+011h)		;7028   ; cuadros de subida...
+	dec a			;702b   ; ...uno menos
 	ld (ix+011h),a		;702c
-	and a			;702f
-	jp z,tipo_13_cumbre		;7030
-	jp tipo_13_pinta		;7033
+	and a			;702f   ; acabados?
+	jp z,tipo_13_cumbre		;7030   ; si: a bajar
+	jp tipo_13_pinta		;7033   ; no: pintado
 tipo_13_cumbre:
 	ld (ix+012h),010h		;7036   ; 16 cuadros bajando
 	jp tipo_13_pinta		;703a
@@ -2041,14 +2041,14 @@ tipo_13_vuelta_cerca:
 	jp tipo_13_fin		;7059
 tipo_13_tipo2:
 	ld a,(ix+017h)		;705c
-	and 0f0h		;705f
-	cp 020h		;7061
+	and 0f0h		;705f   ; la clase de la casilla (+17)
+	cp 020h		;7061   ; clase 0x20?
 	jp z,tipo_13_salta		;7063
 	jp tipo_13_delante		;7066
 tipo_13_tipo2_der:
 	ld a,(ix+01ah)		;7069
-	and 0f0h		;706c
-	cp 020h		;706e
+	and 0f0h		;706c   ; la clase de la casilla (+1A)
+	cp 020h		;706e   ; clase 0x20?
 	jp z,tipo_13_salta		;7070
 	jp tipo_13_der_delante		;7073
 
@@ -2069,22 +2069,22 @@ tipo_0f:
 	bit 0,(ix+001h)		;708d   ; mirando a la izquierda: pared delante...
 	jr z,tipo_0f_der		;7091
 	ld a,(ix+018h)		;7093
-	and 0f0h		;7096
-	cp 020h		;7098
+	and 0f0h		;7096   ; la clase de la casilla (+18)
+	cp 020h		;7098   ; clase 0x20?
 	call z,da_la_vuelta		;709a
 	ld a,(ix+01bh)		;709d   ; ...o sin suelo delante: da la vuelta
-	and 0f0h		;70a0
-	cp 020h		;70a2
+	and 0f0h		;70a0   ; la clase de la casilla (+1B)
+	cp 020h		;70a2   ; clase 0x20?
 	call nz,da_la_vuelta		;70a4
 	jr tipo_0f_anda		;70a7
 tipo_0f_der:
 	ld a,(ix+019h)		;70a9
-	and 0f0h		;70ac
-	cp 020h		;70ae
+	and 0f0h		;70ac   ; la clase de la casilla (+19)
+	cp 020h		;70ae   ; clase 0x20?
 	call z,da_la_vuelta		;70b0
 	ld a,(ix+01eh)		;70b3
-	and 0f0h		;70b6
-	cp 020h		;70b8
+	and 0f0h		;70b6   ; la clase de la casilla (+1E)
+	cp 020h		;70b8   ; clase 0x20?
 	call nz,da_la_vuelta		;70ba
 tipo_0f_anda:
 	call anda		;70bd   ; dos veces 2 pixeles
@@ -2115,7 +2115,7 @@ tipo_0a:
 	bit 0,(ix+001h)		;70ef   ; mirando a la izquierda: la de encima-delante...
 	jr z,tipo_0a_der		;70f3
 	ld a,(ix+018h)		;70f5
-	and 00fh		;70f8
+	and 00fh		;70f8   ; el tipo de la casilla (+18)
 	cp 001h		;70fa   ; ...tipo 1: p03:7146
 	jp z,tipo_0a_casilla_1		;70fc
 	cp 002h		;70ff   ; ...tipo 2 o mas: p03:716E
@@ -2125,13 +2125,13 @@ tipo_0a_5:
 	jr nc,tipo_0a_alta		;7105
 tipo_0a_pared:
 	ld a,(ix+020h)		;7107   ; pared delante: p03:7146
-	and 0f0h		;710a
-	cp 020h		;710c
+	and 0f0h		;710a   ; la clase de la casilla (+20)
+	cp 020h		;710c   ; clase 0x20?
 	jr z,tipo_0a_casilla_1		;710e
 	jr tipo_0a_anda		;7110
 tipo_0a_der:
 	ld a,(ix+019h)		;7112
-	and 00fh		;7115
+	and 00fh		;7115   ; el tipo de la casilla (+19)
 	cp 001h		;7117
 	jr z,tipo_0a_casilla_1		;7119
 	cp 002h		;711b
@@ -2141,8 +2141,8 @@ tipo_0a_der_5:
 	jr nc,tipo_0a_der_alta		;7121
 tipo_0a_der_pared:
 	ld a,(ix+021h)		;7123
-	and 0f0h		;7126
-	cp 020h		;7128
+	and 0f0h		;7126   ; la clase de la casilla (+21)
+	cp 020h		;7128   ; clase 0x20?
 	jr z,tipo_0a_casilla_1		;712a
 tipo_0a_anda:
 	call distancia_x_7		;712c   ; a menos de 0x10 en x (con +7): quieto
@@ -2174,16 +2174,16 @@ tipo_0a_der_2:
 	cp 005h		;715f   ; 5 o mas: la siguiente comprobacion
 	jr nc,tipo_0a_der_5		;7161
 	ld a,(ix+022h)		;7163   ; la casilla de +22 de clase 0xF0 (nada): anda
-	and 0f0h		;7166
-	cp 0f0h		;7168
+	and 0f0h		;7166   ; la clase de la casilla (+22)
+	cp 0f0h		;7168   ; clase 0xF0?
 	jr z,tipo_0a_anda		;716a
 	jr tipo_0a_casilla_1		;716c
 tipo_0a_2:
 	cp 005h		;716e
 	jr nc,tipo_0a_5		;7170
 	ld a,(ix+01fh)		;7172   ; la de +1F de clase 0xF0: anda
-	and 0f0h		;7175
-	cp 0f0h		;7177
+	and 0f0h		;7175   ; la clase de la casilla (+1F)
+	cp 0f0h		;7177   ; clase 0xF0?
 	jr z,tipo_0a_anda		;7179
 	jr tipo_0a_casilla_1		;717b
 
@@ -2239,19 +2239,19 @@ tipo_06_suelo:
 	bit 0,(ix+001h)		;71e3   ; mirando a la izquierda...
 	jr z,tipo_06_der		;71e7
 	ld a,(ix+018h)		;71e9   ; ...pared: da la vuelta y nada mas
-	and 0f0h		;71ec
-	cp 020h		;71ee
+	and 0f0h		;71ec   ; la clase de la casilla (+18)
+	cp 020h		;71ee   ; clase 0x20?
 	push af			;71f0
 	call z,da_la_vuelta		;71f1
 	pop af			;71f4
 	jp z,tipo_06_fin		;71f5
 	ld a,(ix+01bh)		;71f8   ; ...tipo 2 debajo-delante: p03:732B
-	and 00fh		;71fb
+	and 00fh		;71fb   ; el tipo de la casilla (+1B)
 	cp 002h		;71fd
 	jp z,tipo_06_tipo2		;71ff
 tipo_06_delante:
 	ld a,(ix+01ch)		;7202   ; la de debajo-delante, nibble bajo:
-	and 00fh		;7205
+	and 00fh		;7205   ; el tipo de la casilla (+1C)
 	cp 00fh		;7207   ; 0x0F: p03:727A
 	jp z,tipo_06_lejos		;7209
 	cp 001h		;720c   ; 1: da la vuelta
@@ -2272,34 +2272,34 @@ tipo_06_vuelta:
 	jp tipo_06_lejos		;7230
 tipo_06_der:
 	ld a,(ix+019h)		;7233
-	and 0f0h		;7236
-	cp 020h		;7238
+	and 0f0h		;7236   ; la clase de la casilla (+19)
+	cp 020h		;7238   ; clase 0x20?
 	push af			;723a
 	call z,da_la_vuelta		;723b
 	pop af			;723e
 	jp z,tipo_06_fin		;723f
 	ld a,(ix+01eh)		;7242
-	and 00fh		;7245
+	and 00fh		;7245   ; el tipo de la casilla (+1E)
 	cp 002h		;7247
 	jp z,tipo_06_tipo2_der		;7249
 tipo_06_der_delante:
-	ld a,(ix+01dh)		;724c
-	and 00fh		;724f
-	cp 00fh		;7251
-	jp z,tipo_06_lejos		;7253
-	cp 001h		;7256
-	jp z,da_la_vuelta		;7258
-	cp 002h		;725b
-	jp z,tipo_06_escalon_der		;725d
-	cp 003h		;7260
-	jp z,tipo_06_escalon_der		;7262
-	cp 004h		;7265
-	jp z,tipo_06_anda		;7267
-	cp 005h		;726a
-	jp z,tipo_06_salto_alto		;726c
-	cp 006h		;726f
-	jp z,tipo_06_salto_alto		;7271
-	jp nc,tipo_06_otra_der		;7274
+	ld a,(ix+01dh)		;724c   ; la de debajo-delante a la derecha
+	and 00fh		;724f   ; el tipo de la casilla (+1D)
+	cp 00fh		;7251   ; 0x0F?
+	jp z,tipo_06_lejos		;7253   ; si: como si no hubiera nada
+	cp 001h		;7256   ; 1?
+	jp z,da_la_vuelta		;7258   ; si: da la vuelta
+	cp 002h		;725b   ; 2?
+	jp z,tipo_06_escalon_der		;725d   ; escalon
+	cp 003h		;7260   ; 3?
+	jp z,tipo_06_escalon_der		;7262   ; escalon
+	cp 004h		;7265   ; 4?
+	jp z,tipo_06_anda		;7267   ; anda
+	cp 005h		;726a   ; 5?
+	jp z,tipo_06_salto_alto		;726c   ; salto alto
+	cp 006h		;726f   ; 6?
+	jp z,tipo_06_salto_alto		;7271   ; salto alto
+	jp nc,tipo_06_otra_der		;7274   ; mas: lo otro
 tipo_06_der_vuelta:
 	call da_la_vuelta		;7277
 tipo_06_lejos:
@@ -2324,16 +2324,16 @@ tipo_06_fin:
 	jp 04a8bh		;72a2   ; p00 pinta_actor
 tipo_06_escalon:
 	ld a,(ix+017h)		;72a5
-	and 0f0h		;72a8
-	cp 020h		;72aa
+	and 0f0h		;72a8   ; la clase de la casilla (+17)
+	cp 020h		;72aa   ; clase 0x20?
 	jp nz,tipo_06_anda		;72ac
 tipo_06_salta:
 	ld (ix+010h),00ch		;72af   ; 12 cuadros subiendo
 	jp tipo_06_anda		;72b3
 tipo_06_escalon_der:
 	ld a,(ix+01ah)		;72b6
-	and 0f0h		;72b9
-	cp 020h		;72bb
+	and 0f0h		;72b9   ; la clase de la casilla (+1A)
+	cp 020h		;72bb   ; clase 0x20?
 	jp nz,tipo_06_anda		;72bd
 	ld (ix+010h),00ch		;72c0
 	jp tipo_06_anda		;72c4
@@ -2355,16 +2355,16 @@ tipo_06_bajando:
 	jp tipo_06_pinta		;72e8
 tipo_06_subiendo:
 	res 1,(ix+001h)		;72eb   ; 2 arriba, un cuadro menos
-	ld a,(ix+007h)		;72ef
-	dec a			;72f2
+	ld a,(ix+007h)		;72ef   ; la y...
+	dec a			;72f2   ; ...2 pixeles arriba
 	dec a			;72f3
-	ld (ix+007h),a		;72f4
-	ld a,(ix+011h)		;72f7
-	dec a			;72fa
+	ld (ix+007h),a		;72f4   ; guardada
+	ld a,(ix+011h)		;72f7   ; cuadros de subida...
+	dec a			;72fa   ; ...uno menos
 	ld (ix+011h),a		;72fb
-	and a			;72fe
-	jp z,tipo_06_cumbre		;72ff
-	jp tipo_06_pinta		;7302
+	and a			;72fe   ; acabados?
+	jp z,tipo_06_cumbre		;72ff   ; si: a bajar
+	jp tipo_06_pinta		;7302   ; no: pintado
 tipo_06_cumbre:
 	ld (ix+012h),010h		;7305   ; 16 cuadros bajando
 	jp tipo_06_pinta		;7309
@@ -2396,14 +2396,14 @@ tipo_06_vuelta_cerca:
 	jp tipo_06_fin		;7328
 tipo_06_tipo2:
 	ld a,(ix+017h)		;732b
-	and 0f0h		;732e
-	cp 020h		;7330
+	and 0f0h		;732e   ; la clase de la casilla (+17)
+	cp 020h		;7330   ; clase 0x20?
 	jp z,tipo_06_salta		;7332
 	jp tipo_06_delante		;7335
 tipo_06_tipo2_der:
 	ld a,(ix+01ah)		;7338
-	and 0f0h		;733b
-	cp 020h		;733d
+	and 0f0h		;733b   ; la clase de la casilla (+1A)
+	cp 020h		;733d   ; clase 0x20?
 	jp z,tipo_06_salta		;733f
 	jp tipo_06_der_delante		;7342
 tipo_06_escondido:
@@ -2449,22 +2449,22 @@ tipo_12:
 	bit 0,(ix+001h)		;739d   ; mirando a la izquierda: pared o sin suelo, quieto
 	jr z,tipo_12_der		;73a1
 	ld a,(ix+017h)		;73a3
-	and 0f0h		;73a6
-	cp 020h		;73a8
+	and 0f0h		;73a6   ; la clase de la casilla (+17)
+	cp 020h		;73a8   ; clase 0x20?
 	jp z,tipo_12_quieto		;73aa
 	ld a,(ix+01ch)		;73ad
-	and 0f0h		;73b0
-	cp 020h		;73b2
+	and 0f0h		;73b0   ; la clase de la casilla (+1C)
+	cp 020h		;73b2   ; clase 0x20?
 	jp nz,tipo_12_quieto		;73b4
 	jr tipo_12_lejos		;73b7
 tipo_12_der:
 	ld a,(ix+01ah)		;73b9
-	and 0f0h		;73bc
-	cp 020h		;73be
+	and 0f0h		;73bc   ; la clase de la casilla (+1A)
+	cp 020h		;73be   ; clase 0x20?
 	jp z,tipo_12_quieto		;73c0
 	ld a,(ix+01eh)		;73c3
-	and 0f0h		;73c6
-	cp 020h		;73c8
+	and 0f0h		;73c6   ; la clase de la casilla (+1E)
+	cp 020h		;73c8   ; clase 0x20?
 	jp nz,tipo_12_quieto		;73ca
 tipo_12_lejos:
 	call distancia_x		;73cd   ; a 0x40 o mas en x: anda
@@ -2560,8 +2560,8 @@ mueve_proyectil_12:
 	ld (ix+001h),00fh		;7496   ; pose 0x0F
 	call casillas_actor		;749a   ; las casillas
 	ld a,(ix+020h)		;749d   ; toca una de clase 0x20: se acaba
-	and 0f0h		;74a0
-	cp 020h		;74a2
+	and 0f0h		;74a0   ; la clase de la casilla (+20)
+	cp 020h		;74a2   ; clase 0x20?
 	jp z,acaba_proyectil_12		;74a4
 	ld a,(0d8fch)		;74a7   ; C = x de Rastan + 8
 	add a,008h		;74aa
@@ -2659,19 +2659,19 @@ tipo_11_suelo:
 	bit 0,(ix+001h)		;7571   ; mirando a la izquierda...
 	jr z,tipo_11_der		;7575
 	ld a,(ix+018h)		;7577   ; ...pared: da la vuelta y nada mas
-	and 0f0h		;757a
-	cp 020h		;757c
+	and 0f0h		;757a   ; la clase de la casilla (+18)
+	cp 020h		;757c   ; clase 0x20?
 	push af			;757e
 	call z,da_la_vuelta		;757f
 	pop af			;7582
 	jp z,tipo_11_fin		;7583
 	ld a,(ix+01bh)		;7586   ; ...tipo 2 debajo-delante: p03:76D7
-	and 00fh		;7589
+	and 00fh		;7589   ; el tipo de la casilla (+1B)
 	cp 002h		;758b
 	jp z,tipo_11_tipo2		;758d
 tipo_11_delante:
 	ld a,(ix+01ch)		;7590   ; la de debajo-delante, nibble bajo:
-	and 00fh		;7593
+	and 00fh		;7593   ; el tipo de la casilla (+1C)
 	cp 00fh		;7595   ; 0x0F: p03:7608
 	jp z,tipo_11_lejos		;7597
 	cp 001h		;759a   ; 1: da la vuelta
@@ -2692,34 +2692,34 @@ tipo_11_vuelta:
 	jp tipo_11_lejos		;75be
 tipo_11_der:
 	ld a,(ix+019h)		;75c1
-	and 0f0h		;75c4
-	cp 020h		;75c6
+	and 0f0h		;75c4   ; la clase de la casilla (+19)
+	cp 020h		;75c6   ; clase 0x20?
 	push af			;75c8
 	call z,da_la_vuelta		;75c9
 	pop af			;75cc
 	jp z,tipo_11_fin		;75cd
 	ld a,(ix+01eh)		;75d0
-	and 00fh		;75d3
+	and 00fh		;75d3   ; el tipo de la casilla (+1E)
 	cp 002h		;75d5
 	jp z,tipo_11_tipo2_der		;75d7
 tipo_11_der_delante:
-	ld a,(ix+01dh)		;75da
-	and 00fh		;75dd
-	cp 00fh		;75df
-	jp z,tipo_11_lejos		;75e1
-	cp 001h		;75e4
-	jp z,da_la_vuelta		;75e6
-	cp 002h		;75e9
-	jp z,tipo_11_escalon_der		;75eb
-	cp 003h		;75ee
-	jp z,tipo_11_escalon_der		;75f0
-	cp 004h		;75f3
-	jp z,tipo_11_anda		;75f5
-	cp 005h		;75f8
-	jp z,tipo_11_salto_alto		;75fa
-	cp 006h		;75fd
-	jp z,tipo_11_salto_alto		;75ff
-	jp nc,tipo_11_otra_der		;7602
+	ld a,(ix+01dh)		;75da   ; la de debajo-delante a la derecha
+	and 00fh		;75dd   ; el tipo de la casilla (+1D)
+	cp 00fh		;75df   ; 0x0F?
+	jp z,tipo_11_lejos		;75e1   ; si: como si no hubiera nada
+	cp 001h		;75e4   ; 1?
+	jp z,da_la_vuelta		;75e6   ; si: da la vuelta
+	cp 002h		;75e9   ; 2?
+	jp z,tipo_11_escalon_der		;75eb   ; escalon
+	cp 003h		;75ee   ; 3?
+	jp z,tipo_11_escalon_der		;75f0   ; escalon
+	cp 004h		;75f3   ; 4?
+	jp z,tipo_11_anda		;75f5   ; anda
+	cp 005h		;75f8   ; 5?
+	jp z,tipo_11_salto_alto		;75fa   ; salto alto
+	cp 006h		;75fd   ; 6?
+	jp z,tipo_11_salto_alto		;75ff   ; salto alto
+	jp nc,tipo_11_otra_der		;7602   ; mas: lo otro
 tipo_11_der_vuelta:
 	call da_la_vuelta		;7605
 tipo_11_lejos:
@@ -2748,16 +2748,16 @@ tipo_11_fin:
 	jp 04a8bh		;7640   ; p00 pinta_actor
 tipo_11_escalon:
 	ld a,(ix+017h)		;7643
-	and 0f0h		;7646
-	cp 020h		;7648
+	and 0f0h		;7646   ; la clase de la casilla (+17)
+	cp 020h		;7648   ; clase 0x20?
 	jp nz,tipo_11_anda		;764a
 tipo_11_salta:
 	ld (ix+010h),010h		;764d   ; 16 cuadros subiendo de pixel en pixel
 	jp tipo_11_anda		;7651
 tipo_11_escalon_der:
 	ld a,(ix+01ah)		;7654
-	and 0f0h		;7657
-	cp 020h		;7659
+	and 0f0h		;7657   ; la clase de la casilla (+1A)
+	cp 020h		;7659   ; clase 0x20?
 	jp nz,tipo_11_anda		;765b
 	ld (ix+010h),010h		;765e
 	jp tipo_11_anda		;7662
@@ -2822,14 +2822,14 @@ tipo_11_vuelta_cerca:
 	jp tipo_11_fin		;76d4
 tipo_11_tipo2:
 	ld a,(ix+017h)		;76d7
-	and 0f0h		;76da
-	cp 020h		;76dc
+	and 0f0h		;76da   ; la clase de la casilla (+17)
+	cp 020h		;76dc   ; clase 0x20?
 	jp z,tipo_11_salta		;76de
 	jp tipo_11_delante		;76e1
 tipo_11_tipo2_der:
 	ld a,(ix+01ah)		;76e4
-	and 0f0h		;76e7
-	cp 020h		;76e9
+	and 0f0h		;76e7   ; la clase de la casilla (+1A)
+	cp 020h		;76e9   ; clase 0x20?
 	jp z,tipo_11_salta		;76eb
 	jp tipo_11_der_delante		;76ee
 
@@ -2865,22 +2865,22 @@ tipo_14:
 	bit 0,(ix+001h)		;772e   ; mirando a la izquierda: pared o sin suelo, p03:77A1
 	jr z,tipo_14_der		;7732
 	ld a,(ix+017h)		;7734
-	and 0f0h		;7737
-	cp 020h		;7739
+	and 0f0h		;7737   ; la clase de la casilla (+17)
+	cp 020h		;7739   ; clase 0x20?
 	jp z,tipo_14_parado		;773b
 	ld a,(ix+01ch)		;773e
-	and 0f0h		;7741
-	cp 020h		;7743
+	and 0f0h		;7741   ; la clase de la casilla (+1C)
+	cp 020h		;7743   ; clase 0x20?
 	jp nz,tipo_14_parado		;7745
 	jr tipo_14_lejos		;7748
 tipo_14_der:
 	ld a,(ix+01ah)		;774a
-	and 0f0h		;774d
-	cp 020h		;774f
+	and 0f0h		;774d   ; la clase de la casilla (+1A)
+	cp 020h		;774f   ; clase 0x20?
 	jp z,tipo_14_parado		;7751
 	ld a,(ix+01eh)		;7754
-	and 0f0h		;7757
-	cp 020h		;7759
+	and 0f0h		;7757   ; la clase de la casilla (+1E)
+	cp 020h		;7759   ; clase 0x20?
 	jp nz,tipo_14_parado		;775b
 tipo_14_lejos:
 	call distancia_x		;775e   ; a 0x40 o mas en x: anda
@@ -2979,8 +2979,8 @@ coloca_14_y:
 mueve_proyectil_14:
 	call casillas_actor		;7828   ; las casillas
 	ld a,(ix+020h)		;782b   ; toca una de clase 0x20: se acaba
-	and 0f0h		;782e
-	cp 020h		;7830
+	and 0f0h		;782e   ; la clase de la casilla (+20)
+	cp 020h		;7830   ; clase 0x20?
 	jp z,choca_proyectil_14		;7832
 	ld a,(0d8fch)		;7835   ; C = x de Rastan + 8
 	add a,008h		;7838
@@ -3066,22 +3066,22 @@ tipo_15:
 	bit 0,(ix+001h)		;78ea   ; mirando a la izquierda: pared o sin suelo, p03:7956
 	jr z,tipo_15_der		;78ee
 	ld a,(ix+017h)		;78f0
-	and 0f0h		;78f3
-	cp 020h		;78f5
+	and 0f0h		;78f3   ; la clase de la casilla (+17)
+	cp 020h		;78f5   ; clase 0x20?
 	jp z,tipo_15_parado		;78f7
 	ld a,(ix+01ch)		;78fa
-	and 0f0h		;78fd
-	cp 020h		;78ff
+	and 0f0h		;78fd   ; la clase de la casilla (+1C)
+	cp 020h		;78ff   ; clase 0x20?
 	jp nz,tipo_15_parado		;7901
 	jr tipo_15_lejos		;7904
 tipo_15_der:
 	ld a,(ix+01ah)		;7906
-	and 0f0h		;7909
-	cp 020h		;790b
+	and 0f0h		;7909   ; la clase de la casilla (+1A)
+	cp 020h		;790b   ; clase 0x20?
 	jp z,tipo_15_parado		;790d
 	ld a,(ix+01eh)		;7910
-	and 0f0h		;7913
-	cp 020h		;7915
+	and 0f0h		;7913   ; la clase de la casilla (+1E)
+	cp 020h		;7915   ; clase 0x20?
 	jp nz,tipo_15_parado		;7917
 tipo_15_lejos:
 	call distancia_x		;791a   ; a 0x40 o mas: anda
@@ -3178,8 +3178,8 @@ coloca_15_y:
 mueve_proyectil_15:
 	call casillas_actor		;79dd   ; las casillas
 	ld a,(ix+020h)		;79e0   ; toca una de clase 0x20: se acaba
-	and 0f0h		;79e3
-	cp 020h		;79e5
+	and 0f0h		;79e3   ; la clase de la casilla (+20)
+	cp 020h		;79e5   ; clase 0x20?
 	jp z,choca_proyectil_15		;79e7
 	ld a,(0d8fch)		;79ea   ; C = x de Rastan + 8
 	add a,008h		;79ed
@@ -3250,52 +3250,52 @@ huerfana_paso_al_azar:
 	ret			;7a6a
 paso_der_azar:
 	ld a,(ix+006h)		;7a6b   ; 4 a la derecha, sin pasar de H
-	inc a			;7a6e
+	inc a			;7a6e   ; + 4...
 	inc a			;7a6f
 	inc a			;7a70
 	inc a			;7a71
-	cp h			;7a72
-	ld (ix+006h),a		;7a73
-	ret c			;7a76
-	ld a,h			;7a77
-	ld (ix+006h),a		;7a78
-	ret			;7a7b
+	cp h			;7a72   ; ...comparado con el tope
+	ld (ix+006h),a		;7a73   ; guardado
+	ret c			;7a76   ; sin pasarse: vuelve
+	ld a,h			;7a77   ; pasado: el tope
+	ld (ix+006h),a		;7a78   ; guardado
+	ret			;7a7b   ; vuelve
 paso_izq_azar:
 	ld a,(ix+006h)		;7a7c   ; 4 a la izquierda, sin bajar de L
-	dec a			;7a7f
+	dec a			;7a7f   ; - 4...
 	dec a			;7a80
 	dec a			;7a81
 	dec a			;7a82
-	cp l			;7a83
-	ld (ix+006h),a		;7a84
-	ret nc			;7a87
-	ld a,l			;7a88
-	ld (ix+006h),a		;7a89
-	ret			;7a8c
+	cp l			;7a83   ; ...comparado con el tope
+	ld (ix+006h),a		;7a84   ; guardado
+	ret nc			;7a87   ; sin pasarse: vuelve
+	ld a,l			;7a88   ; pasado: el tope
+	ld (ix+006h),a		;7a89   ; guardado
+	ret			;7a8c   ; vuelve
 paso_abajo_azar:
 	ld a,(ix+007h)		;7a8d   ; y + 4, sin pasar de D (y lo guarda en la x: un error)
-	inc a			;7a90
+	inc a			;7a90   ; + 4...
 	inc a			;7a91
 	inc a			;7a92
 	inc a			;7a93
-	cp d			;7a94
-	ld (ix+006h),a		;7a95
-	ret c			;7a98
-	ld a,d			;7a99
-	ld (ix+006h),a		;7a9a
-	ret			;7a9d
+	cp d			;7a94   ; ...comparado con el tope
+	ld (ix+006h),a		;7a95   ; guardado
+	ret c			;7a98   ; sin pasarse: vuelve
+	ld a,d			;7a99   ; pasado: el tope
+	ld (ix+006h),a		;7a9a   ; guardado
+	ret			;7a9d   ; vuelve
 paso_arriba_azar:
 	ld a,(ix+007h)		;7a9e   ; y - 4, sin bajar de E (tambien en la x)
-	dec a			;7aa1
+	dec a			;7aa1   ; - 4...
 	dec a			;7aa2
 	dec a			;7aa3
 	dec a			;7aa4
-	cp e			;7aa5
-	ld (ix+006h),a		;7aa6
-	ret nc			;7aa9
-	ld a,e			;7aaa
-	ld (ix+006h),a		;7aab
-	ret			;7aae
+	cp e			;7aa5   ; ...comparado con el tope
+	ld (ix+006h),a		;7aa6   ; guardado
+	ret nc			;7aa9   ; sin pasarse: vuelve
+	ld a,e			;7aaa   ; pasado: el tope
+	ld (ix+006h),a		;7aab   ; guardado
+	ret			;7aae   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; MUERTE DE UN ACTOR (vida +0F = 0): si lleva otro actor de la mano (un
@@ -3486,7 +3486,7 @@ hacia_y_b:
 	inc (ix+007h)		;7c1c
 	inc (ix+007h)		;7c1f
 hacia_y_b_anda:
-	bit 0,(ix+001h)		;7c22
+	bit 0,(ix+001h)		;7c22   ; mirando a la izquierda?
 	jr nz,hacia_y_b_izq		;7c26
 	inc (ix+006h)		;7c28
 	inc (ix+006h)		;7c2b
@@ -3566,16 +3566,16 @@ distancia_x_b:
 	ret			;7cdc
 distancia_x_7:
 	ld a,(0d8fch)		;7cdd   ; lo mismo con x del actor + 7
-	ld b,010h		;7ce0
+	ld b,010h		;7ce0   ; B = x de Rastan + 16
 	add a,b			;7ce2
 	ld b,a			;7ce3
-	ld a,(ix+006h)		;7ce4
-	ld c,007h		;7ce7
+	ld a,(ix+006h)		;7ce4   ; la x del actor...
+	ld c,007h		;7ce7   ; ...+ 7
 	add a,c			;7ce9
-	cp b			;7cea
-	jr c,distancia_x_7b		;7ceb
-	sub b			;7ced
-	ret			;7cee
+	cp b			;7cea   ; el actor mas a la derecha?
+	jr c,distancia_x_7b		;7ceb   ; no: al reves
+	sub b			;7ced   ; la diferencia
+	ret			;7cee   ; vuelve
 distancia_x_7b:
 	ld c,a			;7cef
 	ld a,b			;7cf0
@@ -3844,14 +3844,14 @@ pose_b1_y_pinta:
 nada_debajo:
 	call casillas_actor		;7ebd   ; las casillas
 	ld a,(ix+01ch)		;7ec0   ; las dos de debajo, +1C y +1D, de clase 0xF0...
-	and 0f0h		;7ec3
-	cp 0f0h		;7ec5
+	and 0f0h		;7ec3   ; la clase de la casilla (+1C)
+	cp 0f0h		;7ec5   ; clase 0xF0?
 	jr z,nada_debajo_2		;7ec7
 	ret			;7ec9
 nada_debajo_2:
 	ld a,(ix+01dh)		;7eca
-	and 0f0h		;7ecd
-	cp 0f0h		;7ecf
+	and 0f0h		;7ecd   ; la clase de la casilla (+1D)
+	cp 0f0h		;7ecf   ; clase 0xF0?
 	jr z,nada_debajo_si		;7ed1
 	ret			;7ed3
 nada_debajo_si:
@@ -3860,14 +3860,14 @@ nada_debajo_si:
 nada_debajo_16:
 	call casillas_actor		;7ed7   ; lo mismo con +18 y +19, la fila siguiente: debajo de los actores de 16 de alto
 	ld a,(ix+018h)		;7eda
-	and 0f0h		;7edd
-	cp 0f0h		;7edf
+	and 0f0h		;7edd   ; la clase de la casilla (+18)
+	cp 0f0h		;7edf   ; clase 0xF0?
 	jr z,nada_debajo_16_2		;7ee1
 	ret			;7ee3
 nada_debajo_16_2:
 	ld a,(ix+019h)		;7ee4
-	and 0f0h		;7ee7
-	cp 0f0h		;7ee9
+	and 0f0h		;7ee7   ; la clase de la casilla (+19)
+	cp 0f0h		;7ee9   ; clase 0xF0?
 	jr z,nada_debajo_16_si		;7eeb
 	ret			;7eed
 nada_debajo_16_si:

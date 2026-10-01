@@ -1,5 +1,10 @@
 
 
+
+
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 D 0x8000 0x8002 cruce_8000  los dos ultimos bytes del `ld (nn),hl` que empieza en p03:7FFF (ld (0xD189),hl)
 B 0x8002 (Sigue de p03:7FDA, con HL = 0x0130 ya guardado en D189.)
@@ -444,6 +449,8 @@ C 0x80ea p03 anima_actor0
 C 0x80f7 p03 anima_actor0
 C 0x8104 p03 anima_actor0
 C 0x8117 p03 anima_actor0
+C 0x8120 la clase de la casilla (+23)
+C 0x8122 clase 0x20?
 C 0x8165 p03 da_la_vuelta
 C 0x816a p03 da_la_vuelta
 C 0x81a3 p03 anima_actor0
@@ -511,6 +518,8 @@ C 0x866f ix -> actor 4
 C 0x8693 p00 pinta_actor
 C 0x869c p00 pinta_actor
 C 0x86a6 p00 baja_actor
+C 0x86ea la clase de la casilla (+20)
+C 0x86ec clase 0x20?
 C 0x86fd p03 proyectil_choca_izq
 C 0x8717 p03 proyectil_choca_der
 C 0x8738 p00 pinta_actor

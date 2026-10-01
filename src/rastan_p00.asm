@@ -72,35 +72,35 @@ L_406A:
 ; ----------------------------------------------------------------------
 interrupcion:
 	push af			;406c   ; guarda los registros normales...
-	push bc			;406d
-	push de			;406e
-	push hl			;406f
-	push ix		;4070
-	push iy		;4072
+	push bc			;406d   ; BC...
+	push de			;406e   ; ...DE...
+	push hl			;406f   ; ...HL...
+	push ix		;4070   ; ...IX...
+	push iy		;4072   ; ...IY
 	ex af,af'			;4074   ; ...y los alternativos
 	exx			;4075
-	push af			;4076
-	push bc			;4077
-	push de			;4078
-	push hl			;4079
+	push af			;4076   ; AF' ...
+	push bc			;4077   ; ...BC'...
+	push de			;4078   ; ...DE'...
+	push hl			;4079   ; ...HL'
 	ex af,af'			;407a
 	exx			;407b
 	ld bc,(00006h)		;407c   ; puerto de escritura del VDP (BIOS 0x0007, +1 = puerto de registros)
-	inc c			;4080
+	inc c			;4080   ; C = puerto de registros (0x99)
 	ld a,000h		;4081   ; R#15 = 0: el siguiente `in` lee el registro de estado S#0
-	out (c),a		;4083
-	ld a,08fh		;4085
+	out (c),a		;4083   ; el valor...
+	ld a,08fh		;4085   ; ...para R#15 (0x80 + 15)
 	out (c),a		;4087
 	in b,(c)		;4089   ; B = S#0
 	ld a,000h		;408b   ; y vuelve a dejar R#15 = 0 (lo que espera la BIOS)
-	out (c),a		;408d
-	ld a,08fh		;408f
+	out (c),a		;408d   ; 0...
+	ld a,08fh		;408f   ; ...a R#15
 	out (c),a		;4091
 	bit 7,b		;4093   ; bit 7 de S#0: interrupcion de retrazo vertical
 	jp z,L_412D		;4095   ; si no lo es (otra interrupcion del V9938), sale sin hacer nada
 	ld a,001h		;4098   ; bancos 1 y 2 en 0x6000/0x8000 SIN tocar la copia: el sonido vive ahi
 	ld (06ff8h),a		;409a   ; registro del mapper: banco A en 0x6000
-	inc a			;409d
+	inc a			;409d   ; A = 2
 	ld (077f8h),a		;409e   ; registro del mapper: banco A en 0x8000
 	call 06153h		;40a1   ; p01:6153: un paso de la musica y los efectos
 	call arranca_sonidos		;40a4   ; arranca las peticiones de sonido pendientes
@@ -109,15 +109,15 @@ interrupcion:
 	ld a,(0d191h)		;40ad   ; a = copia del registro del mapper de 0x8000
 	ld (077f8h),a		;40b0   ; registro del mapper: banco A en 0x8000
 	ld hl,04000h		;40b3   ; HL = 0x4000 + SP: si SP ha bajado de 0xC000 hay acarreo...
-	adc hl,sp		;40b6
+	adc hl,sp		;40b6   ; + SP
 	jp nc,pila_desbordada		;40b8   ; ...y si no, la pila se ha desbordado: se cuelga a proposito (p00:413E)
 	ld ix,0d17eh		;40bb   ; cinco contadores de 16 bits en D17E-D187, +1 cada cuadro
-	ld l,(ix+000h)		;40bf
+	ld l,(ix+000h)		;40bf   ; el contador...
 	ld h,(ix+001h)		;40c2
 	inc hl			;40c5   ; primer contador +1
-	ld (ix+000h),l		;40c6
+	ld (ix+000h),l		;40c6   ; ...+ 1 guardado
 	ld (ix+001h),h		;40c9
-	inc ix		;40cc
+	inc ix		;40cc   ; el siguiente
 	inc ix		;40ce
 	ld l,(ix+000h)		;40d0
 	ld h,(ix+001h)		;40d3
@@ -148,7 +148,7 @@ interrupcion:
 	inc ix		;4110
 	inc ix		;4112
 	ld a,(0d032h)		;4114   ; D032 = "ya estoy dentro": si el cuadro anterior no acabo...
-	and a			;4117
+	and a			;4117   ; dentro?
 	jp nz,L_412D		;4118   ; ...este se salta el trabajo (no se reentra)
 	ld a,0ffh		;411b   ; marca que se esta dentro
 	ld (0d032h),a		;411d   ; 1 mientras la interrupcion hace el trabajo del cuadro = a
@@ -160,22 +160,22 @@ interrupcion:
 L_412D:
 	ex af,af'			;412d   ; devuelve los registros alternativos...
 	exx			;412e
-	pop hl			;412f
-	pop de			;4130
-	pop bc			;4131
-	pop af			;4132
+	pop hl			;412f   ; HL'...
+	pop de			;4130   ; ...DE'...
+	pop bc			;4131   ; ...BC'...
+	pop af			;4132   ; ...AF'
 	ex af,af'			;4133
 	exx			;4134
 	pop iy		;4135   ; ...y los normales
-	pop ix		;4137
-	pop hl			;4139
-	pop de			;413a
-	pop bc			;413b
-	pop af			;413c
+	pop ix		;4137   ; IX...
+	pop hl			;4139   ; ...HL...
+	pop de			;413a   ; ...DE...
+	pop bc			;413b   ; ...BC...
+	pop af			;413c   ; ...AF
 	ret			;413d   ; vuelve a la BIOS, que acaba la interrupcion
 pila_desbordada:
 	di			;413e   ; sin interrupciones y bucle infinito: el juego se para aqui
-	jr pila_desbordada		;413f
+	jr pila_desbordada		;413f   ; para siempre
 arranca_sonidos:
 	ld a,(0d17ah)		;4141   ; D17A: efecto pedido (0xFF = ninguno)
 	cp 0ffh		;4144
@@ -623,69 +623,69 @@ copia_vram_vram:
 	ld d,000h		;43d6
 	neg		;43d8
 L_43DA:
-	ld h,a			;43da
-	ld a,l			;43db
+	ld h,a			;43da   ; H = el alto
+	ld a,l			;43db   ; x - E...
 	sub e			;43dc
-	ld e,004h		;43dd
-	jp nc,L_43E6		;43df
-	ld e,000h		;43e2
-	neg		;43e4
+	ld e,004h		;43dd   ; ...hacia la derecha: DIX = 4
+	jp nc,L_43E6		;43df   ; positivo: tal cual
+	ld e,000h		;43e2   ; negativo: DIX = 0...
+	neg		;43e4   ; ...y el valor absoluto
 L_43E6:
-	ld l,a			;43e6
-	ld a,d			;43e7
-	or e			;43e8
-	pop de			;43e9
-	push af			;43ea
-	xor a			;43eb
+	ld l,a			;43e6   ; L = el ancho
+	ld a,d			;43e7   ; los dos sentidos...
+	or e			;43e8   ; ...juntos en A
+	pop de			;43e9   ; DE = el destino
+	push af			;43ea   ; ARG, guardado
+	xor a			;43eb   ; 0
 	out (c),e		;43ec   ; DX, DY y pagina A'
-	out (c),a		;43ee
-	out (c),d		;43f0
-	ex af,af'			;43f2
-	out (c),a		;43f3
+	out (c),a		;43ee   ; R#37: DX alto = 0
+	out (c),d		;43f0   ; R#38: DY
+	ex af,af'			;43f2   ; la pagina de destino...
+	out (c),a		;43f3   ; ...R#39
 	ex af,af'			;43f5
-	push hl			;43f6
-	ld h,000h		;43f7
+	push hl			;43f6   ; el tamano, guardado
+	ld h,000h		;43f7   ; HL = ancho + 1...
 	inc hl			;43f9
-	out (c),l		;43fa
-	out (c),h		;43fc
-	pop hl			;43fe
-	out (c),h		;43ff
-	out (c),a		;4401
-	out (c),a		;4403
-	pop af			;4405
-	out (c),a		;4406
+	out (c),l		;43fa   ; ...R#40...
+	out (c),h		;43fc   ; ...R#41
+	pop hl			;43fe   ; el tamano de vuelta
+	out (c),h		;43ff   ; R#42: NY
+	out (c),a		;4401   ; R#43
+	out (c),a		;4403   ; R#44: CLR
+	pop af			;4405   ; ARG...
+	out (c),a		;4406   ; ...R#45
 	ld a,0d0h		;4408   ; CMD 0xD0 = HMMM
-	out (c),a		;440a
-	ei			;440c
-	ret			;440d
+	out (c),a		;440a   ; R#46
+	ei			;440c   ; interrupciones otra vez
+	ret			;440d   ; vuelve
 rellena_vram:
 	di			;440e   ; rellena un rectangulo con el byte A (HMMV): DE..HL las esquinas
-	ex de,hl			;440f
-	push af			;4410
-	call espera_vdp		;4411
-	ld bc,(00007h)		;4414
-	inc c			;4418
+	ex de,hl			;440f   ; HL = la esquina de abajo, DE = la de arriba
+	push af			;4410   ; el byte, guardado
+	call espera_vdp		;4411   ; espera al VDP
+	ld bc,(00007h)		;4414   ; el puerto...
+	inc c			;4418   ; ...de registros
 	pop af			;4419
-	ld b,a			;441a
+	ld b,a			;441a   ; B = el byte
 	ld a,024h		;441b   ; R#17 = 36: DX, DY, NX, NY, CLR...
-	out (c),a		;441d
-	ld a,091h		;441f
+	out (c),a		;441d   ; R#17 = 36...
+	ld a,091h		;441f   ; ...(0x80 + 17)
 	out (c),a		;4421
-	inc c			;4423
+	inc c			;4423   ; el puerto 0x9B
 	inc c			;4424
-	or a			;4425
+	or a			;4425   ; sin acarreo
 	sbc hl,de		;4426   ; NX, NY = HL - DE + 1
-	inc h			;4428
-	inc l			;4429
-	xor a			;442a
+	inc h			;4428   ; ancho + 1
+	inc l			;4429   ; alto + 1
+	xor a			;442a   ; 0
 	out (c),d		;442b   ; DX = D, DY = E (pagina 0)
-	out (c),a		;442d
-	out (c),e		;442f
-	out (c),a		;4431
+	out (c),a		;442d   ; R#37
+	out (c),e		;442f   ; R#38: DY = E
+	out (c),a		;4431   ; R#39: pagina 0
 	out (c),h		;4433   ; NX = H, NY = L
-	out (c),a		;4435
-	out (c),l		;4437
-	out (c),a		;4439
+	out (c),a		;4435   ; R#41
+	out (c),l		;4437   ; R#42: NY = L
+	out (c),a		;4439   ; R#43
 	out (c),b		;443b   ; CLR = el byte de relleno
 	out (c),a		;443d
 	ld a,0c0h		;443f   ; CMD 0xC0 = HMMV
@@ -828,47 +828,47 @@ azar:
 ; (por la pila) = destino y A' su pagina, E+1 = ancho, D = alto.
 ; ----------------------------------------------------------------------
 copia_bloque:
-	di			;44f1
-	push bc			;44f2
-	push af			;44f3
+	di			;44f1   ; sin interrupciones mientras se habla con el VDP
+	push bc			;44f2   ; el destino...
+	push af			;44f3   ; ...y la pagina de origen, guardados
 	call espera_vdp		;44f4   ; espera al VDP
-	ld bc,(00007h)		;44f7
-	inc c			;44fb
+	ld bc,(00007h)		;44f7   ; el puerto de escritura...
+	inc c			;44fb   ; ...+1: registros
 	pop af			;44fc
-	ld b,a			;44fd
+	ld b,a			;44fd   ; B = la pagina de origen
 	ld a,020h		;44fe   ; R#17 = 32 con autoincremento
-	out (c),a		;4500
-	ld a,091h		;4502
+	out (c),a		;4500   ; R#17 = 32...
+	ld a,091h		;4502   ; ...(0x80 + 17)
 	out (c),a		;4504
-	inc c			;4506
+	inc c			;4506   ; +2: el puerto de registros indirectos (0x9B)
 	inc c			;4507
 	out (c),l		;4508   ; SX = L, SY = H, pagina B (la A de entrada)
 	xor a			;450a
-	out (c),a		;450b
-	out (c),h		;450d
-	out (c),b		;450f
+	out (c),a		;450b   ; R#33: SX alto = 0
+	out (c),h		;450d   ; R#34: SY
+	out (c),b		;450f   ; R#35: la pagina de origen
 	pop hl			;4511   ; el destino
 	out (c),l		;4512   ; DX = L, DY = H, pagina A'
-	out (c),a		;4514
-	out (c),h		;4516
+	out (c),a		;4514   ; R#37: DX alto = 0
+	out (c),h		;4516   ; R#38: DY
 	ex af,af'			;4518
-	out (c),a		;4519
+	out (c),a		;4519   ; R#39: la pagina de destino
 	ex af,af'			;451b
 	push de			;451c   ; NX = E + 1 (hasta 256)
-	ld d,000h		;451d
+	ld d,000h		;451d   ; NX = E + 1...
 	inc de			;451f
-	out (c),e		;4520
-	out (c),d		;4522
-	pop de			;4524
-	xor a			;4525
+	out (c),e		;4520   ; R#40...
+	out (c),d		;4522   ; ...R#41
+	pop de			;4524   ; DE de vuelta
+	xor a			;4525   ; 0
 	out (c),d		;4526   ; NY = D
-	out (c),a		;4528
-	out (c),a		;452a
-	out (c),a		;452c
+	out (c),a		;4528   ; R#43: NY alto
+	out (c),a		;452a   ; R#44: CLR
+	out (c),a		;452c   ; R#45: ARG
 	ld a,0d0h		;452e   ; CMD 0xD0 = HMMM
-	out (c),a		;4530
-	ei			;4532
-	ret			;4533
+	out (c),a		;4530   ; R#46: el comando
+	ei			;4532   ; interrupciones otra vez
+	ret			;4533   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Los patrones de un sprite a VRAM, solo si han cambiado. IX = ficha de
@@ -877,104 +877,104 @@ copia_bloque:
 ; ----------------------------------------------------------------------
 carga_patron_sprite:
 	ld h,(ix+001h)		;4534   ; el patron que toca...
-	ld l,(ix+000h)		;4537
-	push hl			;453a
+	ld l,(ix+000h)		;4537   ; HL = el patron que toca
+	push hl			;453a   ; guardado
 	ld d,(ix+005h)		;453b   ; ...contra el que ya hay
-	ld e,(ix+004h)		;453e
-	xor a			;4541
-	sbc hl,de		;4542
+	ld e,(ix+004h)		;453e   ; DE = el que hay
+	xor a			;4541   ; sin acarreo
+	sbc hl,de		;4542   ; iguales?
 	ld a,h			;4544
 	or l			;4545
-	pop hl			;4546
+	pop hl			;4546   ; HL de vuelta
 	jp z,L_45EB		;4547   ; el mismo: nada que hacer
 	ld (ix+005h),h		;454a   ; apunta el nuevo
-	ld (ix+004h),l		;454d
+	ld (ix+004h),l		;454d   ; apuntado como el que hay
 	ld a,h			;4550   ; 0xFFFF = ninguno
-	and l			;4551
-	inc a			;4552
-	jp z,L_45EB		;4553
-	push hl			;4556
+	and l			;4551   ; 0xFF y 0xFF...
+	inc a			;4552   ; ...+1 = 0...
+	jp z,L_45EB		;4553   ; ...: no hay patron
+	push hl			;4556   ; el patron guardado
 	ld a,(ix+00ah)		;4557   ; destino: 0xA000 + (ix+0A) * 32, la tabla de patrones de sprites
 	ld l,a			;455a
-	ld h,000h		;455b
+	ld h,000h		;455b   ; HL = sitio...
 	add hl,hl			;455d
 	add hl,hl			;455e
 	add hl,hl			;455f
 	add hl,hl			;4560
-	add hl,hl			;4561
-	ld de,0a000h		;4562
+	add hl,hl			;4561   ; ...* 32
+	ld de,0a000h		;4562   ; + 0xA000
 	add hl,de			;4565
-	push hl			;4566
-	ld bc,00020h		;4567   ; 32 bytes, un patron de 16x16
-	pop de			;456a
-	pop hl			;456b
-	di			;456c
+	push hl			;4566   ; el destino a la pila
+	ld bc,00020h		;4567   ; 32 bytes
+	pop de			;456a   ; DE = el destino
+	pop hl			;456b   ; HL = el patron
+	di			;456c   ; sin interrupciones: van a cambiar los bancos
 	ld a,(ix+008h)		;456d   ; (ix+8) bit 7 = 0: bancos 14 y 15 en 0x6000/0x8000
-	bit 7,a		;4570
-	jr nz,L_4586		;4572
-	ld a,00eh		;4574
+	bit 7,a		;4570   ; bit 7?
+	jr nz,L_4586		;4572   ; si: p00:4586
+	ld a,00eh		;4574   ; banco 14...
 	ld (0d190h),a		;4576   ; copia del registro del mapper de 0x6000 = a
 	ld (06ff8h),a		;4579   ; registro del mapper: banco A en 0x6000
-	ld a,00fh		;457c
+	ld a,00fh		;457c   ; ...y 15
 	ld (0d191h),a		;457e   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;4581   ; registro del mapper: banco A en 0x8000
-	jr L_45BC		;4584
+	jr L_45BC		;4584   ; a copiar
 L_4586:
 	bit 6,a		;4586   ; bits 7 y 6 = 10: bancos 11, 12 y 13 en 0x6000/0x8000/0xA000
-	jr nz,L_45A4		;4588
-	ld a,00bh		;458a
+	jr nz,L_45A4		;4588   ; bit 6: p00:45A4
+	ld a,00bh		;458a   ; bancos 11...
 	ld (0d190h),a		;458c   ; copia del registro del mapper de 0x6000 = a
 	ld (06ff8h),a		;458f   ; registro del mapper: banco A en 0x6000
-	ld a,00ch		;4592
+	ld a,00ch		;4592   ; ...12...
 	ld (0d191h),a		;4594   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;4597   ; registro del mapper: banco A en 0x8000
-	ld a,00dh		;459a
+	ld a,00dh		;459a   ; ...y 13
 	ld (0d192h),a		;459c   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;459f   ; registro del mapper: banco A en 0xA000
-	jr L_45BC		;45a2
+	jr L_45BC		;45a2   ; a copiar
 L_45A4:
 	ld a,008h		;45a4   ; bits 7 y 6 = 11: bancos 8, 9 y 10
 	ld (0d190h),a		;45a6   ; copia del registro del mapper de 0x6000 = a
 	ld (06ff8h),a		;45a9   ; registro del mapper: banco A en 0x6000
-	ld a,009h		;45ac
+	ld a,009h		;45ac   ; ...9...
 	ld (0d191h),a		;45ae   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;45b1   ; registro del mapper: banco A en 0x8000
-	ld a,00ah		;45b4
+	ld a,00ah		;45b4   ; ...y 10
 	ld (0d192h),a		;45b6   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;45b9   ; registro del mapper: banco A en 0xA000
 L_45BC:
 	call 0005ch		;45bc   ; BIOS LDIRVM - Block transfers to VRAM from memory | el patron a VRAM
-	ei			;45bf
+	ei			;45bf   ; interrupciones otra vez
 	ld a,(ix+008h)		;45c0   ; los colores: (ix+8) sin los bits de banco...
-	res 7,a		;45c3
-	res 6,a		;45c5
+	res 7,a		;45c3   ; sin los bits...
+	res 6,a		;45c5   ; ...de banco
 	ld h,000h		;45c7
-	ld l,a			;45c9
+	ld l,a			;45c9   ; HL = juego de graficos
 	ld de,04df4h		;45ca   ; ...indexa la tabla de colores de p00:4DF4
-	add hl,de			;45cd
-	push hl			;45ce
+	add hl,de			;45cd   ; + tabla: su color
+	push hl			;45ce   ; guardado
 	ld a,(ix+009h)		;45cf   ; destino: D213 + sprite*16, sus colores en RAM
-	ld h,000h		;45d2
+	ld h,000h		;45d2   ; HL = sprite...
 	ld l,a			;45d4
-	add hl,hl			;45d5
+	add hl,hl			;45d5   ; ...* 16
 	add hl,hl			;45d6
 	add hl,hl			;45d7
 	add hl,hl			;45d8
 	ld de,0d213h		;45d9   ; de -> los colores de los 32 sprites
-	add hl,de			;45dc
-	push hl			;45dd
+	add hl,de			;45dc   ; + D213
+	push hl			;45dd   ; DE = sus colores...
 	pop de			;45de
-	pop hl			;45df
+	pop hl			;45df   ; ...HL = el color
 	ld bc,0000fh		;45e0   ; los 16 colores de lineas iguales:
 	ld a,(hl)			;45e3   ; el primero...
-	ex de,hl			;45e4
-	ld (hl),a			;45e5
-	ld d,h			;45e6
+	ex de,hl			;45e4   ; HL = destino
+	ld (hl),a			;45e5   ; el primero
+	ld d,h			;45e6   ; DE = HL + 1
 	ld e,l			;45e7
 	inc de			;45e8
 	ldir		;45e9   ; ...y se copia sobre los otros 15
 L_45EB:
-	ret			;45eb
+	ret			;45eb   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; DATOS resto_45EC: `pop hl / ret` sueltos que nadie ejecuta
@@ -1107,42 +1107,42 @@ L_4676:
 	ret			;468a
 copia_transparente:
 	di			;468b   ; como p00:44F1 pero con LMMM y TIMP: el color 0 no se copia
-	push bc			;468c
+	push bc			;468c   ; el destino y la pagina, guardados
 	push af			;468d
 	call espera_vdp		;468e   ; espera al VDP
-	ld bc,(00007h)		;4691
+	ld bc,(00007h)		;4691   ; el puerto de registros
 	inc c			;4695
 	pop af			;4696
-	ld b,a			;4697
-	ld a,020h		;4698
+	ld b,a			;4697   ; B = la pagina de origen
+	ld a,020h		;4698   ; R#17 = 32 con autoincremento
 	out (c),a		;469a
 	ld a,091h		;469c
 	out (c),a		;469e
-	inc c			;46a0
+	inc c			;46a0   ; el puerto 0x9B
 	inc c			;46a1
 	out (c),l		;46a2   ; SX, SY, pagina
-	xor a			;46a4
-	out (c),a		;46a5
-	out (c),h		;46a7
-	out (c),b		;46a9
-	pop hl			;46ab
+	xor a			;46a4   ; 0
+	out (c),a		;46a5   ; R#33
+	out (c),h		;46a7   ; R#34: SY
+	out (c),b		;46a9   ; R#35: pagina
+	pop hl			;46ab   ; HL = el destino
 	out (c),l		;46ac   ; DX, DY, pagina A'
-	out (c),a		;46ae
-	out (c),h		;46b0
+	out (c),a		;46ae   ; R#37
+	out (c),h		;46b0   ; R#38: DY
 	ex af,af'			;46b2
-	out (c),a		;46b3
+	out (c),a		;46b3   ; R#39: pagina de destino
 	ex af,af'			;46b5
-	xor a			;46b6
+	xor a			;46b6   ; 0
 	out (c),e		;46b7   ; NX = E, NY = D
-	out (c),a		;46b9
-	out (c),d		;46bb
-	out (c),a		;46bd
-	out (c),a		;46bf
-	out (c),a		;46c1
+	out (c),a		;46b9   ; R#41
+	out (c),d		;46bb   ; R#42: NY = D
+	out (c),a		;46bd   ; R#43
+	out (c),a		;46bf   ; R#44
+	out (c),a		;46c1   ; R#45
 	ld a,098h		;46c3   ; CMD 0x98 = LMMM con TIMP
-	out (c),a		;46c5
-	ei			;46c7
-	ret			;46c8
+	out (c),a		;46c5   ; R#46: el comando
+	ei			;46c7   ; interrupciones otra vez
+	ret			;46c8   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Pinta un bloque de tiles: HL = lista de palabras (una por tile), DE = lo
@@ -1256,66 +1256,66 @@ pinta_bloque:
 	ld a,01bh		;4777   ; banco 27 en 0xA000
 	ld (0d192h),a		;4779   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;477c   ; registro del mapper: banco A en 0xA000
-	push hl			;477f
+	push hl			;477f   ; HL guardado dos veces
 	push hl			;4780
-	exx			;4781
-	pop hl			;4782
+	exx			;4781   ; los registros alternativos...
+	pop hl			;4782   ; ...HL' = el bloque
 	ld a,l			;4783   ; (bloque & 7) * 4...
-	and 007h		;4784
+	and 007h		;4784   ; la columna dentro de la fila de 8
 	ld l,a			;4786
 	ld h,000h		;4787
 	add hl,hl			;4789
 	add hl,hl			;478a
-	pop de			;478b
-	push hl			;478c
-	ex de,hl			;478d
+	pop de			;478b   ; DE = el destino
+	push hl			;478c   ; la columna * 4 guardada
+	ex de,hl			;478d   ; HL = el bloque otra vez
 	ld a,l			;478e   ; ...+ (bloque & 0xF8) * 8: 8 bytes por bloque
-	and 0f8h		;478f
+	and 0f8h		;478f   ; la fila de 8 bloques...
 	ld l,a			;4791
 	ld h,000h		;4792
-	add hl,hl			;4794
+	add hl,hl			;4794   ; ...* 8 (64 bytes por fila)
 	add hl,hl			;4795
 	add hl,hl			;4796
-	pop de			;4797
+	pop de			;4797   ; + la columna * 4
 	add hl,de			;4798
 	ld de,(0d5eah)		;4799   ; + la tabla de la fase (D5EA)
 	add hl,de			;479d
-	push hl			;479e
+	push hl			;479e   ; IX = sus cuatro tiles
 	pop ix		;479f
-	exx			;47a1
+	exx			;47a1   ; los registros normales
 	ld l,(ix+000h)		;47a2   ; tile de arriba a la izquierda
-	ld h,(ix+001h)		;47a5
-	push de			;47a8
+	ld h,(ix+001h)		;47a5   ; HL = el tile de arriba a la izquierda
+	push de			;47a8   ; DE guardado
 	call pinta_tile		;47a9
 	pop de			;47ac
 	ld hl,00008h		;47ad   ; 8 a la derecha
-	add hl,de			;47b0
+	add hl,de			;47b0   ; x + 8
 	ex de,hl			;47b1
 	push de			;47b2
 	ld l,(ix+002h)		;47b3   ; arriba a la derecha
-	ld h,(ix+003h)		;47b6
+	ld h,(ix+003h)		;47b6   ; el de arriba a la derecha
 	call pinta_tile		;47b9
 	pop de			;47bc
 	ld hl,007f8h		;47bd   ; la fila de abajo: 8 lineas mas abajo y 8 a la izquierda
-	add hl,de			;47c0
+	add hl,de			;47c0   ; 8 lineas abajo, 8 a la izquierda
 	ex de,hl			;47c1
 	push de			;47c2
 	ld bc,00020h		;47c3   ; los tiles de abajo van 32 bytes mas alla (filas de 8 bloques)
-	add ix,bc		;47c6
+	add ix,bc		;47c6   ; IX + 0x20: la fila de abajo de los tiles
 	ld l,(ix+000h)		;47c8   ; abajo a la izquierda
-	ld h,(ix+001h)		;47cb
+	ld h,(ix+001h)		;47cb   ; abajo a la izquierda
 	call pinta_tile		;47ce
 	pop de			;47d1
-	ld hl,00008h		;47d2
+	ld hl,00008h		;47d2   ; x + 8
 	add hl,de			;47d5
 	ex de,hl			;47d6
 	ld l,(ix+002h)		;47d7   ; abajo a la derecha
-	ld h,(ix+003h)		;47da
+	ld h,(ix+003h)		;47da   ; abajo a la derecha
 	call pinta_tile		;47dd
 	ld a,000h		;47e0   ; banco 0 otra vez en 0xA000
 	ld (0d192h),a		;47e2   ; copia del registro del mapper de 0xA000 = a
 	ld (07ff8h),a		;47e5   ; registro del mapper: banco A en 0xA000
-	ret			;47e8
+	ret			;47e8   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Las 32 fichas de sprite de D413 (11 bytes cada una): +0/1 patron, +2 x,
@@ -1490,153 +1490,153 @@ DATA_bloque_especial:
 ; ----------------------------------------------------------------------
 alta_actor:
 	ld a,(ix+000h)		;48f9   ; tipo 0: hueco libre, nada que hacer
-	and a			;48fc
-	ret z			;48fd
+	and a			;48fc   ; tipo 0...
+	ret z			;48fd   ; ...nada
 	ld a,(ix+000h)		;48fe   ; tipos 0x0A, 0x1A y 0x1B: grupo de dos sprites (p00:4967)
-	cp 00ah		;4901
+	cp 00ah		;4901   ; 0x0A?
 	jp z,alta_actor_dos		;4903
-	cp 01ah		;4906
+	cp 01ah		;4906   ; 0x1A?
 	jp z,alta_actor_dos		;4908
-	cp 01bh		;490b
+	cp 01bh		;490b   ; 0x1B?
 	jp z,alta_actor_dos		;490d
 	cp 016h		;4910   ; tipos 0x16, 0x1F, 0x0B, 0x0C, 0x17, 0x1E y 0x25: un sprite (p00:49EB)
-	jp z,alta_actor_uno		;4912
-	cp 01fh		;4915
+	jp z,alta_actor_uno		;4912   ; 0x16: uno
+	cp 01fh		;4915   ; 0x1F?
 	jp z,alta_actor_uno		;4917
-	cp 00bh		;491a
+	cp 00bh		;491a   ; 0x0B?
 	jp z,alta_actor_uno		;491c
-	cp 00ch		;491f
+	cp 00ch		;491f   ; 0x0C?
 	jp z,alta_actor_uno		;4921
-	cp 017h		;4924
+	cp 017h		;4924   ; 0x17?
 	jp z,alta_actor_uno		;4926
-	cp 01eh		;4929
+	cp 01eh		;4929   ; 0x1E?
 	jp z,alta_actor_uno		;492b
-	cp 025h		;492e
+	cp 025h		;492e   ; 0x25?
 	jp z,alta_actor_uno		;4930
 	ld d,000h		;4933   ; los demas: un grupo libre de DA17 con los bits 00
-	call busca_grupo		;4935
+	call busca_grupo		;4935   ; D = 0: un grupo libre
 	ld a,b			;4938   ; no hay: no sale
-	and a			;4939
-	ret z			;493a
+	and a			;4939   ; B = 0: ninguno...
+	ret z			;493a   ; ...no se da de alta
 	ld a,003h		;493b   ; se marca ocupado (11)
-	call marca_grupo		;493d
+	call marca_grupo		;493d   ; A = 3: ocupado
 	ld a,b			;4940   ; +0E = grupo con el bit 4: "cinco sprites"
-	and 007h		;4941
-	set 4,a		;4943
-	ld (ix+00eh),a		;4945
+	and 007h		;4941   ; el numero de grupo...
+	set 4,a		;4943   ; ...con el bit 4...
+	ld (ix+00eh),a		;4945   ; ...en +0E
 	ld a,b			;4948   ; primera ficha: 0x10 + (grupo - 1) * 5
-	dec a			;4949
-	add a,a			;494a
+	dec a			;4949   ; (grupo - 1)...
+	add a,a			;494a   ; ...* 4...
 	add a,a			;494b
-	add a,b			;494c
-	add a,010h		;494d
+	add a,b			;494c   ; ...+ grupo = * 5...
+	add a,010h		;494d   ; ...+ 0x10
 	ld de,0000bh		;494f   ; 11 bytes por ficha
 	ld hl,0d413h		;4952   ; hl -> las 32 fichas de sprite
-	ld b,a			;4955
+	ld b,a			;4955   ; B = el numero de ficha
 L_4956:
-	add hl,de			;4956
+	add hl,de			;4956   ; HL = D413 + ficha * 11
 	djnz L_4956		;4957
 	ld (ix+003h),l		;4959   ; +3/4 = sus fichas
-	ld (ix+004h),h		;495c
+	ld (ix+004h),h		;495c   ; (byte alto)
 	ld a,005h		;495f   ; +5 = cinco sprites
-	ld (ix+005h),a		;4961
-	jp pinta_actor_nuevo		;4964
+	ld (ix+005h),a		;4961   ; +5 = 5
+	jp pinta_actor_nuevo		;4964   ; y se pinta
 alta_actor_dos:
 	ld d,040h		;4967   ; un grupo con 01...
-	call busca_grupo		;4969
-	ld a,b			;496c
+	call busca_grupo		;4969   ; D = 0x40: un grupo con 01
+	ld a,b			;496c   ; B = el grupo...
 	and a			;496d
-	jp nz,L_49AF		;496e
+	jp nz,L_49AF		;496e   ; ...hay: p00:49AF
 	ld d,080h		;4971   ; ...o con 10...
-	call busca_grupo		;4973
-	ld a,b			;4976
+	call busca_grupo		;4973   ; D = 0x80: uno con 10
+	ld a,b			;4976   ; B...
 	and a			;4977
-	jp nz,L_49B7		;4978
+	jp nz,L_49B7		;4978   ; ...hay: p00:49B7
 	ld d,000h		;497b   ; ...o libre (00)
-	call busca_grupo		;497d
-	ld a,b			;4980
+	call busca_grupo		;497d   ; D = 0: uno libre
+	ld a,b			;4980   ; B...
 	and a			;4981
-	ret z			;4982
+	ret z			;4982   ; ...ninguno: no
 	ld a,002h		;4983   ; libre: se marca 10
-	call marca_grupo		;4985
+	call marca_grupo		;4985   ; A = 2: 10
 L_4988:
 	ld a,b			;4988   ; +0E = grupo con el bit 7
-	and 007h		;4989
-	set 7,a		;498b
-	ld (ix+00eh),a		;498d
+	and 007h		;4989   ; el grupo...
+	set 7,a		;498b   ; ...con el bit 7...
+	ld (ix+00eh),a		;498d   ; ...en +0E
 	ld a,b			;4990   ; primera ficha: 0x10 + (grupo - 1) * 5
-	dec a			;4991
+	dec a			;4991   ; (grupo - 1) * 5 + 0x10
 	add a,a			;4992
 	add a,a			;4993
 	add a,b			;4994
 	add a,010h		;4995
-	ld de,0000bh		;4997
+	ld de,0000bh		;4997   ; 11 bytes por ficha
 	ld hl,0d413h		;499a   ; hl -> las 32 fichas de sprite
-	ld b,a			;499d
+	ld b,a			;499d   ; B = la ficha
 L_499E:
-	add hl,de			;499e
+	add hl,de			;499e   ; HL = D413 + ficha * 11
 	djnz L_499E		;499f
-	ld (ix+003h),l		;49a1
+	ld (ix+003h),l		;49a1   ; +3/+4 = la ficha
 	ld (ix+004h),h		;49a4
 	ld a,002h		;49a7   ; dos sprites
-	ld (ix+005h),a		;49a9
-	jp pinta_actor_nuevo		;49ac
+	ld (ix+005h),a		;49a9   ; +5 = 2
+	jp pinta_actor_nuevo		;49ac   ; y se pinta
 L_49AF:
 	ld a,003h		;49af   ; tenia 01: pasa a 11 (el grupo lleno)
-	call marca_grupo		;49b1
-	jp L_4988		;49b4
+	call marca_grupo		;49b1   ; marcado 11
+	jp L_4988		;49b4   ; y sigue como el libre
 L_49B7:
 	ld a,b			;49b7   ; tenia 10: la segunda mitad del grupo
-	and 007h		;49b8
-	set 6,a		;49ba
+	and 007h		;49b8   ; el grupo...
+	set 6,a		;49ba   ; ...con el bit 6
 	ld (ix+00eh),a		;49bc
-	ld a,003h		;49bf
-	call marca_grupo		;49c1
-	ld a,b			;49c4
+	ld a,003h		;49bf   ; A = 3: lleno
+	call marca_grupo		;49c1   ; marcado
+	ld a,b			;49c4   ; el grupo...
 	and 007h		;49c5
-	set 6,a		;49c7
-	ld (ix+00eh),a		;49c9
+	set 6,a		;49c7   ; ...con el bit 6...
+	ld (ix+00eh),a		;49c9   ; ...en +0E
 	ld a,b			;49cc   ; primera ficha: 0x12 + (grupo - 1) * 5
-	dec a			;49cd
+	dec a			;49cd   ; (grupo - 1) * 5...
 	add a,a			;49ce
 	add a,a			;49cf
 	add a,b			;49d0
-	add a,012h		;49d1
-	ld de,0000bh		;49d3
+	add a,012h		;49d1   ; ...+ 0x12: la segunda mitad del grupo
+	ld de,0000bh		;49d3   ; 11 bytes por ficha
 	ld hl,0d413h		;49d6   ; hl -> las 32 fichas de sprite
-	ld b,a			;49d9
+	ld b,a			;49d9   ; B = la ficha
 L_49DA:
-	add hl,de			;49da
+	add hl,de			;49da   ; HL = la ficha
 	djnz L_49DA		;49db
-	ld (ix+003h),l		;49dd
+	ld (ix+003h),l		;49dd   ; +3/+4
 	ld (ix+004h),h		;49e0
-	ld a,002h		;49e3
+	ld a,002h		;49e3   ; dos sprites
 	ld (ix+005h),a		;49e5
-	jp pinta_actor_nuevo		;49e8
+	jp pinta_actor_nuevo		;49e8   ; y se pinta
 alta_actor_uno:
 	call busca_sitio_uno		;49eb   ; un sitio libre de DA18
-	ld a,b			;49ee
+	ld a,b			;49ee   ; B = el sitio...
 	and a			;49ef
-	ret z			;49f0
+	ret z			;49f0   ; ...ninguno: no
 	ld a,001h		;49f1   ; se marca ocupado
-	call marca_sitio_uno		;49f3
+	call marca_sitio_uno		;49f3   ; marcado ocupado
 	ld a,b			;49f6   ; +0E = sitio con el bit 5
-	and 007h		;49f7
-	set 5,a		;49f9
-	ld (ix+00eh),a		;49fb
+	and 007h		;49f7   ; el sitio...
+	set 5,a		;49f9   ; ...con el bit 5...
+	ld (ix+00eh),a		;49fb   ; ...en +0E
 	ld a,b			;49fe   ; ficha 0x0A + sitio
-	add a,00ah		;49ff
-	ld de,0000bh		;4a01
+	add a,00ah		;49ff   ; ficha = sitio + 0x0A
+	ld de,0000bh		;4a01   ; 11 bytes por ficha
 	ld hl,0d413h		;4a04   ; hl -> las 32 fichas de sprite
-	ld b,a			;4a07
+	ld b,a			;4a07   ; B = la ficha
 L_4A08:
-	add hl,de			;4a08
+	add hl,de			;4a08   ; HL = la ficha
 	djnz L_4A08		;4a09
-	ld (ix+003h),l		;4a0b
+	ld (ix+003h),l		;4a0b   ; +3/+4
 	ld (ix+004h),h		;4a0e
 	ld a,001h		;4a11   ; un sprite
-	ld (ix+005h),a		;4a13
-	jp pinta_actor_nuevo		;4a16
+	ld (ix+005h),a		;4a13   ; un sprite
+	jp pinta_actor_nuevo		;4a16   ; y se pinta
 
 ; ----------------------------------------------------------------------
 ; DATOS resto_4A19: dos `ret` sueltos que nadie ejecuta
@@ -1708,66 +1708,66 @@ L_4A42:
 	ret			;4a8a
 pinta_actor:
 	call definicion_pose		;4a8b   ; lo mismo para un actor ya dado de alta: la definicion de su pose...
-	ld (ix+00ch),e		;4a8e
+	ld (ix+00ch),e		;4a8e   ; +0C/+0D = la definicion
 	ld (ix+00dh),d		;4a91
 	push ix		;4a94   ; ...su x y su y...
-	ld a,(ix+006h)		;4a96
+	ld a,(ix+006h)		;4a96   ; x...
 	ld (0d5ddh),a		;4a99   ; lo que se suma a la x de los sprites = a
-	ld a,(ix+007h)		;4a9c
+	ld a,(ix+007h)		;4a9c   ; ...e y del actor
 	ld (0d5deh),a		;4a9f   ; lo que se suma a la y de los sprites = a
 	ld a,(ix+000h)		;4aa2   ; ...el banco de las definiciones...
-	cp 018h		;4aa5
+	cp 018h		;4aa5   ; 0x18 o mas?
 	jr nc,L_4AB3		;4aa7
-	ld a,01eh		;4aa9
+	ld a,01eh		;4aa9   ; banco 30
 	ld (0d191h),a		;4aab   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;4aae   ; registro del mapper: banco A en 0x8000
-	jr L_4ABB		;4ab1
+	jr L_4ABB		;4ab1   ; sigue
 L_4AB3:
-	ld a,01ah		;4ab3
+	ld a,01ah		;4ab3   ; banco 26
 	ld (0d191h),a		;4ab5   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;4ab8   ; registro del mapper: banco A en 0x8000
 L_4ABB:
-	push ix		;4abb
+	push ix		;4abb   ; HL = IX...
 	pop hl			;4abd
-	ld de,0000ah		;4abe
+	ld de,0000ah		;4abe   ; ...+ 0x0A...
 	add hl,de			;4ac1
 	push hl			;4ac2
-	pop iy		;4ac3
-	ld e,(ix+00ch)		;4ac5
+	pop iy		;4ac3   ; ...= IY: el estado de la animacion
+	ld e,(ix+00ch)		;4ac5   ; DE = la definicion
 	ld d,(ix+00dh)		;4ac8
-	ld l,(ix+003h)		;4acb
+	ld l,(ix+003h)		;4acb   ; HL = sus fichas
 	ld h,(ix+004h)		;4ace
 	push de			;4ad1
-	pop ix		;4ad2
-	ex af,af'			;4ad4
+	pop ix		;4ad2   ; IX = la definicion
+	ex af,af'			;4ad4   ; A' = 0...
 	ld a,000h		;4ad5   ; A' = 0: solo cambia la pose
-	ex af,af'			;4ad7
+	ex af,af'			;4ad7   ; ...vuelve A
 	call anima		;4ad8   ; rellena las fichas
-	pop ix		;4adb
-	push ix		;4add
+	pop ix		;4adb   ; IX = el actor...
+	push ix		;4add   ; ...guardado
 	ld a,(ix+00ah)		;4adf   ; +2 = +0A con el bit 7 de A' (la orientacion)
-	and 07fh		;4ae2
-	ex af,af'			;4ae4
-	rrca			;4ae5
+	and 07fh		;4ae2   ; sin el bit 7
+	ex af,af'			;4ae4   ; A' a mano...
+	rrca			;4ae5   ; ...su bit 0 al bit 7...
 	and 080h		;4ae6
-	ld b,a			;4ae8
-	ex af,af'			;4ae9
+	ld b,a			;4ae8   ; ...B = ese bit
+	ex af,af'			;4ae9   ; A otra vez
 	or b			;4aea
-	ld (ix+002h),a		;4aeb
-	ld l,(ix+003h)		;4aee
+	ld (ix+002h),a		;4aeb   ; +2 = el cuadro con la marca de vuelta
+	ld l,(ix+003h)		;4aee   ; HL = sus fichas
 	ld h,(ix+004h)		;4af1
-	ld b,(ix+005h)		;4af4
-	push hl			;4af7
+	ld b,(ix+005h)		;4af4   ; B = cuantas
+	push hl			;4af7   ; IX = las fichas
 	pop ix		;4af8
 	call fichas_a_atributos		;4afa   ; y las pasa a atributos
-	pop ix		;4afd
+	pop ix		;4afd   ; IX = el actor
 	ld a,003h		;4aff   ; bancos 3 y 4 otra vez
 	ld (0d190h),a		;4b01   ; copia del registro del mapper de 0x6000 = a
 	ld (06ff8h),a		;4b04   ; registro del mapper: banco A en 0x6000
-	ld a,004h		;4b07
+	ld a,004h		;4b07   ; banco 4
 	ld (0d191h),a		;4b09   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;4b0c   ; registro del mapper: banco A en 0x8000
-	ret			;4b0f
+	ret			;4b0f   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Da de baja un actor: devuelve sus sprites al grupo, los esconde y borra
@@ -1981,21 +1981,21 @@ marca_grupo:
 	or c			;4c49
 	jr L_4C63		;4c4a
 L_4C4C:
-	add a,a			;4c4c
+	add a,a			;4c4c   ; grupo 2: dos bits mas...
 	add a,a			;4c4d
-	djnz L_4C57		;4c4e
-	res 4,c		;4c50
+	djnz L_4C57		;4c4e   ; ...si no es el 2, el 3
+	res 4,c		;4c50   ; bits 4-5 del grupo 2 a 0...
 	res 5,c		;4c52
-	or c			;4c54
-	jr L_4C63		;4c55
+	or c			;4c54   ; ...y los nuevos
+	jr L_4C63		;4c55   ; guardado
 L_4C57:
-	add a,a			;4c57
+	add a,a			;4c57   ; grupo 3: dos bits mas
 	add a,a			;4c58
-	djnz L_4C62		;4c59
-	res 6,c		;4c5b
+	djnz L_4C62		;4c59   ; si no, ninguno
+	res 6,c		;4c5b   ; bits 6-7 a 0...
 	res 7,c		;4c5d
-	or c			;4c5f
-	jr L_4C63		;4c60
+	or c			;4c5f   ; ...y los nuevos
+	jr L_4C63		;4c60   ; guardado
 L_4C62:
 	ld a,c			;4c62
 L_4C63:
@@ -2264,11 +2264,11 @@ DATA_texto_game_over_2:
 	jr $+23		;4f72   ; salta los espacios
 borra_game_over:
 	exx			;4f74
-	ld b,000h		;4f75
+	ld b,000h		;4f75   ; opaco
 	exx			;4f77
-	ld d,060h		;4f78
+	ld d,060h		;4f78   ; en (0x60, 0x60)
 	ld e,060h		;4f7a
-	call escribe_texto		;4f7c
+	call escribe_texto		;4f7c   ; nueve espacios
 
 ; ----------------------------------------------------------------------
 ; DATOS texto_blancos: nueve espacios: borran "GAME OVER"
@@ -3124,46 +3124,46 @@ ficha_de_fase:
 	ld (0d191h),a		;5657   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;565a   ; registro del mapper: banco A en 0x8000
 	ld a,(0d5e5h)		;565d   ; fases 0x12 en adelante...
-	cp 012h		;5660
+	cp 012h		;5660   ; 0x12 o mas?
 	ld a,003h		;5662   ; (musica 3 por defecto)
 	ld (0d17ah),a		;5664   ; musica pedida, para p01:640F = a
 	ld a,007h		;5667   ; ...ronda 7 y musica 7
-	jp nc,L_5680		;5669
+	jp nc,L_5680		;5669   ; si: ronda 7, musica 7
 	ld a,(0d5e5h)		;566c   ; las demas: B = fase / 3 + 1 (la ronda)...
-	ld b,000h		;566f
+	ld b,000h		;566f   ; B = 0
 L_5671:
-	inc b			;5671
-	sub 003h		;5672
-	jp nc,L_5671		;5674
+	inc b			;5671   ; una ronda mas...
+	sub 003h		;5672   ; ...por cada 3 fases
+	jp nc,L_5671		;5674   ; hasta pasarse
 	add a,003h		;5677   ; ...y musica 2, 3 o 4 segun el resto
-	inc a			;5679
-	inc a			;567a
+	inc a			;5679   ; resto + 2...
+	inc a			;567a   ; ...= musica 2, 3 o 4
 	ld a,a			;567b   ; (un `ld a,a` que no hace nada)
 	ld (0d17ah),a		;567c   ; musica pedida, para p01:640F = a
 	ld a,b			;567f   ; A = ronda
 L_5680:
 	ld de,00830h		;5680   ; el numero de ronda en (0x30, 0x08)
-	ex af,af'			;5683
-	xor a			;5684
+	ex af,af'			;5683   ; en la pagina 0...
+	xor a			;5684   ; ...(A' = 0)
 	ex af,af'			;5685
-	call escribe_bcd		;5686
+	call escribe_bcd		;5686   ; escrito
 	ld a,(0d5e5h)		;5689   ; fase * 16 + 0x9035: su ficha
-	add a,a			;568c
+	add a,a			;568c   ; fase * 2...
 	ld l,a			;568d
 	ld h,000h		;568e
-	add hl,hl			;5690
+	add hl,hl			;5690   ; ...* 8 = fase * 16
 	add hl,hl			;5691
 	add hl,hl			;5692
-	ld de,09035h		;5693
-	add hl,de			;5696
+	ld de,09035h		;5693   ; + las fichas
+	add hl,de			;5696   ; HL = su ficha
 	ld e,(hl)			;5697   ; +0/1: la tabla de pantallas (D5E7)
 	inc hl			;5698
-	ld d,(hl)			;5699
+	ld d,(hl)			;5699   ; DE = palabra 0
 	inc hl			;569a
 	ld (0d5e7h),de		;569b   ; la tabla de pantallas de la fase = de
 	ld e,(hl)			;569f   ; +2/3: la tabla de bloques (D5EA)
 	inc hl			;56a0
-	ld d,(hl)			;56a1
+	ld d,(hl)			;56a1   ; DE = palabra 1
 	inc hl			;56a2
 	ld (0d5eah),de		;56a3   ; la tabla de bloques de 16x16 de la fase = de
 	ld a,(hl)			;56a7   ; +4: la ultima columna (D5EE)
@@ -3180,38 +3180,38 @@ L_5680:
 	ld (0d5f1h),a		;56b8   ; la fila de la pantalla en que se esta = a
 	ld e,(hl)			;56bb   ; +8/9: el fondo de la fila 0 (D5E1)
 	inc hl			;56bc
-	ld d,(hl)			;56bd
+	ld d,(hl)			;56bd   ; DE = palabra 4
 	inc hl			;56be
 	ld (0d5e1h),de		;56bf   ; el mapa de fondo de la fila 0 de pantallas = de
 	ld e,(hl)			;56c3   ; +A/B: el fondo de las demas filas (D5E3)
 	inc hl			;56c4
-	ld d,(hl)			;56c5
+	ld d,(hl)			;56c5   ; DE = palabra 5
 	inc hl			;56c6
 	ld (0d5e3h),de		;56c7   ; el mapa de fondo de las demas filas = de
 	ld e,(hl)			;56cb   ; +C/D: la paleta
 	inc hl			;56cc
-	ld d,(hl)			;56cd
+	ld d,(hl)			;56cd   ; DE = la paleta
 	inc hl			;56ce
 	ld a,(hl)			;56cf   ; +E: el banco de los mapas (D5E9)
 	ld (0d5e9h),a		;56d0   ; el banco de los mapas de la fase = a
 	inc hl			;56d3
 	ld a,(hl)			;56d4   ; +F: donde sale el jugador; nibble bajo * 16 = x...
-	ld b,a			;56d5
-	and 00fh		;56d6
-	add a,a			;56d8
+	ld b,a			;56d5   ; B = el byte
+	and 00fh		;56d6   ; la x en casillas...
+	add a,a			;56d8   ; ...* 16
 	add a,a			;56d9
 	add a,a			;56da
 	add a,a			;56db
 	ld (0d8fch),a		;56dc   ; la x de Rastan = a
 	ld (0d92eh),a		;56df   ; x donde aparece el jugador en la pantalla nueva = a
 	ld a,b			;56e2   ; ...nibble alto + 0x20 = y
-	and 0f0h		;56e3
-	add a,020h		;56e5
+	and 0f0h		;56e3   ; la y en casillas (ya * 16)...
+	add a,020h		;56e5   ; ...+ 0x20 del marcador
 	ld (0d8fdh),a		;56e7   ; la y de Rastan = a
 	ld (0d92fh),a		;56ea   ; y donde aparece el jugador = a
 	ex de,hl			;56ed   ; la paleta de la fase
-	call pon_paleta		;56ee
-	ret			;56f1
+	call pon_paleta		;56ee   ; HL = la paleta: al VDP
+	ret			;56f1   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; TAREA 2: el jugador. Cada cuadro, si el juego no esta en pausa, mueve a
@@ -3676,19 +3676,19 @@ siguiente_alta:
 	ld ix,0da20h		;5a45   ; y los enemigos de tipo 0x18, 0x1C, 0x22 y 0x25 se dan de alta ya
 	ld b,008h		;5a49
 L_5A4B:
-	push bc			;5a4b
-	ld a,(ix+000h)		;5a4c
-	and a			;5a4f
+	push bc			;5a4b   ; la cuenta
+	ld a,(ix+000h)		;5a4c   ; el tipo...
+	and a			;5a4f   ; ...0: hueco
 	jr z,L_5A7F		;5a50
-	cp 018h		;5a52
+	cp 018h		;5a52   ; 0x18?
 	jr z,alta_enemigo_fijo		;5a54
-	cp 01ch		;5a56
+	cp 01ch		;5a56   ; 0x1C?
 	jr z,alta_enemigo_fijo		;5a58
-	cp 022h		;5a5a
+	cp 022h		;5a5a   ; 0x22?
 	jr z,alta_enemigo_fijo		;5a5c
-	cp 025h		;5a5e
+	cp 025h		;5a5e   ; 0x25?
 	jr z,alta_enemigo_fijo		;5a60
-	jr L_5A7F		;5a62
+	jr L_5A7F		;5a62   ; los demas no
 alta_enemigo_fijo:
 	call alta_actor		;5a64   ; alta y ocho pasos de animacion
 	call pinta_actor		;5a67
@@ -3812,7 +3812,7 @@ cada_sprite:
 	inc ix		;5b40
 ficha_siguiente:
 	inc iy		;5b42   ; 11 bytes mas alla
-	inc iy		;5b44
+	inc iy		;5b44   ; (11 `inc iy`)
 	inc iy		;5b46
 	inc iy		;5b48
 	inc iy		;5b4a
@@ -3822,15 +3822,15 @@ ficha_siguiente:
 	inc iy		;5b52
 	inc iy		;5b54
 	inc iy		;5b56
-	pop bc			;5b58
-	djnz cada_sprite		;5b59
-	ret			;5b5b
+	pop bc			;5b58   ; la cuenta
+	djnz cada_sprite		;5b59   ; la siguiente
+	ret			;5b5b   ; vuelve
 sprite_vacio:
-	push de			;5b5c
-	push iy		;5b5d
-	pop de			;5b5f
+	push de			;5b5c   ; DE guardado
+	push iy		;5b5d   ; DE = IY...
+	pop de			;5b5f   ; ...la ficha
 	ld hl,05b7dh		;5b60   ; los 8 bytes de p00:5B7D: sin patron y oculto
-	ldi		;5b63
+	ldi		;5b63   ; 8 bytes
 	ldi		;5b65
 	ldi		;5b67
 	ldi		;5b69
@@ -3838,9 +3838,9 @@ sprite_vacio:
 	ldi		;5b6d
 	ldi		;5b6f
 	ldi		;5b71
-	pop de			;5b73
-	inc ix		;5b74
-	jr ficha_siguiente		;5b76
+	pop de			;5b73   ; DE de vuelta
+	inc ix		;5b74   ; el 0xFF de este sprite
+	jr ficha_siguiente		;5b76   ; la ficha siguiente
 sigue_el_cuadro:
 	ex af,af'			;5b78   ; A' = 0: no ha dado la vuelta
 	xor a			;5b79

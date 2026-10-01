@@ -1,4 +1,9 @@
 
+
+
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x6000 TAREA 4: las cosas de DA20 (8, de 38 bytes), una por cuadro (DA1D apunta a
 B 0x6000 la que toca, DA1F cuenta). Segun su tipo: las que siguen a otra, las que
@@ -189,9 +194,308 @@ L 0x6575 decorado_destino
 C 0x6575 el destino: su sitio, 8 lineas mas abajo
 C 0x6583 de la pagina 1 a la 0
 C 0x6589 copiado
+C 0x6007 B = la cuenta
+C 0x6008 guardada
+C 0x600E si: decorado
+C 0x6013 si: fija
+C 0x6017 si
+C 0x601A 0x22?
+C 0x601C si: fija
+C 0x6020 si
+C 0x6023 0x1D?
+C 0x6025 si
+C 0x602A si
+C 0x602F si
+C 0x6034 si
+C 0x6037 0x17?
+C 0x6039 si
+C 0x603E si
+C 0x6041 0x1B?
+C 0x6043 si
+C 0x604C sin sprites?
+C 0x604D si: nada
+C 0x6052 x...
+C 0x6055 ...e y de su sitio
+C 0x605E la cuenta de vuelta
+C 0x6062 la siguiente
+C 0x606D la cuenta...
+C 0x606E ...guardada
+C 0x6071 vuelve
+C 0x6076 ocho
+C 0x6078 vuelve
+C 0x607C tiene sprites?
+C 0x607D si: se anima
+C 0x6082 x...
+C 0x6085 ...e y
+C 0x608D R & 0x1F...
+C 0x608F ...= 0x0A?
+C 0x6091 no: nada
+C 0x609A DA19 bit 0: sin grupo libre
+C 0x609C nada
+C 0x60A0 R bit 3...
+C 0x60A2 ...a 0: este cuadro no
+C 0x60AC no ha acabado: nada
+C 0x60B1 H = tipo, L = pose
+C 0x60B4 D, E = su sitio
+C 0x60BA guardados
+C 0x60BF devueltos
+C 0x60C4 la pose
+C 0x60C7 el sitio
+C 0x60CD la siguiente
+C 0x60D3 mirando a la izquierda: la otra mitad
+C 0x60D9 x de Rastan - x de la puerta...
+C 0x60DC ...menos de 0xC0 (Rastan a la derecha)?
+C 0x60DE si: se cierra
+C 0x60EF si no, se abre
+C 0x60F5 abierta?
+C 0x60F6 no: el actor
+C 0x60FB +12 = 0: cerrada
+C 0x60FE IX guardado
+C 0x6106 y...
+C 0x6109 ...+ 0x10
+C 0x6111 16 de ancho, 32 de alto
+C 0x6114 sin desplazamiento de tile
+C 0x611A IX de vuelta
+C 0x611C al actor
+C 0x6122 ya abierta?
+C 0x6124 si: al actor
+C 0x6129 +12 = 1: abierta
+C 0x612C IX guardado
+C 0x612E x
+C 0x6134 y...
+C 0x6137 ...+ 0x10
+C 0x613F 16 x 32
+C 0x6142 sin desplazamiento
+C 0x6148 IX de vuelta
+C 0x614D el actor ya esta?
+C 0x614E si: se mueve
+C 0x6154 x + 0x10...
+C 0x6156 ...su x
+C 0x6159 y...
+C 0x615C ...+ 8
+C 0x615E su y
+C 0x6167 DA19 bit 1: sin sitio
+C 0x6169 nada
+C 0x616F sin sprites...
+C 0x6170 ...nada
+C 0x6176 3 pixeles...
+C 0x617F la cuenta...
+C 0x6182 ...15?
+C 0x618A la y de su sitio...
+C 0x618D ...guardada en C
+C 0x618E + 8...
+C 0x6190 ...para pintarlo
+C 0x6193 BC guardado
+C 0x6197 BC de vuelta
+C 0x619B la y de su sitio otra vez
+C 0x619E la siguiente
+C 0x61A4 abierta?
+C 0x61A5 no: al actor
+C 0x61A8 cerrada
+C 0x61AD IX guardado
+C 0x61AF x
+C 0x61B5 y...
+C 0x61B8 ...+ 0x10
+C 0x61BD los tiles de cerrada
+C 0x61C0 16 x 32
+C 0x61C9 IX de vuelta
+C 0x61CB al actor
+C 0x61D1 ya abierta?
+C 0x61D3 si: al actor
+C 0x61D6 abierta
+C 0x61DB IX guardado
+C 0x61DD x
+C 0x61E3 y...
+C 0x61E6 ...+ 0x10
+C 0x61EB los tiles de abierta
+C 0x61EE 16 x 32
+C 0x61F7 IX de vuelta
+C 0x61F9 el actor ya esta?
+C 0x61FD si: se mueve
+C 0x6203 x
+C 0x6206 y...
+C 0x6209 ...+ 8
+C 0x6214 sin sitio
+C 0x6216 nada
+C 0x6219 sin sprites...
+C 0x621D ...nada
+C 0x622C la cuenta...
+C 0x622F ...15?
+C 0x6231 si: se acaba
+C 0x6234 B = x de su sitio
+C 0x6237 y...
+C 0x623A ...guardada en C
+C 0x623B + 8 para pintarlo
+C 0x6240 la x nueva...
+C 0x6243 ...de sitio un momento
+C 0x624B el sitio de vuelta
+C 0x6251 la siguiente
+C 0x6257 H = tipo
+C 0x625A L = pose
+C 0x625D D, E = sitio
+C 0x6263 guardados
+C 0x6269 devueltos
+C 0x626F la pose
+C 0x6272 el sitio
+C 0x6278 +12
+C 0x627B la siguiente
+C 0x62C1 tiene sprites?
+C 0x62C7 x...
+C 0x62CA ...e y
+C 0x62D6 sin grupo libre
+C 0x62D8 nada
+C 0x62DE pose distinta de 0?
+C 0x62DF si: cayendo
+C 0x62E8 no ha acabado: nada
+C 0x62ED pose 1
+C 0x62F3 su y + 0x20
+C 0x6310 BC guardado
+C 0x6314 BC de vuelta
+C 0x6318 0xD3 o mas?
+C 0x631A si: se acaba
+C 0x631F 0xB3 o mas: pose 2
+C 0x6324 0xA3 o mas: pose 3
+C 0x6327 la siguiente
+C 0x632E pose 0...
+C 0x6332 ...y vuelve a empezar
+C 0x6335 pose...
+C 0x6339 ...2
+C 0x633D la siguiente
+C 0x6344 (repetido)
+C 0x6348 la siguiente
+C 0x6351 pose 0?
+C 0x6353 arriba
+C 0x6358 1: derecha
+C 0x635D 2: izquierda
+C 0x6363 tiene sprites?
+C 0x6364 si: un paso
+C 0x6368 R & 0x0F...
+C 0x636A ...= 5?
+C 0x636C no: nada
+C 0x6372 x...
+C 0x6375 ...e y
+C 0x6381 sin sitio
+C 0x6383 nada
+C 0x6389 HL = el paso
+C 0x638B la tabla...
+C 0x638E ...su paso
+C 0x6390 y + paso
+C 0x6393 guardada
+C 0x639F 19 pasos?
+C 0x63A1 aun no
+C 0x63A7 H = tipo, L = pose
+C 0x63AA D, E = sitio
+C 0x63B0 guardados
+C 0x63B5 devueltos
+C 0x63BA la pose
+C 0x63BD el sitio
+C 0x63C3 la siguiente
+C 0x63C9 tiene sprites?
+C 0x63CA si: un paso
+C 0x63CC R & 9...
+C 0x63CE ...= 0?
+C 0x63D0 si: nada
+C 0x63D6 x...
+C 0x63D9 ...e y
+C 0x63E5 sin sitio
+C 0x63E7 nada
+C 0x63ED HL = el paso
+C 0x63EF la tabla
+C 0x63F3 el paso
+C 0x63F4 + y
+C 0x63F7 guardada
+C 0x63FD 4 pixeles...
+C 0x640F 19 pasos?
+C 0x6411 aun no
+C 0x6414 vuelve a empezar
+C 0x641A tiene sprites?
+C 0x641B si: un paso
+C 0x641D R & 9...
+C 0x6421 ...= 0: nada
+C 0x6427 x a +16 (sin uso)
+C 0x642A y...
+C 0x642D ...a la x de su sitio
+C 0x6436 sin sitio
+C 0x6438 nada
+C 0x643E HL = el paso
+C 0x6440 la tabla
+C 0x6444 el paso
+C 0x6445 + y
+C 0x6448 guardada
+C 0x644E 4 pixeles...
+C 0x6457 un paso mas
+C 0x645D cuantos lleva
+C 0x6460 19?
+C 0x6462 aun no
+C 0x6465 vuelve a empezar
+C 0x647E tiene sprites?
+C 0x647F si: cae
+C 0x6483 R & 0x2A...
+C 0x6485 ...distinto de 0: nada
+C 0x648B x...
+C 0x648E ...e y
+C 0x649A sin grupo libre
+C 0x649C nada
+C 0x64A3 si: deshaciendose
+C 0x64A8 4 pixeles
+C 0x64B7 aun no
+C 0x64BE desde el cuadro 0
+C 0x64C5 la siguiente
+C 0x64D1 10?
+C 0x64D3 aun no
+C 0x64D9 D, E = sitio
+C 0x64DF guardados
+C 0x64E4 devueltos
+C 0x64E6 el tipo
+C 0x64E9 el sitio
+C 0x64EF la siguiente
+C 0x64F5 H = x
+C 0x64F6 y...
+C 0x64F9 ...L
+C 0x64FA los dos + 1
+C 0x64FD sin el marcador
+C 0x64FF la fila
+C 0x6501 BC = fila * 16
+C 0x6506 x / 16
+C 0x650C HL = columna...
+C 0x650F ...* 2
+C 0x6510 + fila * 32
+C 0x6515 en D774
+C 0x6516 el byte alto
+C 0x651A la fila de debajo
+C 0x651C la clase...
+C 0x651E ...0x20? (Z)
+C 0x6520 vuelve
+C 0x6523 R & 3...
+C 0x6525 ...= 1?
+C 0x6527 si: este cuadro no
+C 0x652D sin sprites...
+C 0x652E ...nada
+C 0x6531 x...
+C 0x6537 ...e y de su sitio
+C 0x6540 la siguiente
+C 0x6546 cuantos cuadros...
+C 0x654B no toca: nada
+C 0x6551 el nibble bajo...
+C 0x6553 ...* 16
+C 0x6557 E = x
+C 0x655A la vuelta...
+C 0x655D ...bit 3: una u otra
+C 0x655F H = 0x28...
+C 0x6561 ...D = 0x30
+C 0x6563 la primera
+C 0x6566 la otra: H y D + 8
+C 0x6578 la y de su sitio...
+C 0x657B ...+ 8
+C 0x6585 A' = 0: la pagina de destino
+C 0x6588 (A = 1: la de origen)
+C 0x658C la siguiente
 # --- fin de las notas por tandas ---
 
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x60e7 la diferencia en y...
+C 0x60ea ...cabe si va de 0 a 63
+C 0x60ec no cabe: fuera
 C 0x6103 x donde se pinta = a
 C 0x610b y donde se pinta = a
 C 0x6117 p00 pinta_bloque_tiles

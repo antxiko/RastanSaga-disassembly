@@ -33,8 +33,8 @@ L_69A7:	equ 0x069a7
 ; ----------------------------------------------------------------------
 jugador:
 	ld a,(0d90fh)		;6000   ; D90F bit 7: muerto
-	bit 7,a		;6003
-	jp nz,jugador_muerto		;6005
+	bit 7,a		;6003   ; bit 7?
+	jp nz,jugador_muerto		;6005   ; si: la cuenta de la muerte
 	call mueve_jugador		;6008   ; p06:68A7
 	ld a,(0d904h)		;600b   ; la pose y el juego de poses de este cuadro...
 	ld (0d8f4h),a		;600e   ; la pose de Rastan para la animacion = a
@@ -45,8 +45,8 @@ jugador:
 	ld a,(0d8fdh)		;601d   ; a = la y de Rastan
 	ld (0d5deh),a		;6020   ; lo que se suma a la y de los sprites = a
 	ld hl,0d904h		;6023   ; D904 bit 6: si esta puesto...
-	bit 6,(hl)		;6026
-	jp z,L_602D		;6028
+	bit 6,(hl)		;6026   ; bit 6?
+	jp z,L_602D		;6028   ; no: sigue
 	res 5,(hl)		;602b   ; ...se borra el bit 5
 L_602D:
 	call anima_jugador		;602d   ; la animacion de Rastan
@@ -54,31 +54,31 @@ L_602D:
 	call puntuacion		;6033   ; la puntuacion, si ha cambiado
 	ld a,080h		;6036   ; D188 = 0x80: la cuenta de la muerte, lista
 	ld hl,0d188h		;6038   ; hl -> cuadros que le quedan a la muerte de Rastan
-	ld (hl),a			;603b
-	ret			;603c
+	ld (hl),a			;603b   ; D188 = 0x80
+	ret			;603c   ; vuelve
 jugador_muerto:
 	ld a,(0d8fch)		;603d   ; a = la x de Rastan
 	ld (0d5ddh),a		;6040   ; lo que se suma a la x de los sprites = a
 	ld a,(0d8fdh)		;6043   ; a = la y de Rastan
 	ld (0d5deh),a		;6046   ; lo que se suma a la y de los sprites = a
 	ld a,(0d188h)		;6049   ; D188 bit 1: cada dos cuadros...
-	bit 1,a		;604c
-	jr z,L_6055		;604e
+	bit 1,a		;604c   ; bit 1 del contador?
+	jr z,L_6055		;604e   ; no: se borran
 	call anima_jugador		;6050   ; ...se anima...
-	jr cuenta_muerte		;6053
+	jr cuenta_muerte		;6053   ; a contar
 L_6055:
 	ld ix,0d413h		;6055   ; ...y al otro se borran sus 11 fichas: parpadea
-	ld b,00bh		;6059
+	ld b,00bh		;6059   ; las 11 fichas del jugador
 	call 04823h		;605b   ; p00 vacia_fichas_sprite
 cuenta_muerte:
 	ld hl,0d188h		;605e   ; D188 - 1...
-	dec (hl)			;6061
+	dec (hl)			;6061   ; D188 - 1
 	ld a,(hl)			;6062
-	or a			;6063
+	or a			;6063   ; a 0?
 	ret nz			;6064   ; ...y al llegar a 0...
 	ld hl,0d17dh		;6065   ; ...aviso a la tarea 0 (D17D bit 6)
-	set 6,(hl)		;6068
-	ret			;606a
+	set 6,(hl)		;6068   ; bit 6 del estado
+	ret			;606a   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; La barra de vida, solo si ha cambiado: en (0x50, 0x14)-(.., 0x1A), una
@@ -86,52 +86,52 @@ cuenta_muerte:
 ; ----------------------------------------------------------------------
 barra_de_vida:
 	ld a,(0d925h)		;606b   ; la vida pintada (D925)...
-	ld b,a			;606e
+	ld b,a			;606e   ; B = la pintada
 	ld a,(0d91ch)		;606f   ; ...contra la de ahora (D91C)
-	cp b			;6072
-	ret z			;6073
+	cp b			;6072   ; la misma?
+	ret z			;6073   ; si: nada
 	ld (0d925h),a		;6074   ; apuntada
 	ld a,(0d91ch)		;6077   ; a = la vida de Rastan
 	srl a		;607a   ; vida / 2...
 	ld h,a			;607c   ; ...pixeles: HL = (0x50 + vida/2, 0x1A)
-	ld l,000h		;607d
-	ld de,0501ah		;607f
+	ld l,000h		;607d   ; H = vida / 2, L = 0
+	ld de,0501ah		;607f   ; + (0x1A, 0x50)
 	add hl,de			;6082
 	ld de,05014h		;6083   ; DE = (0x50, 0x14)
-	ex de,hl			;6086
-	push de			;6087
+	ex de,hl			;6086   ; DE = la esquina de abajo, HL = 0x5014
+	push de			;6087   ; guardada
 	and a			;6088   ; sin vida: no hay parte llena
-	jp z,L_6091		;6089
+	jp z,L_6091		;6089   ; sin vida: sin parte llena
 	ld a,077h		;608c   ; color 7 en los dos pixeles del byte
 	call 0440eh		;608e   ; rellena
 L_6091:
 	ld a,(0d91ch)		;6091   ; lo que falta hasta la vida maxima (D91D)
-	srl a		;6094
-	ld b,a			;6096
+	srl a		;6094   ; vida / 2
+	ld b,a			;6096   ; B = vida / 2
 	ld a,(0d91dh)		;6097   ; a = el largo total de la barra
-	srl a		;609a
-	sub b			;609c
+	srl a		;609a   ; maximo / 2...
+	sub b			;609c   ; ...- vida / 2
 	and a			;609d   ; nada: la barra esta llena
-	jp z,L_60B1		;609e
+	jp z,L_60B1		;609e   ; nada vacio: ya esta
 	ld h,a			;60a1   ; la parte vacia...
-	ld l,000h		;60a2
-	pop de			;60a4
-	ld e,01ah		;60a5
-	add hl,de			;60a7
-	ld e,014h		;60a8
+	ld l,000h		;60a2   ; H = lo vacio, L = 0
+	pop de			;60a4   ; DE = la esquina de antes
+	ld e,01ah		;60a5   ; E = 0x1A
+	add hl,de			;60a7   ; + la esquina: el final
+	ld e,014h		;60a8   ; E = 0x14
 	ld a,066h		;60aa   ; ...de color 6
-	ex de,hl			;60ac
+	ex de,hl			;60ac   ; DE..HL
 	call 0440eh		;60ad   ; rellena
-	ret			;60b0
+	ret			;60b0   ; vuelve
 L_60B1:
-	pop de			;60b1
-	ret			;60b2
+	pop de			;60b1   ; DE fuera de la pila
+	ret			;60b2   ; vuelve
 huerfana_puntuacion_0:
 	exx			;60b3   ; nadie la llama: escribe la puntuacion a 0 en (0x00, 0x18)...
-	ld b,000h		;60b4
+	ld b,000h		;60b4   ; B' = 0: opaco
 	exx			;60b6
-	ld d,018h		;60b7
-	ld e,000h		;60b9
+	ld d,018h		;60b7   ; D = 0x18
+	ld e,000h		;60b9   ; E = 0
 	call 04612h		;60bb   ; p00 escribe_texto
 
 ; ----------------------------------------------------------------------
@@ -146,72 +146,72 @@ DATA_texto_cero_2:
 
 
 	call lee_puntuacion		;60c6   ; ...y luego la de verdad
-	ld l,000h		;60c9
-	ld h,018h		;60cb
+	ld l,000h		;60c9   ; x = 0...
+	ld h,018h		;60cb   ; ...y = 0x18
 	ld (0d5dbh),hl		;60cd   ; la lista o la cadena que se esta pintando = hl
-	call escribe_puntuacion		;60d0
-	ret			;60d3
+	call escribe_puntuacion		;60d0   ; seis cifras
+	ret			;60d3   ; vuelve
 puntuacion:
 	call lee_puntuacion		;60d4   ; la puntuacion y su marca de cambio
 	bit 7,b		;60d7   ; bit 7 de D921: ha cambiado?
-	ret z			;60d9
+	ret z			;60d9   ; sin cambio: nada
 	res 7,(ix+02dh)		;60da   ; se borra la marca
 	ld l,000h		;60de   ; en (0x00, 0x18)
-	ld h,018h		;60e0
+	ld h,018h		;60e0   ; y = 0x18
 	ld (0d5dbh),hl		;60e2   ; la lista o la cadena que se esta pintando = hl
 	call escribe_puntuacion		;60e5   ; seis cifras
-	ret			;60e8
+	ret			;60e8   ; vuelve
 lee_puntuacion:
 	ld ix,0d8f4h		;60e9   ; IX = D8F4: +2A/2B/2C = D91E/D91F/D920, tres bytes BCD
 	ld e,(ix+02ah)		;60ed   ; E = las dos cifras de abajo
 	ld d,(ix+02bh)		;60f0   ; D = las dos de en medio
 	ld c,(ix+02ch)		;60f3   ; C = las dos de arriba
 	ld b,(ix+02dh)		;60f6   ; B = D921, la marca
-	ret			;60f9
+	ret			;60f9   ; vuelve
 escribe_puntuacion:
 	ld h,000h		;60fa   ; H = 0: aun no ha salido ninguna cifra distinta de 0
 	ld a,c			;60fc   ; cifra 1 (la de arriba)
-	rra			;60fd
+	rra			;60fd   ; el nibble alto de C...
 	rra			;60fe
 	rra			;60ff
 	rra			;6100
-	push bc			;6101
-	call escribe_cifra		;6102
-	pop bc			;6105
+	push bc			;6101   ; BC guardado
+	call escribe_cifra		;6102   ; escrito
+	pop bc			;6105   ; BC de vuelta
 	ld a,c			;6106   ; cifra 2
-	call escribe_cifra		;6107
+	call escribe_cifra		;6107   ; el nibble bajo de C
 	ld a,d			;610a   ; cifra 3
-	rra			;610b
+	rra			;610b   ; el alto de D
 	rra			;610c
 	rra			;610d
 	rra			;610e
-	call escribe_cifra		;610f
+	call escribe_cifra		;610f   ; escrito
 	ld a,d			;6112   ; cifra 4
-	call escribe_cifra		;6113
+	call escribe_cifra		;6113   ; el bajo de D
 	ld a,e			;6116   ; cifra 5
-	rra			;6117
+	rra			;6117   ; el alto de E
 	rra			;6118
 	rra			;6119
 	rra			;611a
-	call escribe_cifra		;611b
+	call escribe_cifra		;611b   ; escrito
 	ld a,e			;611e   ; cifra 6 (cae en la rutina)
 escribe_cifra:
 	and 00fh		;611f   ; la cifra de abajo de A
 	jr nz,L_6127		;6121   ; un 0...
 	dec h			;6123   ; ...sin ninguna cifra antes: sale un espacio
-	inc h			;6124
-	jr z,L_612A		;6125
+	inc h			;6124   ; H otra vez: 0?
+	jr z,L_612A		;6125   ; si: espacio
 L_6127:
 	add a,010h		;6127   ; 0x10 + cifra...
 	inc h			;6129   ; (ya ha salido una)
 L_612A:
 	add a,020h		;612a   ; ...+ 0x20: el codigo ASCII ('0' + cifra, o espacio)
-	push hl			;612c
-	push de			;612d
+	push hl			;612c   ; HL...
+	push de			;612d   ; ...y DE guardados
 	call 04633h		;612e   ; escribe la letra
-	pop de			;6131
-	pop hl			;6132
-	ret			;6133
+	pop de			;6131   ; DE...
+	pop hl			;6132   ; ...y HL de vuelta
+	ret			;6133   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Anima a Rastan con tres capas de sprites: la primera en la ficha 2 (tabla
@@ -222,14 +222,14 @@ L_612A:
 ; ----------------------------------------------------------------------
 anima_jugador:
 	ld a,(0d8f5h)		;6134   ; el juego de poses...
-	ld b,a			;6137
+	ld b,a			;6137   ; B = el de ahora
 	ld a,(0d8f8h)		;6138   ; ...ha cambiado?
-	cp b			;613b
-	jp nz,juego_nuevo		;613c
+	cp b			;613b   ; iguales?
+	jp nz,juego_nuevo		;613c   ; no: juego nuevo
 	ld a,(0d8f7h)		;613f   ; la pose...
-	ld b,a			;6142
+	ld b,a			;6142   ; B = la anterior
 	ld a,(0d8f4h)		;6143   ; ...ha cambiado?
-	cp b			;6146
+	cp b			;6146   ; iguales?
 	jp z,capa_1		;6147   ; nada nuevo: se sigue
 	jp pose_nueva		;614a   ; pose nueva
 juego_nuevo:
@@ -242,30 +242,30 @@ pose_nueva:
 	ld a,0feh		;615c   ; las dos animaciones (D8FE y D900) desde el principio
 	ld (0d8feh),a		;615e   ; estado de la animacion de la capa 1 = a
 	ld (0d900h),a		;6161   ; estado de la animacion de la capa 2 = a
-	ld a,001h		;6164
-	ld (0d8ffh),a		;6166
+	ld a,001h		;6164   ; las cuentas a 1...
+	ld (0d8ffh),a		;6166   ; ...de las dos animaciones
 	ld (0d901h),a		;6169
 capa_1:
 	ld a,(0d8f4h)		;616c   ; pose & 0x7F...
-	and 07fh		;616f
-	ld d,000h		;6171
-	ld e,a			;6173
-	push de			;6174
-	pop hl			;6175
+	and 07fh		;616f   ; sin el bit 7
+	ld d,000h		;6171   ; DE = la pose
+	ld e,a			;6173   ; E = la pose
+	push de			;6174   ; HL = DE...
+	pop hl			;6175   ; HL = DE
 	add hl,hl			;6176   ; ...* 3 + p06:639F
-	add hl,de			;6177
-	ld de,0639fh		;6178
-	add hl,de			;617b
+	add hl,de			;6177   ; ...* 3
+	ld de,0639fh		;6178   ; la tabla de la capa 1
+	add hl,de			;617b   ; HL = la entrada
 	ld e,(hl)			;617c   ; la definicion
-	inc hl			;617d
-	ld d,(hl)			;617e
-	inc hl			;617f
+	inc hl			;617d   ; la definicion en DE
+	ld d,(hl)			;617e   ; D...
+	inc hl			;617f   ; el tercer byte
 	ex af,af'			;6180   ; el tercer byte, guardado para la capa 3
-	ld a,(hl)			;6181
-	push af			;6182
-	ex af,af'			;6183
-	push de			;6184
-	pop ix		;6185
+	ld a,(hl)			;6181   ; A = el tercer byte...
+	push af			;6182   ; ...a la pila
+	ex af,af'			;6183   ; A de vuelta
+	push de			;6184   ; IX = la definicion
+	pop ix		;6185   ; IX = la definicion
 	ld hl,0d429h		;6187   ; a la ficha 2
 	ld iy,0d8feh		;618a   ; estado de la animacion: D8FE
 	ld a,01ah		;618e   ; banco 26 en 0x8000
@@ -273,32 +273,32 @@ capa_1:
 	ld (077f8h),a		;6193   ; registro del mapper: banco A en 0x8000
 	call 05aa5h		;6196   ; un paso
 	ex af,af'			;6199   ; A' bit 0: la animacion ha dado la vuelta...
-	ld b,a			;619a
-	ex af,af'			;619b
-	bit 0,b		;619c
-	jr z,capa_2		;619e
+	ld b,a			;619a   ; B = A'
+	ex af,af'			;619b   ; A de vuelta
+	bit 0,b		;619c   ; ha dado la vuelta?
+	jr z,capa_2		;619e   ; no: la capa 2
 	ld hl,0d904h		;61a0   ; ...y se borra D904 bit 5
-	res 5,(hl)		;61a3
+	res 5,(hl)		;61a3   ; D904 bit 5 a 0: acabo la accion
 capa_2:
 	ld a,(0d8f4h)		;61a5   ; pose * 3 + p06:64B3
-	and 07fh		;61a8
-	ld d,000h		;61aa
-	ld e,a			;61ac
-	push de			;61ad
-	pop hl			;61ae
-	add hl,hl			;61af
-	add hl,de			;61b0
-	ld de,064b3h		;61b1
-	add hl,de			;61b4
+	and 07fh		;61a8   ; sin el bit 7
+	ld d,000h		;61aa   ; DE = pose
+	ld e,a			;61ac   ; E = la pose
+	push de			;61ad   ; HL = pose...
+	pop hl			;61ae   ; HL = DE
+	add hl,hl			;61af   ; * 2
+	add hl,de			;61b0   ; ...* 3
+	ld de,064b3h		;61b1   ; la tabla de la capa 2
+	add hl,de			;61b4   ; HL = la entrada
 	ld e,(hl)			;61b5   ; la definicion
-	inc hl			;61b6
-	ld d,(hl)			;61b7
-	inc hl			;61b8
+	inc hl			;61b6   ; el byte alto
+	ld d,(hl)			;61b7   ; DE = la definicion
+	inc hl			;61b8   ; el tercer byte
 	ex af,af'			;61b9   ; A' = el tercer byte
-	ld a,(hl)			;61ba
-	ex af,af'			;61bb
-	push de			;61bc
-	pop ix		;61bd
+	ld a,(hl)			;61ba   ; A = el tercer byte
+	ex af,af'			;61bb   ; ...a A'
+	push de			;61bc   ; IX = la definicion
+	pop ix		;61bd   ; IX = la definicion
 	ld hl,0d455h		;61bf   ; a la ficha 6
 	ld iy,0d900h		;61c2   ; estado: D900
 	ld a,01ah		;61c6   ; banco 26
@@ -306,194 +306,194 @@ capa_2:
 	ld (077f8h),a		;61cb   ; registro del mapper: banco A en 0x8000
 	call 05aa5h		;61ce   ; un paso
 	ld a,(0d8f5h)		;61d1   ; la tercera capa: D8F5 & 3...
-	and 003h		;61d4
-	ld l,a			;61d6
-	ld h,000h		;61d7
+	and 003h		;61d4   ; los bits 0-1
+	ld l,a			;61d6   ; HL = ...
+	ld h,000h		;61d7   ; H = 0
 	add hl,hl			;61d9   ; ...elige una de las cuatro tablas de p06:6397...
-	ld de,06397h		;61da
-	add hl,de			;61dd
-	ld e,(hl)			;61de
-	inc hl			;61df
-	ld d,(hl)			;61e0
+	ld de,06397h		;61da   ; la tabla de tablas
+	add hl,de			;61dd   ; HL = la palabra
+	ld e,(hl)			;61de   ; DE = la tabla de esta capa
+	inc hl			;61df   ; el byte alto
+	ld d,(hl)			;61e0   ; D
 	ld a,(0d8f4h)		;61e1   ; ...y la pose, la definicion
-	and 07fh		;61e4
-	ld h,000h		;61e6
-	ld l,a			;61e8
-	add hl,hl			;61e9
-	add hl,de			;61ea
-	ld e,(hl)			;61eb
-	inc hl			;61ec
-	ld d,(hl)			;61ed
-	push de			;61ee
-	pop ix		;61ef
+	and 07fh		;61e4   ; sin el bit 7
+	ld h,000h		;61e6   ; HL = pose...
+	ld l,a			;61e8   ; L = la pose
+	add hl,hl			;61e9   ; ...* 2
+	add hl,de			;61ea   ; en la tabla
+	ld e,(hl)			;61eb   ; DE = la definicion
+	inc hl			;61ec   ; el byte alto
+	ld d,(hl)			;61ed   ; D
+	push de			;61ee   ; IX = la definicion
+	pop ix		;61ef   ; IX = la definicion
 	ex af,af'			;61f1   ; A' = el tercer byte de la capa 1
-	pop af			;61f2
-	ex af,af'			;61f3
+	pop af			;61f2   ; A = el tercer byte de la capa 1, de la pila
+	ex af,af'			;61f3   ; ...a A'
 	ld hl,0d413h		;61f4   ; a la ficha 0
 	ld iy,0d8feh		;61f7   ; con el estado de la capa 1 (D8FE)
 	ld a,01ah		;61fb   ; banco 26
 	ld (0d191h),a		;61fd   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;6200   ; registro del mapper: banco A en 0x8000
 	call 05b95h		;6203   ; sin avanzar: el mismo cuadro que la capa 1
-	ret			;6206
+	ret			;6206   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Repinta los cuatro bloques de fondo (2x2) que tapa el actor IX en su
 ; posicion de salida (+10 x, +11 y), sacandolos de D5F4.
 ; ----------------------------------------------------------------------
 repinta_fondo_actor:
-	push ix		;6207
+	push ix		;6207   ; IX se guarda: p00:4777 lo pisa
 	ld a,(ix+010h)		;6209   ; x
-	ld e,a			;620c
+	ld e,a			;620c   ; E = x
 	ld a,(ix+011h)		;620d   ; y - 0x20 (la parte de arriba es el marcador)
-	sub 020h		;6210
-	ld d,a			;6212
+	sub 020h		;6210   ; sin el marcador...
+	ld d,a			;6212   ; ...D = y en la pantalla de juego
 	ld a,e			;6213   ; x / 16 + (y - 0x20): la casilla
-	srl a		;6214
-	srl a		;6216
-	srl a		;6218
-	srl a		;621a
-	or d			;621c
-	ld l,a			;621d
-	ld h,000h		;621e
+	srl a		;6214   ; x / 16...
+	srl a		;6216   ; x / 4...
+	srl a		;6218   ; ...x / 8...
+	srl a		;621a   ; ...x / 16
+	or d			;621c   ; ...+ la fila (los 4 bits de abajo de y valen 0: casillas alineadas)
+	ld l,a			;621d   ; HL = la casilla
+	ld h,000h		;621e   ; H = 0
 	add hl,hl			;6220   ; * 2: palabra
-	push hl			;6221
+	push hl			;6221   ; guardada para las otras tres
 	ld de,0d5f4h		;6222   ; el bloque de arriba a la izquierda
-	add hl,de			;6225
-	ld e,(hl)			;6226
-	inc hl			;6227
-	ld d,(hl)			;6228
-	ex de,hl			;6229
+	add hl,de			;6225   ; en el fondo
+	ld e,(hl)			;6226   ; E...
+	inc hl			;6227   ; el byte alto
+	ld d,(hl)			;6228   ; ...y D: el bloque
+	ex de,hl			;6229   ; HL = el bloque
 	ld a,(ix+010h)		;622a   ; en (x, y)
-	ld e,a			;622d
-	ld a,(ix+011h)		;622e
-	ld d,a			;6231
+	ld e,a			;622d   ; E = x
+	ld a,(ix+011h)		;622e   ; D = y
+	ld d,a			;6231   ; D = y
 	exx			;6232   ; opaco
-	ld b,000h		;6233
-	exx			;6235
-	push ix		;6236
+	ld b,000h		;6233   ; B' = 0: opaco
+	exx			;6235   ; normales
+	push ix		;6236   ; IX guardado
 	call 04777h		;6238   ; pintado
-	pop ix		;623b
-	pop hl			;623d
-	push hl			;623e
+	pop ix		;623b   ; IX de vuelta
+	pop hl			;623d   ; la casilla otra vez...
+	push hl			;623e   ; ...y guardada
 	ld de,0d5f6h		;623f   ; arriba a la derecha (la palabra siguiente)
-	add hl,de			;6242
-	ld e,(hl)			;6243
-	inc hl			;6244
-	ld d,(hl)			;6245
-	ex de,hl			;6246
+	add hl,de			;6242   ; la casilla de la derecha (+2)
+	ld e,(hl)			;6243   ; E...
+	inc hl			;6244   ; ...
+	ld d,(hl)			;6245   ; D: el bloque
+	ex de,hl			;6246   ; HL = el bloque
 	ld a,(ix+010h)		;6247   ; en (x + 16, y)
-	add a,010h		;624a
-	ld e,a			;624c
-	ld a,(ix+011h)		;624d
-	ld d,a			;6250
-	exx			;6251
-	ld b,000h		;6252
-	exx			;6254
-	push ix		;6255
+	add a,010h		;624a   ; x + 16
+	ld e,a			;624c   ; E = x + 16
+	ld a,(ix+011h)		;624d   ; D = y
+	ld d,a			;6250   ; D = y
+	exx			;6251   ; alternativos
+	ld b,000h		;6252   ; B' = 0: opaco
+	exx			;6254   ; normales
+	push ix		;6255   ; IX guardado
 	call 04777h		;6257   ; pintado
-	pop ix		;625a
-	pop hl			;625c
-	push hl			;625d
+	pop ix		;625a   ; IX de vuelta
+	pop hl			;625c   ; la casilla...
+	push hl			;625d   ; guardada
 	ld de,0d614h		;625e   ; abajo a la izquierda (una fila = 0x20 bytes mas)
-	add hl,de			;6261
-	ld e,(hl)			;6262
+	add hl,de			;6261   ; la de debajo (+0x20)
+	ld e,(hl)			;6262   ; E...
 	inc hl			;6263
-	ld d,(hl)			;6264
-	ex de,hl			;6265
+	ld d,(hl)			;6264   ; ...D: el bloque
+	ex de,hl			;6265   ; HL = el bloque
 	ld a,(ix+010h)		;6266   ; en (x, y + 16)
-	ld e,a			;6269
+	ld e,a			;6269   ; E = x
 	ld a,(ix+011h)		;626a
-	add a,010h		;626d
+	add a,010h		;626d   ; y + 16
 	ld d,a			;626f
 	exx			;6270
-	ld b,000h		;6271
+	ld b,000h		;6271   ; opaco
 	exx			;6273
 	push ix		;6274
 	call 04777h		;6276   ; pintado
 	pop ix		;6279
-	pop hl			;627b
+	pop hl			;627b   ; la casilla
 	ld de,0d616h		;627c   ; abajo a la derecha
-	add hl,de			;627f
+	add hl,de			;627f   ; abajo a la derecha (+0x22)
 	ld e,(hl)			;6280
 	inc hl			;6281
 	ld d,(hl)			;6282
-	ex de,hl			;6283
+	ex de,hl			;6283   ; HL = el bloque
 	ld a,(ix+010h)		;6284   ; en (x + 16, y + 16)
-	add a,010h		;6287
+	add a,010h		;6287   ; x + 16
 	ld e,a			;6289
 	ld a,(ix+011h)		;628a
-	add a,010h		;628d
+	add a,010h		;628d   ; y + 16
 	ld d,a			;628f
 	exx			;6290
-	ld b,000h		;6291
+	ld b,000h		;6291   ; opaco
 	exx			;6293
 	push ix		;6294
 	call 04777h		;6296   ; pintado
-	pop ix		;6299
-	pop ix		;629b
-	ret			;629d
+	pop ix		;6299   ; IX
+	pop ix		;629b   ; IX de la entrada
+	ret			;629d   ; vuelve
 repinta_fondo_especial:
 	ld a,(0d92bh)		;629e   ; lo mismo en la posicion del bloque especial
-	ld e,a			;62a1
+	ld e,a			;62a1   ; E = x
 	ld a,(0d92ch)		;62a2   ; a = y del bloque especial
-	sub 020h		;62a5
-	ld d,a			;62a7
+	sub 020h		;62a5   ; sin el marcador
+	ld d,a			;62a7   ; D = y
 	ld a,e			;62a8   ; x / 16...
 	srl a		;62a9
 	srl a		;62ab
 	srl a		;62ad
 	srl a		;62af
 	or d			;62b1   ; ...+ (y - 0x20): la casilla
-	ld l,a			;62b2
+	ld l,a			;62b2   ; HL = la casilla
 	ld h,000h		;62b3
-	add hl,hl			;62b5
+	add hl,hl			;62b5   ; * 2: palabra
 	ld de,0d5f4h		;62b6   ; el bloque de fondo de esa casilla
-	add hl,de			;62b9
-	ld e,(hl)			;62ba
+	add hl,de			;62b9   ; en el fondo...
+	ld e,(hl)			;62ba   ; ...el bloque
 	inc hl			;62bb
 	ld d,(hl)			;62bc
-	ex de,hl			;62bd
+	ex de,hl			;62bd   ; HL = el bloque
 	ld a,(0d92bh)		;62be   ; a = x del bloque especial de la pantalla
-	ld e,a			;62c1
+	ld e,a			;62c1   ; E = x
 	ld a,(0d92ch)		;62c2   ; a = y del bloque especial
-	ld d,a			;62c5
+	ld d,a			;62c5   ; D = y
 	exx			;62c6   ; opaco
-	ld b,000h		;62c7
+	ld b,000h		;62c7   ; B' = 0
 	exx			;62c9
 	call 04777h		;62ca   ; pintado
 	ld a,(0d92bh)		;62cd   ; y lo de delante en la misma casilla
-	ld e,a			;62d0
+	ld e,a			;62d0   ; E = x
 	ld a,(0d92ch)		;62d1   ; a = y del bloque especial
-	sub 020h		;62d4
-	ld d,a			;62d6
-	ld a,e			;62d7
+	sub 020h		;62d4   ; sin el marcador
+	ld d,a			;62d6   ; D = y
+	ld a,e			;62d7   ; x / 16...
 	srl a		;62d8
 	srl a		;62da
 	srl a		;62dc
 	srl a		;62de
-	or d			;62e0
-	ld l,a			;62e1
+	or d			;62e0   ; ...+ la fila
+	ld l,a			;62e1   ; HL = la casilla
 	ld h,000h		;62e2
-	add hl,hl			;62e4
+	add hl,hl			;62e4   ; * 2
 	ld de,0d774h		;62e5   ; en D774
-	add hl,de			;62e8
-	ld e,(hl)			;62e9
+	add hl,de			;62e8   ; en lo de delante...
+	ld e,(hl)			;62e9   ; ...el numero de bloque (sin la clase)
 	inc hl			;62ea
-	ld d,000h		;62eb
-	ex de,hl			;62ed
+	ld d,000h		;62eb   ; D = 0
+	ex de,hl			;62ed   ; HL = el bloque
 	ld a,l			;62ee   ; 0xFF: no hay nada delante
-	cp 0ffh		;62ef
-	ret z			;62f1
+	cp 0ffh		;62ef   ; 0xFF?
+	ret z			;62f1   ; si: vuelve
 	ld a,(0d92bh)		;62f2   ; a = x del bloque especial de la pantalla
-	ld e,a			;62f5
+	ld e,a			;62f5   ; E = x
 	ld a,(0d92ch)		;62f6   ; a = y del bloque especial
-	ld d,a			;62f9
+	ld d,a			;62f9   ; D = y
 	exx			;62fa
 	ld b,001h		;62fb   ; transparente
 	exx			;62fd
 	call 04777h		;62fe   ; pintado
-	ret			;6301
+	ret			;6301   ; vuelve
 
 ; ----------------------------------------------------------------------
 ; Los cinco iconos del marcador, en (0xB0..0xF0, 0x10), segun lo que lleva
@@ -1219,70 +1219,70 @@ agarrado:
 	cp 001h		;6b4a
 	jp z,clase_1		;6b4c
 	ld a,e			;6b4f   ; giros 10-19 son los 0-9 al reves
-	cp 00ah		;6b50
-	jr c,clase_0		;6b52
-	sub 00ah		;6b54
-	neg		;6b56
-	add a,008h		;6b58
-	ld e,a			;6b5a
+	cp 00ah		;6b50   ; giro 10 o mas?
+	jr c,clase_0		;6b52   ; no: tal cual
+	sub 00ah		;6b54   ; giro - 10...
+	neg		;6b56   ; ...negado...
+	add a,008h		;6b58   ; ...+ 8: el espejo
+	ld e,a			;6b5a   ; E = el giro
 clase_0:
 	cp 001h		;6b5b   ; segun el giro, la y se corrige un poco...
-	jr c,clase_0_bajo		;6b5d
-	jr z,clase_0_alto		;6b5f
-	cp 008h		;6b61
+	jr c,clase_0_bajo		;6b5d   ; giro 0
+	jr z,clase_0_alto		;6b5f   ; giro 1
+	cp 008h		;6b61   ; 2-7: sin correccion
 	jr c,clase_0_x		;6b63
-	jr z,clase_0_alto		;6b65
-	cp 00ah		;6b67
+	jr z,clase_0_alto		;6b65   ; giro 8
+	cp 00ah		;6b67   ; giro 9
 	jr c,clase_0_bajo		;6b69
 clase_0_alto:
 	ld a,l			;6b6b   ; ...si esta muy por debajo del actor, un pixel arriba
-	sub (ix+007h)		;6b6c
-	cp 02fh		;6b6f
-	jr c,clase_0_x		;6b71
-	dec l			;6b73
+	sub (ix+007h)		;6b6c   ; L - y del actor...
+	cp 02fh		;6b6f   ; ...0x2F o mas abajo?
+	jr c,clase_0_x		;6b71   ; no: tal cual
+	dec l			;6b73   ; si: un pixel arriba
 	jr clase_0_x		;6b74
 clase_0_bajo:
-	ld a,l			;6b76
-	sub (ix+007h)		;6b77
-	cp 01fh		;6b7a
+	ld a,l			;6b76   ; giros 0 y 9...
+	sub (ix+007h)		;6b77   ; ...distancia en y...
+	cp 01fh		;6b7a   ; ...0x1F o mas?
 	jr c,clase_0_x		;6b7c
-	dec l			;6b7e
+	dec l			;6b7e   ; si: un pixel arriba
 clase_0_x:
 	ld a,l			;6b7f   ; B = distancia en y
-	sub (ix+007h)		;6b80
-	ld b,a			;6b83
+	sub (ix+007h)		;6b80   ; la distancia en y...
+	ld b,a			;6b83   ; ...en B
 	ld a,e			;6b84   ; giro * 20 * 2...
-	add a,a			;6b85
+	add a,a			;6b85   ; giro * 4...
 	add a,a			;6b86
-	add a,e			;6b87
-	add a,a			;6b88
+	add a,e			;6b87   ; ...+ giro (* 5)...
+	add a,a			;6b88   ; ...* 4 (* 20)
 	add a,a			;6b89
-	push hl			;6b8a
-	ld l,a			;6b8b
+	push hl			;6b8a   ; HL guardado
+	ld l,a			;6b8b   ; HL = giro * 20...
 	ld h,000h		;6b8c
-	add hl,hl			;6b8e
+	add hl,hl			;6b8e   ; ...* 2 (40 bytes por giro)
 	ld de,08d2ch		;6b8f   ; ...en la tabla p07:8D2C (40 bytes por giro)
-	add hl,de			;6b92
+	add hl,de			;6b92   ; HL = la fila del giro
 	ld e,b			;6b93   ; + distancia / 2
-	srl e		;6b94
+	srl e		;6b94   ; distancia / 2
 	ld d,000h		;6b96
-	add hl,de			;6b98
+	add hl,de			;6b98   ; la columna
 	ld a,(hl)			;6b99   ; la x relativa + la x del actor - 16
-	add a,(ix+006h)		;6b9a
-	sub 010h		;6b9d
-	pop hl			;6b9f
-	ld h,a			;6ba0
-	jp coloca_jugador		;6ba1
+	add a,(ix+006h)		;6b9a   ; + x del actor
+	sub 010h		;6b9d   ; - 16
+	pop hl			;6b9f   ; HL de vuelta
+	ld h,a			;6ba0   ; H = la x nueva
+	jp coloca_jugador		;6ba1   ; y se coloca
 clase_1:
 	ld a,e			;6ba4   ; lo mismo con la tabla p07:8EBC (32 bytes por giro)
-	cp 00ah		;6ba5
+	cp 00ah		;6ba5   ; el mismo espejo de giros
 	jr c,L_6BB0		;6ba7
 	sub 00ah		;6ba9
 	neg		;6bab
 	add a,008h		;6bad
 	ld e,a			;6baf
 L_6BB0:
-	cp 001h		;6bb0
+	cp 001h		;6bb0   ; segun el giro...
 	jr c,clase_1_bajo		;6bb2
 	jr z,clase_1_alto		;6bb4
 	cp 008h		;6bb6
@@ -1292,79 +1292,79 @@ L_6BB0:
 	jr c,clase_1_bajo		;6bbe
 clase_1_alto:
 	ld a,l			;6bc0
-	sub (ix+007h)		;6bc1
+	sub (ix+007h)		;6bc1   ; distancia en y: 0x20 o mas, un pixel arriba
 	cp 020h		;6bc4
 	jr c,clase_1_x		;6bc6
 	dec l			;6bc8
 	jr clase_1_x		;6bc9
 clase_1_bajo:
 	ld a,l			;6bcb
-	sub (ix+007h)		;6bcc
+	sub (ix+007h)		;6bcc   ; 0x18 o mas: uno...
 	cp 018h		;6bcf
 	jr c,clase_1_x		;6bd1
 	dec l			;6bd3
-	cp 030h		;6bd4
+	cp 030h		;6bd4   ; ...0x30 o mas: otro
 	jr c,clase_1_x		;6bd6
 	dec l			;6bd8
 clase_1_x:
 	ld a,l			;6bd9
-	sub (ix+007h)		;6bda
-	ld b,a			;6bdd
+	sub (ix+007h)		;6bda   ; la distancia...
+	ld b,a			;6bdd   ; ...en B
 	ld a,e			;6bde
-	add a,a			;6bdf
+	add a,a			;6bdf   ; giro * 16...
 	add a,a			;6be0
 	add a,a			;6be1
 	add a,a			;6be2
 	push hl			;6be3
 	ld l,a			;6be4
 	ld h,000h		;6be5
-	add hl,hl			;6be7
+	add hl,hl			;6be7   ; ...* 2 (32 bytes por giro)
 	ld de,08ebch		;6be8   ; tabla p07:8EBC
 	add hl,de			;6beb
 	ld e,b			;6bec
-	srl e		;6bed
+	srl e		;6bed   ; distancia / 2
 	ld d,000h		;6bef
 	add hl,de			;6bf1
-	ld a,(hl)			;6bf2
-	add a,(ix+006h)		;6bf3
+	ld a,(hl)			;6bf2   ; la x relativa...
+	add a,(ix+006h)		;6bf3   ; ...+ x del actor - 16
 	sub 010h		;6bf6
 	pop hl			;6bf8
-	ld h,a			;6bf9
+	ld h,a			;6bf9   ; H = x
 	jp coloca_jugador		;6bfa
 clase_2:
 	ld a,e			;6bfd   ; tabla p07:8FFC (24 bytes por giro)
-	cp 00ah		;6bfe
+	cp 00ah		;6bfe   ; el espejo de giros
 	jr c,L_6C09		;6c00
 	sub 00ah		;6c02
 	neg		;6c04
 	add a,008h		;6c06
 	ld e,a			;6c08
 L_6C09:
-	cp 001h		;6c09
-	jr c,clase_2_b		;6c0b
-	jr z,clase_2_a		;6c0d
-	cp 002h		;6c0f
+	cp 001h		;6c09   ; segun el giro, otra correccion
+	jr c,clase_2_b		;6c0b   ; giro 0
+	jr z,clase_2_a		;6c0d   ; giro 1
+	cp 002h		;6c0f   ; giro 2
 	jr z,clase_2_c		;6c11
-	cp 007h		;6c13
+	cp 007h		;6c13   ; 3-6: sin correccion
 	jr c,clase_2_x		;6c15
-	jr z,clase_2_c		;6c17
-	cp 009h		;6c19
+	jr z,clase_2_c		;6c17   ; giro 7
+	cp 009h		;6c19   ; 8: a
 	jr c,clase_2_a		;6c1b
-	jr z,clase_2_b		;6c1d
+	jr z,clase_2_b		;6c1d   ; 9: b
 clase_2_a:
 	ld a,l			;6c1f
-	sub (ix+007h)		;6c20
-	cp 010h		;6c23
+	sub (ix+007h)		;6c20   ; L - y del agarradero...
+	cp 010h		;6c23   ; ...0x10 o mas?
 	jr c,clase_2_x		;6c25
-	dec l			;6c27
+	dec l			;6c27   ; si: un pixel arriba
 	jr clase_2_x		;6c28
 clase_2_b:
 	ld a,l			;6c2a
-	sub (ix+007h)		;6c2b
-	cp 00ah		;6c2e
+	sub (ix+007h)		;6c2b   ; la distancia...
+	cp 00ah		;6c2e   ; ...0x0A o mas: uno arriba...
 	jr c,clase_2_x		;6c30
 	dec l			;6c32
-	cp 01ch		;6c33
+	cp 01ch		;6c33   ; ...0x1C o mas: otro
 	jr c,clase_2_x		;6c35
 	dec l			;6c37
 	jr clase_2_x		;6c38
@@ -1376,29 +1376,29 @@ clase_2_c:
 	dec l			;6c42
 clase_2_x:
 	ld a,l			;6c43
-	sub (ix+007h)		;6c44
-	ld b,a			;6c47
+	sub (ix+007h)		;6c44   ; la distancia en y...
+	ld b,a			;6c47   ; ...en B
 	ld a,e			;6c48
-	add a,a			;6c49
+	add a,a			;6c49   ; giro * 3...
 	add a,e			;6c4a
-	add a,a			;6c4b
+	add a,a			;6c4b   ; ...* 8 = 24 bytes por giro
 	add a,a			;6c4c
 	add a,a			;6c4d
-	push hl			;6c4e
-	ld l,a			;6c4f
+	push hl			;6c4e   ; HL guardado
+	ld l,a			;6c4f   ; HL = la fila
 	ld h,000h		;6c50
 	ld de,08ffch		;6c52   ; tabla p07:8FFC
-	add hl,de			;6c55
+	add hl,de			;6c55   ; en la tabla
 	ld e,b			;6c56
-	srl e		;6c57
+	srl e		;6c57   ; distancia / 2
 	ld d,000h		;6c59
-	add hl,de			;6c5b
-	ld a,(hl)			;6c5c
-	add a,(ix+006h)		;6c5d
-	sub 010h		;6c60
-	pop hl			;6c62
-	ld h,a			;6c63
-	jp coloca_jugador		;6c64
+	add hl,de			;6c5b   ; la columna
+	ld a,(hl)			;6c5c   ; la x relativa...
+	add a,(ix+006h)		;6c5d   ; ...+ x del actor...
+	sub 010h		;6c60   ; ...- 16
+	pop hl			;6c62   ; HL de vuelta
+	ld h,a			;6c63   ; H = la x
+	jp coloca_jugador		;6c64   ; se coloca
 clase_3:
 	ld a,e			;6c67   ; tabla p07:90EC
 	cp 00ah		;6c68
@@ -1408,54 +1408,54 @@ clase_3:
 	add a,008h		;6c70
 	ld e,a			;6c72
 L_6C73:
-	cp 001h		;6c73
+	cp 001h		;6c73   ; giro 0
 	jr c,clase_3_b		;6c75
-	jr z,clase_3_a		;6c77
-	cp 003h		;6c79
+	jr z,clase_3_a		;6c77   ; giro 1
+	cp 003h		;6c79   ; 2
 	jr c,clase_3_c		;6c7b
-	jr z,clase_3_d		;6c7d
-	cp 006h		;6c7f
+	jr z,clase_3_d		;6c7d   ; 3
+	cp 006h		;6c7f   ; 4-5: sin correccion
 	jr c,clase_3_x		;6c81
-	jr z,clase_3_d		;6c83
-	cp 008h		;6c85
+	jr z,clase_3_d		;6c83   ; 6
+	cp 008h		;6c85   ; 7
 	jr c,clase_3_c		;6c87
-	jr nz,clase_3_b		;6c89
+	jr nz,clase_3_b		;6c89   ; 9 o mas: b
 clase_3_a:
 	ld a,l			;6c8b
-	sub (ix+007h)		;6c8c
-	cp 005h		;6c8f
+	sub (ix+007h)		;6c8c   ; la distancia en y
+	cp 005h		;6c8f   ; 5 o mas: uno arriba
 	jr c,clase_3_x		;6c91
 	dec l			;6c93
-	cp 00dh		;6c94
+	cp 00dh		;6c94   ; 0x0D o mas: otro
 	jr c,clase_3_x		;6c96
 	dec l			;6c98
-	cp 016h		;6c99
+	cp 016h		;6c99   ; 0x16 o mas: otro
 	jr c,clase_3_x		;6c9b
 	dec l			;6c9d
 	jr clase_3_x		;6c9e
 clase_3_b:
 	ld a,l			;6ca0
 	sub (ix+007h)		;6ca1   ; la y se corrige un pixel por cada umbral que pasa
-	cp 003h		;6ca4
+	cp 003h		;6ca4   ; 3 o mas: uno
 	jr c,clase_3_x		;6ca6
 	dec l			;6ca8
-	cp 008h		;6ca9
+	cp 008h		;6ca9   ; 8 o mas: otro
 	jr c,clase_3_x		;6cab
 	dec l			;6cad
-	cp 00dh		;6cae
+	cp 00dh		;6cae   ; 0x0D o mas: otro
 	jr c,clase_3_x		;6cb0
 	dec l			;6cb2
-	cp 013h		;6cb3
+	cp 013h		;6cb3   ; 0x13 o mas: otro
 	jr c,clase_3_x		;6cb5
 	dec l			;6cb7
 	jr clase_3_x		;6cb8
 clase_3_c:
 	ld a,l			;6cba
-	sub (ix+007h)		;6cbb
-	cp 009h		;6cbe
+	sub (ix+007h)		;6cbb   ; la distancia
+	cp 009h		;6cbe   ; 9 o mas: uno
 	jr c,clase_3_x		;6cc0
 	dec l			;6cc2
-	cp 019h		;6cc3
+	cp 019h		;6cc3   ; 0x19 o mas: otro
 	jr c,clase_3_x		;6cc5
 	dec l			;6cc7
 	jr clase_3_x		;6cc8
@@ -1741,17 +1741,17 @@ mira_delante:
 	jr z,pared		;6e84
 mira_delante_2:
 	ld a,c			;6e86   ; la segunda, igual
-	and 0f0h		;6e87
-	cp 010h		;6e89
+	and 0f0h		;6e87   ; la clase
+	cp 010h		;6e89   ; 0x10 o menos...
 	jp c,nada_delante		;6e8b
-	jp z,nada_delante		;6e8e
-	cp 040h		;6e91
+	jp z,nada_delante		;6e8e   ; ...nada
+	cp 040h		;6e91   ; 0x20-0x3F: pared
 	jr c,pared		;6e93
-	cp 060h		;6e95
+	cp 060h		;6e95   ; 0x40-0x5F: cuesta
 	jr c,entra_cuesta_a		;6e97
-	cp 080h		;6e99
+	cp 080h		;6e99   ; 0x60-0x7F: la otra cuesta
 	jp c,entra_cuesta_b		;6e9b
-	cp 0a0h		;6e9e
+	cp 0a0h		;6e9e   ; 0xA0: como pared; lo demas, nada
 	jp nz,nada_delante		;6ea0
 pared:
 	pop hl			;6ea3
@@ -2286,17 +2286,17 @@ choque_lateral_en_el_aire:
 	jr z,choque_lateral		;723b
 choque_lateral_2:
 	ld a,c			;723d   ; la segunda: 0x20-0x7F o 0xA0, choca
-	and 0f0h		;723e
-	cp 010h		;7240
+	and 0f0h		;723e   ; la clase
+	cp 010h		;7240   ; 0x10 o menos: la tercera
 	jr c,choque_lateral_3		;7242
 	jr z,choque_lateral_3		;7244
-	cp 040h		;7246
+	cp 040h		;7246   ; 0x20-0x3F: choca
 	jr c,choque_lateral		;7248
-	cp 060h		;724a
+	cp 060h		;724a   ; 0x40-0x5F: choca
 	jp c,choque_lateral		;724c
-	cp 080h		;724f
+	cp 080h		;724f   ; 0x60-0x7F: choca
 	jp c,choque_lateral		;7251
-	cp 0a0h		;7254
+	cp 0a0h		;7254   ; 0xA0: choca
 	jr z,choque_lateral		;7256
 choque_lateral_3:
 	ld a,d			;7258   ; la tercera: 0x20-0x3F u 0xA0 choca...
@@ -2626,31 +2626,31 @@ mira_al_caer:
 	jr z,choca_al_caer		;74c8
 mira_al_caer_2:
 	ld a,c			;74ca   ; la segunda, igual
-	and 0f0h		;74cb
-	cp 010h		;74cd
+	and 0f0h		;74cb   ; la clase
+	cp 010h		;74cd   ; 0x10 o menos: la tercera
 	jr c,mira_al_caer_3		;74cf
 	jr z,mira_al_caer_3		;74d1
-	cp 040h		;74d3
+	cp 040h		;74d3   ; 0x20-0x3F: choca
 	jr c,choca_al_caer		;74d5
-	cp 060h		;74d7
+	cp 060h		;74d7   ; 0x40-0x5F: choca
 	jp c,choca_al_caer		;74d9
-	cp 080h		;74dc
+	cp 080h		;74dc   ; 0x60-0x7F: choca
 	jp c,choca_al_caer		;74de
-	cp 0a0h		;74e1
+	cp 0a0h		;74e1   ; 0xA0: choca
 	jr z,choca_al_caer		;74e3
 mira_al_caer_3:
 	ld a,d			;74e5   ; la tercera: 0x20-0x3F, 0x40-0x5F, 0x60-0x7F o 0xA0
-	and 0f0h		;74e6
-	cp 010h		;74e8
+	and 0f0h		;74e6   ; la clase
+	cp 010h		;74e8   ; 0x10 o menos: nada
 	jp c,nada_al_caer		;74ea
 	jr z,nada_al_caer		;74ed
-	cp 040h		;74ef
+	cp 040h		;74ef   ; 0x20-0x3F: pared
 	jr c,pared_al_caer		;74f1
-	cp 060h		;74f3
+	cp 060h		;74f3   ; 0x40-0x5F: cuesta
 	jr c,cuesta_al_caer		;74f5
-	cp 080h		;74f7
+	cp 080h		;74f7   ; 0x60-0x7F: la otra
 	jr c,cuesta_al_caer_b		;74f9
-	cp 0a0h		;74fb
+	cp 0a0h		;74fb   ; 0xA0: pared
 	jr z,pared_al_caer		;74fd
 nada_al_caer:
 	pop hl			;74ff
@@ -2999,17 +2999,17 @@ cae_en_arranque:
 	jp nc,cuesta_e_mitad		;7748
 	jp cuesta_e_alta		;774b
 arranque_a:
-	pop hl			;774e
-	pop bc			;774f
+	pop hl			;774e   ; HL y...
+	pop bc			;774f   ; ...BC de vuelta
 	ld a,h			;7750   ; mitad izquierda: E = casilla + 0x10...
 	and 00fh		;7751
 	cp 008h		;7753
-	jr c,arranque_b		;7755
-	ld a,l			;7757
+	jr c,arranque_b		;7755   ; mitad derecha: p06:7760
+	ld a,l			;7757   ; la y de la casilla...
 	and 0f0h		;7758
-	add a,010h		;775a
+	add a,010h		;775a   ; ...+ 0x10
 	ld e,a			;775c
-	jp y_de_cuesta		;775d
+	jp y_de_cuesta		;775d   ; a la cuesta
 arranque_b:
 	ld a,l			;7760   ; ...mitad derecha: + 0x18
 	and 0f0h		;7761
@@ -3365,23 +3365,23 @@ debajo:
 	jr c,fila_de_debajo		;794a
 	sub 010h		;794c
 fila_de_debajo:
-	ld b,000h		;794e
-	ld c,a			;7950
-	ld e,a			;7951
+	ld b,000h		;794e   ; B = 0
+	ld c,a			;7950   ; C = la fila
+	ld e,a			;7951   ; E = la y
 	ld a,h			;7952
-	ld d,a			;7953
-	and 0f0h		;7954
-	rra			;7956
+	ld d,a			;7953   ; D = la x
+	and 0f0h		;7954   ; x / 16...
+	rra			;7956   ; ...* 2
 	rra			;7957
 	rra			;7958
-	ld l,a			;7959
+	ld l,a			;7959   ; HL = la columna
 	ld h,000h		;795a
-	add hl,bc			;795c
-	add hl,bc			;795d
+	add hl,bc			;795c   ; + fila * 2...
+	add hl,bc			;795d   ; ...(una fila son 0x20 bytes)
 	ld bc,0d774h		;795e   ; en D774
-	add hl,bc			;7961
-	inc hl			;7962
-	jp tres_casillas		;7963
+	add hl,bc			;7961   ; HL = la casilla
+	inc hl			;7962   ; el byte alto
+	jp tres_casillas		;7963   ; tres casillas
 a_la_izquierda:
 	ld a,l			;7966   ; y - 16, la columna de x + 8
 	sub 010h		;7967
@@ -3414,29 +3414,29 @@ fila_valida:
 	sub 010h		;798f
 	jr fila_valida		;7991
 fila_de_encima_b:
-	ld b,000h		;7993
-	ld c,a			;7995
-	ld e,a			;7996
+	ld b,000h		;7993   ; B = 0
+	ld c,a			;7995   ; C = la fila
+	ld e,a			;7996   ; E = la y
 	ld a,h			;7997
-	ld d,a			;7998
+	ld d,a			;7998   ; D = la x
 	add a,010h		;7999   ; la columna de x + 0x10
-	and 0f0h		;799b
-	rra			;799d
+	and 0f0h		;799b   ; en casillas
+	rra			;799d   ; * 2
 	rra			;799e
 	rra			;799f
-	ld l,a			;79a0
+	ld l,a			;79a0   ; HL = la columna
 	ld h,000h		;79a1
-	add hl,bc			;79a3
+	add hl,bc			;79a3   ; + la fila
 	add hl,bc			;79a4
 	ld bc,0d774h		;79a5   ; en D774
 	add hl,bc			;79a8
-	inc hl			;79a9
-	ex af,af'			;79aa
-	bit 0,a		;79ab
-	jp nz,dos_casillas		;79ad
-	ld bc,0a0a0h		;79b0
+	inc hl			;79a9   ; el byte alto
+	ex af,af'			;79aa   ; A' = si la fila salio de la pantalla
+	bit 0,a		;79ab   ; dentro?
+	jp nz,dos_casillas		;79ad   ; si: dos casillas
+	ld bc,0a0a0h		;79b0   ; fuera: 0xA0 en las tres
 	ld de,0a0a0h		;79b3
-	ret			;79b6
+	ret			;79b6   ; vuelve
 dos_casillas:
 	ld a,d			;79b7
 	ld b,(hl)			;79b8   ; la casilla, dos veces...
@@ -3459,24 +3459,24 @@ fila_valida_b:
 	sub 010h		;79cd
 	jr fila_valida_b		;79cf
 fila_de_debajo_b:
-	ld b,000h		;79d1
-	ld c,a			;79d3
-	ld e,a			;79d4
+	ld b,000h		;79d1   ; B = 0
+	ld c,a			;79d3   ; C = la fila
+	ld e,a			;79d4   ; E = la y
 	ld a,h			;79d5
-	ld d,a			;79d6
-	add a,010h		;79d7
-	and 0f0h		;79d9
-	rra			;79db
+	ld d,a			;79d6   ; D = la x
+	add a,010h		;79d7   ; x + 16...
+	and 0f0h		;79d9   ; ...en casillas
+	rra			;79db   ; * 2
 	rra			;79dc
 	rra			;79dd
-	ld l,a			;79de
+	ld l,a			;79de   ; HL = la columna
 	ld h,000h		;79df
-	add hl,bc			;79e1
+	add hl,bc			;79e1   ; + la fila
 	add hl,bc			;79e2
 	ld bc,0d774h		;79e3   ; en D774
 	add hl,bc			;79e6
-	inc hl			;79e7
-	jp dos_casillas		;79e8
+	inc hl			;79e7   ; el byte alto
+	jp dos_casillas		;79e8   ; dos casillas
 a_la_izquierda_b:
 	ld a,l			;79eb
 	sub 010h		;79ec
@@ -3778,21 +3778,21 @@ golpe_izq_0:
 	ld l,a			;7bdd
 	jp fuerza_del_golpe		;7bde
 golpe_izq_1:
-	ld a,l			;7be1
+	ld a,l			;7be1   ; cuadros 1 y 5 a la izquierda: y + 8...
 	add a,008h		;7be2
 	ld l,a			;7be4
-	ld a,h			;7be5
+	ld a,h			;7be5   ; ...x - 4
 	sub 004h		;7be6
 	ld h,a			;7be8
-	jp fuerza_del_golpe		;7be9
+	jp fuerza_del_golpe		;7be9   ; la fuerza
 golpe_izq_2:
-	ld a,l			;7bec
+	ld a,l			;7bec   ; cuadros 2 y 4: y + 8...
 	add a,008h		;7bed
 	ld l,a			;7bef
-	ld a,h			;7bf0
+	ld a,h			;7bf0   ; ...x + 0x0F
 	add a,00fh		;7bf1
 	ld h,a			;7bf3
-	jp fuerza_del_golpe		;7bf4
+	jp fuerza_del_golpe		;7bf4   ; la fuerza
 golpe_izq_3:
 	ld a,(0d919h)		;7bf7   ; cuadro 3: arma 0 y 1, x + 0x20
 	cp 002h		;7bfa
@@ -3887,166 +3887,166 @@ L_7C8D:
 	ld ix,0d933h		;7ca0   ; ix -> los 6 actores de la pantalla
 golpe_a_objeto:
 	ld a,(ix+00fh)		;7ca4   ; sin vida (+0F = 0): no se le puede dar
-	or a			;7ca7
-	jp z,siguiente_objeto_golpe		;7ca8
+	or a			;7ca7   ; vida 0...
+	jp z,siguiente_objeto_golpe		;7ca8   ; ...no se le puede dar
 	ld a,(ix+000h)		;7cab   ; hueco
-	or a			;7cae
-	jp z,siguiente_objeto_golpe		;7caf
+	or a			;7cae   ; tipo 0...
+	jp z,siguiente_objeto_golpe		;7caf   ; ...hueco
 	bit 7,(ix+025h)		;7cb2   ; +25 bit 7: ya le dio este golpe
-	jp nz,siguiente_objeto_golpe		;7cb6
+	jp nz,siguiente_objeto_golpe		;7cb6   ; si: el siguiente
 	cp 002h		;7cb9   ; segun el tipo, una caja de choque distinta:
-	jp c,caja_a		;7cbb
-	jp z,caja_b		;7cbe
-	cp 004h		;7cc1
+	jp c,caja_a		;7cbb   ; tipo 1: caja a
+	jp z,caja_b		;7cbe   ; 2: b
+	cp 004h		;7cc1   ; 3: c
 	jp c,caja_c		;7cc3
-	jp z,caja_b		;7cc6
-	cp 006h		;7cc9
+	jp z,caja_b		;7cc6   ; 4: b
+	cp 006h		;7cc9   ; 5: b
 	jp c,caja_b		;7ccb
-	jp z,caja_a		;7cce
-	cp 008h		;7cd1
+	jp z,caja_a		;7cce   ; 6: a
+	cp 008h		;7cd1   ; 7: b
 	jp c,caja_b		;7cd3
-	jp z,caja_i		;7cd6
-	cp 00ah		;7cd9
+	jp z,caja_i		;7cd6   ; 8: i
+	cp 00ah		;7cd9   ; 9: e
 	jp c,caja_e		;7cdb
-	jp z,caja_i		;7cde
-	cp 00ch		;7ce1
+	jp z,caja_i		;7cde   ; 0x0A: i
+	cp 00ch		;7ce1   ; 0x0B y 0x0C: f
 	jp c,caja_f		;7ce3
 	jp z,caja_f		;7ce6
-	cp 00eh		;7ce9
+	cp 00eh		;7ce9   ; 0x0D: e
 	jp c,caja_e		;7ceb
-	jp z,caja_g		;7cee
-	cp 010h		;7cf1
+	jp z,caja_g		;7cee   ; 0x0E: g
+	cp 010h		;7cf1   ; 0x0F: h
 	jp c,caja_h		;7cf3
-	jp z,caja_g		;7cf6
-	cp 012h		;7cf9
+	jp z,caja_g		;7cf6   ; 0x10: g
+	cp 012h		;7cf9   ; 0x11, 0x12 y 0x13: a
 	jp c,caja_a		;7cfb
 	jp z,caja_a		;7cfe
 	cp 014h		;7d01
 	jp c,caja_a		;7d03
-	jp z,caja_c		;7d06
-	cp 016h		;7d09
+	jp z,caja_c		;7d06   ; 0x14: c
+	cp 016h		;7d09   ; 0x15: c
 	jp c,caja_c		;7d0b
-	jp z,caja_tipo_16		;7d0e
-	jp siguiente_objeto_golpe		;7d11
+	jp z,caja_tipo_16		;7d0e   ; 0x16: la suya
+	jp siguiente_objeto_golpe		;7d11   ; 0x17 o mas: no se le da
 caja_a:
 	ld a,(ix+006h)		;7d14   ; |x del objeto - x del golpe| y |y - y| dentro de la caja...
-	sub h			;7d17
-	add a,014h		;7d18
-	cp 018h		;7d1a
-	jp nc,siguiente_objeto_golpe		;7d1c
-	ld a,(ix+007h)		;7d1f
-	sub l			;7d22
-	add a,01eh		;7d23
-	cp 02ch		;7d25
-	jp nc,siguiente_objeto_golpe		;7d27
-	jp le_da		;7d2a
+	sub h			;7d17   ; la diferencia en x...
+	add a,014h		;7d18   ; ...corrida +20...
+	cp 018h		;7d1a   ; ...cabe en la caja si va de -20 a 3
+	jp nc,siguiente_objeto_golpe		;7d1c   ; no cabe: fuera
+	ld a,(ix+007h)		;7d1f   ; y del objeto
+	sub l			;7d22   ; la diferencia en y...
+	add a,01eh		;7d23   ; ...corrida +30...
+	cp 02ch		;7d25   ; ...cabe en la caja si va de -30 a 13
+	jp nc,siguiente_objeto_golpe		;7d27   ; no cabe: fuera
+	jp le_da		;7d2a   ; le da
 caja_b:
-	ld a,(ix+007h)		;7d2d
-	sub l			;7d30
-	add a,00fh		;7d31
-	cp 01bh		;7d33
-	jr nc,caja_b_2		;7d35
-	ld a,(ix+006h)		;7d37
-	sub h			;7d3a
-	add a,01ch		;7d3b
-	cp 029h		;7d3d
-	jp nc,siguiente_objeto_golpe		;7d3f
-	jp le_da		;7d42
+	ld a,(ix+007h)		;7d2d   ; y del objeto
+	sub l			;7d30   ; la diferencia en y...
+	add a,00fh		;7d31   ; ...corrida +15...
+	cp 01bh		;7d33   ; ...cabe en la caja si va de -15 a 11
+	jr nc,caja_b_2		;7d35   ; no cabe: fuera
+	ld a,(ix+006h)		;7d37   ; x del objeto
+	sub h			;7d3a   ; la diferencia en x...
+	add a,01ch		;7d3b   ; ...corrida +28...
+	cp 029h		;7d3d   ; ...cabe en la caja si va de -28 a 12
+	jp nc,siguiente_objeto_golpe		;7d3f   ; no cabe: fuera
+	jp le_da		;7d42   ; le da
 caja_b_2:
-	ld a,(ix+007h)		;7d45
-	sub l			;7d48
-	add a,01bh		;7d49
-	cp 01eh		;7d4b
-	jp nc,siguiente_objeto_golpe		;7d4d
-	ld a,(ix+006h)		;7d50
-	sub h			;7d53
-	add a,016h		;7d54
-	cp 01dh		;7d56
-	jp nc,siguiente_objeto_golpe		;7d58
-	jp le_da		;7d5b
+	ld a,(ix+007h)		;7d45   ; por debajo: otra caja
+	sub l			;7d48   ; la diferencia en y...
+	add a,01bh		;7d49   ; ...corrida +27...
+	cp 01eh		;7d4b   ; ...cabe en la caja si va de -27 a 2
+	jp nc,siguiente_objeto_golpe		;7d4d   ; no cabe: fuera
+	ld a,(ix+006h)		;7d50   ; x
+	sub h			;7d53   ; la diferencia en x...
+	add a,016h		;7d54   ; ...corrida +22...
+	cp 01dh		;7d56   ; ...cabe en la caja si va de -22 a 6
+	jp nc,siguiente_objeto_golpe		;7d58   ; no cabe: fuera
+	jp le_da		;7d5b   ; le da
 caja_c:
-	ld a,(ix+007h)		;7d5e
-	sub l			;7d61
-	add a,00fh		;7d62
-	cp 01bh		;7d64
-	jr nc,caja_c_2		;7d66
-	ld a,(ix+006h)		;7d68
-	sub h			;7d6b
-	add a,016h		;7d6c
-	cp 01dh		;7d6e
-	jp nc,siguiente_objeto_golpe		;7d70
-	jp le_da		;7d73
+	ld a,(ix+007h)		;7d5e   ; y
+	sub l			;7d61   ; la diferencia en y...
+	add a,00fh		;7d62   ; ...corrida +15...
+	cp 01bh		;7d64   ; ...cabe en la caja si va de -15 a 11
+	jr nc,caja_c_2		;7d66   ; no cabe: fuera
+	ld a,(ix+006h)		;7d68   ; x
+	sub h			;7d6b   ; la diferencia en x...
+	add a,016h		;7d6c   ; ...corrida +22...
+	cp 01dh		;7d6e   ; ...cabe en la caja si va de -22 a 6
+	jp nc,siguiente_objeto_golpe		;7d70   ; no cabe: fuera
+	jp le_da		;7d73   ; le da
 caja_c_2:
-	ld a,(ix+007h)		;7d76
-	sub l			;7d79
-	add a,01bh		;7d7a
-	cp 01eh		;7d7c
-	jp nc,siguiente_objeto_golpe		;7d7e
-	ld a,(ix+006h)		;7d81
-	sub h			;7d84
-	add a,01dh		;7d85
-	cp 02bh		;7d87
-	jp nc,siguiente_objeto_golpe		;7d89
-	jp le_da		;7d8c
+	ld a,(ix+007h)		;7d76   ; por debajo: otra caja
+	sub l			;7d79   ; la diferencia en y...
+	add a,01bh		;7d7a   ; ...corrida +27...
+	cp 01eh		;7d7c   ; ...cabe en la caja si va de -27 a 2
+	jp nc,siguiente_objeto_golpe		;7d7e   ; no cabe: fuera
+	ld a,(ix+006h)		;7d81   ; x
+	sub h			;7d84   ; la diferencia en x...
+	add a,01dh		;7d85   ; ...corrida +29...
+	cp 02bh		;7d87   ; ...cabe en la caja si va de -29 a 13
+	jp nc,siguiente_objeto_golpe		;7d89   ; no cabe: fuera
+	jp le_da		;7d8c   ; le da
 huerfana_caja_d:
 	ld a,(ix+006h)		;7d8f   ; nadie llega aqui: otra caja sin usar
-	sub h			;7d92
-	add a,01fh		;7d93
-	cp 01dh		;7d95
-	jp nc,siguiente_objeto_golpe		;7d97
-	ld a,(ix+007h)		;7d9a
-	sub l			;7d9d
-	add a,01fh		;7d9e
-	cp 017h		;7da0
-	jp nc,siguiente_objeto_golpe		;7da2
-	jp le_da		;7da5
+	sub h			;7d92   ; la diferencia en x...
+	add a,01fh		;7d93   ; ...corrida +31...
+	cp 01dh		;7d95   ; ...cabe en la caja si va de -31 a -3
+	jp nc,siguiente_objeto_golpe		;7d97   ; no cabe: fuera
+	ld a,(ix+007h)		;7d9a   ; y
+	sub l			;7d9d   ; la diferencia en y...
+	add a,01fh		;7d9e   ; ...corrida +31...
+	cp 017h		;7da0   ; ...cabe en la caja si va de -31 a -9
+	jp nc,siguiente_objeto_golpe		;7da2   ; no cabe: fuera
+	jp le_da		;7da5   ; le da
 caja_e:
-	ld a,(ix+006h)		;7da8
-	sub h			;7dab
-	add a,01ch		;7dac
-	cp 029h		;7dae
-	jp nc,siguiente_objeto_golpe		;7db0
-	ld a,(ix+007h)		;7db3
-	sub l			;7db6
-	add a,01dh		;7db7
-	cp 029h		;7db9
-	jp nc,siguiente_objeto_golpe		;7dbb
-	jp le_da		;7dbe
+	ld a,(ix+006h)		;7da8   ; x
+	sub h			;7dab   ; la diferencia en x...
+	add a,01ch		;7dac   ; ...corrida +28...
+	cp 029h		;7dae   ; ...cabe en la caja si va de -28 a 12
+	jp nc,siguiente_objeto_golpe		;7db0   ; no cabe: fuera
+	ld a,(ix+007h)		;7db3   ; y
+	sub l			;7db6   ; la diferencia en y...
+	add a,01dh		;7db7   ; ...corrida +29...
+	cp 029h		;7db9   ; ...cabe en la caja si va de -29 a 11
+	jp nc,siguiente_objeto_golpe		;7dbb   ; no cabe: fuera
+	jp le_da		;7dbe   ; le da
 caja_f:
-	ld a,(ix+006h)		;7dc1
-	sub h			;7dc4
-	add a,00eh		;7dc5
-	cp 01dh		;7dc7
-	jp nc,siguiente_objeto_golpe		;7dc9
-	ld a,(ix+007h)		;7dcc
-	sub l			;7dcf
-	add a,00eh		;7dd0
-	cp 01dh		;7dd2
-	jp nc,siguiente_objeto_golpe		;7dd4
-	jp le_da		;7dd7
+	ld a,(ix+006h)		;7dc1   ; x
+	sub h			;7dc4   ; la diferencia en x...
+	add a,00eh		;7dc5   ; ...corrida +14...
+	cp 01dh		;7dc7   ; ...cabe en la caja si va de -14 a 14
+	jp nc,siguiente_objeto_golpe		;7dc9   ; no cabe: fuera
+	ld a,(ix+007h)		;7dcc   ; y
+	sub l			;7dcf   ; la diferencia en y...
+	add a,00eh		;7dd0   ; ...corrida +14...
+	cp 01dh		;7dd2   ; ...cabe en la caja si va de -14 a 14
+	jp nc,siguiente_objeto_golpe		;7dd4   ; no cabe: fuera
+	jp le_da		;7dd7   ; le da
 caja_g:
 	ld a,(ix+006h)		;7dda
-	sub h			;7ddd
-	add a,00eh		;7dde
-	cp 01dh		;7de0
-	jp nc,siguiente_objeto_golpe		;7de2
+	sub h			;7ddd   ; la diferencia en x...
+	add a,00eh		;7dde   ; ...corrida +14...
+	cp 01dh		;7de0   ; ...cabe en la caja si va de -14 a 14
+	jp nc,siguiente_objeto_golpe		;7de2   ; no cabe: fuera
 	ld a,(ix+007h)		;7de5
-	sub l			;7de8
-	add a,01eh		;7de9
-	cp 02ch		;7deb
-	jp nc,siguiente_objeto_golpe		;7ded
+	sub l			;7de8   ; la diferencia en y...
+	add a,01eh		;7de9   ; ...corrida +30...
+	cp 02ch		;7deb   ; ...cabe en la caja si va de -30 a 13
+	jp nc,siguiente_objeto_golpe		;7ded   ; no cabe: fuera
 	jp le_da		;7df0
 caja_h:
 	ld a,(ix+006h)		;7df3
-	sub h			;7df6
-	add a,01eh		;7df7
-	cp 02dh		;7df9
-	jp nc,siguiente_objeto_golpe		;7dfb
+	sub h			;7df6   ; la diferencia en x...
+	add a,01eh		;7df7   ; ...corrida +30...
+	cp 02dh		;7df9   ; ...cabe en la caja si va de -30 a 14
+	jp nc,siguiente_objeto_golpe		;7dfb   ; no cabe: fuera
 	ld a,(ix+007h)		;7dfe
-	sub l			;7e01
-	add a,01fh		;7e02
-	cp 01dh		;7e04
-	jp nc,siguiente_objeto_golpe		;7e06
+	sub l			;7e01   ; la diferencia en y...
+	add a,01fh		;7e02   ; ...corrida +31...
+	cp 01dh		;7e04   ; ...cabe en la caja si va de -31 a -3
+	jp nc,siguiente_objeto_golpe		;7e06   ; no cabe: fuera
 	jp le_da		;7e09
 caja_tipo_16:
 	res 6,(ix+025h)		;7e0c   ; tipo 0x16: +25 bit 6 a 0...
@@ -4055,40 +4055,40 @@ caja_tipo_16:
 	cp 014h		;7e15
 	jp nz,siguiente_objeto_golpe		;7e17
 	ld a,(ix+006h)		;7e1a
-	sub h			;7e1d
-	add a,015h		;7e1e
-	cp 01ch		;7e20
-	jp nc,siguiente_objeto_golpe		;7e22
+	sub h			;7e1d   ; la diferencia en x...
+	add a,015h		;7e1e   ; ...corrida +21...
+	cp 01ch		;7e20   ; ...cabe en la caja si va de -21 a 6
+	jp nc,siguiente_objeto_golpe		;7e22   ; no cabe: fuera
 	ld a,(ix+007h)		;7e25
-	sub l			;7e28
-	add a,019h		;7e29
-	cp 033h		;7e2b
-	jp nc,siguiente_objeto_golpe		;7e2d
+	sub l			;7e28   ; la diferencia en y...
+	add a,019h		;7e29   ; ...corrida +25...
+	cp 033h		;7e2b   ; ...cabe en la caja si va de -25 a 25
+	jp nc,siguiente_objeto_golpe		;7e2d   ; no cabe: fuera
 	set 6,(ix+025h)		;7e30   ; ...y si le da, +25 bit 6
 	jp le_da		;7e34
 caja_i:
 	ld a,(ix+006h)		;7e37
-	sub h			;7e3a
-	add a,01eh		;7e3b
-	cp 02dh		;7e3d
-	jp nc,siguiente_objeto_golpe		;7e3f
+	sub h			;7e3a   ; la diferencia en x...
+	add a,01eh		;7e3b   ; ...corrida +30...
+	cp 02dh		;7e3d   ; ...cabe en la caja si va de -30 a 14
+	jp nc,siguiente_objeto_golpe		;7e3f   ; no cabe: fuera
 	ld a,(ix+007h)		;7e42
-	sub l			;7e45
-	add a,009h		;7e46
-	cp 01eh		;7e48
-	jp nc,siguiente_objeto_golpe		;7e4a
+	sub l			;7e45   ; la diferencia en y...
+	add a,009h		;7e46   ; ...corrida +9...
+	cp 01eh		;7e48   ; ...cabe en la caja si va de -9 a 20
+	jp nc,siguiente_objeto_golpe		;7e4a   ; no cabe: fuera
 	jp le_da		;7e4d
 huerfana_caja_j:
 	ld a,(ix+006h)		;7e50   ; nadie llega aqui
-	sub h			;7e53
-	add a,00eh		;7e54
-	cp 01dh		;7e56
-	jp nc,siguiente_objeto_golpe		;7e58
+	sub h			;7e53   ; la diferencia en x...
+	add a,00eh		;7e54   ; ...corrida +14...
+	cp 01dh		;7e56   ; ...cabe en la caja si va de -14 a 14
+	jp nc,siguiente_objeto_golpe		;7e58   ; no cabe: fuera
 	ld a,(ix+007h)		;7e5b
-	sub l			;7e5e
-	add a,00ch		;7e5f
-	cp 018h		;7e61
-	jp nc,siguiente_objeto_golpe		;7e63
+	sub l			;7e5e   ; la diferencia en y...
+	add a,00ch		;7e5f   ; ...corrida +12...
+	cp 018h		;7e61   ; ...cabe en la caja si va de -12 a 11
+	jp nc,siguiente_objeto_golpe		;7e63   ; no cabe: fuera
 	jp le_da		;7e66
 le_da:
 	ld a,(ix+00fh)		;7e69   ; vida - fuerza
@@ -4126,22 +4126,22 @@ golpe_a_bloque:
 	bit 0,c		;7ea7   ; hacia abajo: una caja estrecha
 	jr z,golpe_a_bloque_lado		;7ea9
 	ld a,(ix+010h)		;7eab
-	sub h			;7eae
-	add a,00eh		;7eaf
-	cp 010h		;7eb1
-	jr nc,siguiente_bloque		;7eb3
+	sub h			;7eae   ; la diferencia en x...
+	add a,00eh		;7eaf   ; ...corrida +14...
+	cp 010h		;7eb1   ; ...cabe en la caja si va de -14 a 1
+	jr nc,siguiente_bloque		;7eb3   ; no cabe: fuera
 	ld a,(ix+011h)		;7eb5
-	sub l			;7eb8
-	add a,01fh		;7eb9
-	cp 02dh		;7ebb
-	jr nc,siguiente_bloque		;7ebd
+	sub l			;7eb8   ; la diferencia en y...
+	add a,01fh		;7eb9   ; ...corrida +31...
+	cp 02dh		;7ebb   ; ...cabe en la caja si va de -31 a 13
+	jr nc,siguiente_bloque		;7ebd   ; no cabe: fuera
 	jp rompe_bloque		;7ebf
 golpe_a_bloque_lado:
 	ld a,(ix+010h)		;7ec2   ; de lado: otra caja
-	sub h			;7ec5
-	add a,01fh		;7ec6
-	cp 029h		;7ec8
-	jr nc,siguiente_bloque		;7eca
+	sub h			;7ec5   ; la diferencia en x...
+	add a,01fh		;7ec6   ; ...corrida +31...
+	cp 029h		;7ec8   ; ...cabe en la caja si va de -31 a 9
+	jr nc,siguiente_bloque		;7eca   ; no cabe: fuera
 	ld a,(ix+011h)		;7ecc
 	sub l			;7ecf
 	add a,018h		;7ed0
@@ -4255,15 +4255,15 @@ disparo_a_objeto:
 	bit 7,(ix+025h)		;7f79   ; ya tocado
 	jp nz,disparo_avanza		;7f7d
 	ld a,(ix+006h)		;7f80   ; dentro de la caja del disparo?
-	sub h			;7f83
-	add a,00eh		;7f84
-	cp 01dh		;7f86
-	jr nc,disparo_avanza		;7f88
+	sub h			;7f83   ; la diferencia en x...
+	add a,00eh		;7f84   ; ...corrida +14...
+	cp 01dh		;7f86   ; ...cabe en la caja si va de -14 a 14
+	jr nc,disparo_avanza		;7f88   ; no cabe: fuera
 	ld a,(ix+007h)		;7f8a
-	sub l			;7f8d
-	add a,01bh		;7f8e
-	cp 027h		;7f90
-	jr nc,disparo_avanza		;7f92
+	sub l			;7f8d   ; la diferencia en y...
+	add a,01bh		;7f8e   ; ...corrida +27...
+	cp 027h		;7f90   ; ...cabe en la caja si va de -27 a 11
+	jr nc,disparo_avanza		;7f92   ; no cabe: fuera
 	ld a,(ix+00fh)		;7f94   ; vida - 0x30
 	sub c			;7f97
 	jr z,L_7F9C		;7f98
@@ -4275,16 +4275,16 @@ L_7FA0:
 	ld (ix+00fh),a		;7fa0   ; y el disparo tambien
 	jp fin_del_disparo		;7fa3
 disparo_avanza:
-	add ix,de		;7fa6
-	djnz disparo_a_objeto		;7fa8
+	add ix,de		;7fa6   ; el siguiente objeto
+	djnz disparo_a_objeto		;7fa8   ; los tres
 	ld a,(0d924h)		;7faa   ; la direccion: 0 arriba, 1 derecha, 2 abajo, 3 izquierda
-	and 003h		;7fad
-	cp 001h		;7faf
+	and 003h		;7fad   ; la direccion
+	cp 001h		;7faf   ; 0: arriba
 	jr c,disparo_arriba		;7fb1
-	jr z,disparo_derecha		;7fb3
-	cp 003h		;7fb5
+	jr z,disparo_derecha		;7fb3   ; 1: derecha
+	cp 003h		;7fb5   ; 2: abajo
 	jr c,disparo_abajo		;7fb7
-	ld a,h			;7fb9
+	ld a,h			;7fb9   ; 3: izquierda, x - 3
 	sub 003h		;7fba
 	ld h,a			;7fbc
 	jr guarda_disparo		;7fbd
