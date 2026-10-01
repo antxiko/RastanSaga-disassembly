@@ -182,14 +182,14 @@ arranca_sonidos:
 	jr z,L_4150		;4146
 	call 0640fh		;4148   ; p01:640F lo arranca...
 	ld a,0ffh		;414b   ; ...y se borra la peticion
-	ld (0d17ah),a		;414d   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;414d   ; musica pedida, para p01:640F = a
 L_4150:
 	ld a,(0d178h)		;4150   ; D178: musica pedida (0xFF = ninguna)
 	cp 0ffh		;4153
 	jr z,L_415F		;4155
 	call 063e1h		;4157   ; p01:63E1 la arranca...
 	ld a,0ffh		;415a   ; ...y se borra la peticion
-	ld (0d178h),a		;415c   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;415c   ; efecto pedido, para p01:63E1 = a
 L_415F:
 	ret			;415f
 
@@ -2065,9 +2065,9 @@ tarea_principal:
 	ld a,0ffh		;4e1b   ; D5DF = 0xFF
 	ld (0d5dfh),a		;4e1d   ; 0xFF = el juego corre, 0 = pausa = a
 	ld a,000h		;4e20   ; musica 0 y efecto 0
-	ld (0d178h),a		;4e22   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;4e22   ; efecto pedido, para p01:63E1 = a
 	ld a,000h		;4e25
-	ld (0d17ah),a		;4e27   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;4e27   ; musica pedida, para p01:640F = a
 	ld a,003h		;4e2a   ; D067 = 3
 	ld (0d067h),a		;4e2c   ; 3 al empezar = a
 	call pantalla_titulo		;4e2f   ; prepara la partida (p00:4FE0)
@@ -2136,27 +2136,27 @@ DATA_texto_game_over:
 
 
 	ld a,000h		;4ea3   ; corta el efecto...
-	ld (0d17ah),a		;4ea5   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;4ea5   ; musica pedida, para p01:640F = a
 	ld a,008h		;4ea8   ; ...y pide el 8
-	ld (0d17ah),a		;4eaa   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;4eaa   ; musica pedida, para p01:640F = a
 	ld a,0c8h		;4ead   ; 200 cuadros...
 	call duerme		;4eaf
 	ld a,0c8h		;4eb2   ; ...y otros 200
 	call duerme		;4eb4
 	ld a,006h		;4eb7   ; efecto 6
-	ld (0d17ah),a		;4eb9   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;4eb9   ; musica pedida, para p01:640F = a
 	xor a			;4ebc   ; la partida a cero (lo mismo que p00:4FE0)
 	ld (0d17dh),a		;4ebd   ; bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-	ld (0d905h),a		;4ec0
-	ld (0d919h),a		;4ec3
+	ld (0d905h),a		;4ec0   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+	ld (0d919h),a		;4ec3   ; el arma que lleva = a
 	ld (0d926h),a		;4ec6
-	ld (0d91eh),a		;4ec9
-	ld (0d91fh),a		;4ecc
-	ld (0d920h),a		;4ecf
-	ld (0d921h),a		;4ed2
+	ld (0d91eh),a		;4ec9   ; la puntuacion, tres bytes BCD = a
+	ld (0d91fh),a		;4ecc   ; puntuacion, cifras 3-4 = a
+	ld (0d920h),a		;4ecf   ; puntuacion, cifras 5-6 = a
+	ld (0d921h),a		;4ed2   ; bit 7: la puntuacion ha cambiado = a
 	ld (0d90dh),a		;4ed5
 	ld (0d90eh),a		;4ed8
-	ld (0d90fh),a		;4edb
+	ld (0d90fh),a		;4edb   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld (0d910h),a		;4ede
 	exx			;4ee1
 	ld b,000h		;4ee2
@@ -2304,7 +2304,7 @@ se_acaba:
 	call 06077h		;4fb2   ; ...p01:6077 rehace el VDP
 	call 00044h		;4fb5   ; BIOS ENASCR - Displays the screen
 	ld a,000h		;4fb8   ; sin efecto
-	ld (0d17ah),a		;4fba   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;4fba   ; musica pedida, para p01:640F = a
 	xor a			;4fbd   ; vuelta a la fase 0...
 	ld (0d5e5h),a		;4fbe   ; la fase = a
 	jp tarea_principal		;4fc1   ; ...y a la presentacion desde el principio
@@ -2325,21 +2325,21 @@ continua:
 ; ----------------------------------------------------------------------
 pantalla_titulo:
 	ld a,000h		;4fe0   ; sin musica ni efecto
-	ld (0d178h),a		;4fe2   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;4fe2   ; efecto pedido, para p01:63E1 = a
 	ld a,000h		;4fe5
-	ld (0d17ah),a		;4fe7   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;4fe7   ; musica pedida, para p01:640F = a
 	xor a			;4fea   ; D17D, D905, D919, D926, D91E-D921 y D90D-D910 a 0
 	ld (0d17dh),a		;4feb   ; bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-	ld (0d905h),a		;4fee
-	ld (0d919h),a		;4ff1
+	ld (0d905h),a		;4fee   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+	ld (0d919h),a		;4ff1   ; el arma que lleva = a
 	ld (0d926h),a		;4ff4
-	ld (0d91eh),a		;4ff7
-	ld (0d91fh),a		;4ffa
-	ld (0d920h),a		;4ffd
-	ld (0d921h),a		;5000
+	ld (0d91eh),a		;4ff7   ; la puntuacion, tres bytes BCD = a
+	ld (0d91fh),a		;4ffa   ; puntuacion, cifras 3-4 = a
+	ld (0d920h),a		;4ffd   ; puntuacion, cifras 5-6 = a
+	ld (0d921h),a		;5000   ; bit 7: la puntuacion ha cambiado = a
 	ld (0d90dh),a		;5003
 	ld (0d90eh),a		;5006
-	ld (0d90fh),a		;5009
+	ld (0d90fh),a		;5009   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld (0d910h),a		;500c
 	call limpia_fichas_sprite		;500f   ; sprites a cero y ocultos
 	ld ix,0d413h		;5012   ; ix -> las 32 fichas de sprite
@@ -2609,8 +2609,8 @@ tarea_partida:
 	ld (0db53h),a		;5280
 	call borra_vram		;5283   ; VRAM a 0
 	ld a,0a0h		;5286   ; D91C y D91D = 0xA0
-	ld (0d91dh),a		;5288
-	ld (0d91ch),a		;528b
+	ld (0d91dh),a		;5288   ; el largo total de la barra = a
+	ld (0d91ch),a		;528b   ; la vida de Rastan = a
 	ld a,001h		;528e   ; D902 = 1, D903 = 0xFE
 	ld (0d902h),a		;5290
 	ld a,0feh		;5293
@@ -2618,14 +2618,14 @@ tarea_partida:
 	xor a			;5298   ; D90D-D910, D924-D925 y D91E-D921 a 0
 	ld (0d90dh),a		;5299
 	ld (0d90eh),a		;529c
-	ld (0d90fh),a		;529f
+	ld (0d90fh),a		;529f   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld (0d910h),a		;52a2
-	ld (0d925h),a		;52a5
+	ld (0d925h),a		;52a5   ; la vida que muestra la barra = a
 	ld (0d924h),a		;52a8   ; bit 7: el jugador usa la ficha 10 = a
-	ld (0d91eh),a		;52ab
-	ld (0d91fh),a		;52ae
-	ld (0d920h),a		;52b1
-	ld (0d921h),a		;52b4
+	ld (0d91eh),a		;52ab   ; la puntuacion, tres bytes BCD = a
+	ld (0d91fh),a		;52ae   ; puntuacion, cifras 3-4 = a
+	ld (0d920h),a		;52b1   ; puntuacion, cifras 5-6 = a
+	ld (0d921h),a		;52b4   ; bit 7: la puntuacion ha cambiado = a
 	ld a,001h		;52b7   ; DA1F = 1
 	ld (0da1fh),a		;52b9
 	ld hl,0da20h		;52bc   ; DA1D = DA20
@@ -2806,7 +2806,7 @@ nueva_pantalla:
 	ld (hl),0c0h		;5424
 	ld hl,0d90eh		;5426
 	ld (hl),000h		;5429
-	ld hl,0d90fh		;542b
+	ld hl,0d90fh		;542b   ; hl -> bit 7 muerto, bit 4 un rato sin mandos
 	ld (hl),000h		;542e
 	ld hl,0d910h		;5430   ; D910: se queda el bit 7 y se pone el 4
 	ld a,(hl)			;5433
@@ -2820,10 +2820,10 @@ nueva_pantalla:
 	ld hl,0d903h		;5443
 	ld (hl),001h		;5446
 	ld a,0ffh		;5448   ; D8F7 y D8F8 = 0xFF
-	ld (0d8f7h),a		;544a
-	ld (0d8f8h),a		;544d
+	ld (0d8f7h),a		;544a   ; la pose del cuadro anterior = a
+	ld (0d8f8h),a		;544d   ; D8F5 del cuadro anterior = a
 	ld a,027h		;5450   ; D913 = 0x27
-	ld (0d913h),a		;5452   ; 0x27 al entrar en una pantalla = a
+	ld (0d913h),a		;5452   ; cuenta del estado del jugador = a
 	call limpia_fichas_sprite		;5455   ; sprites a cero y ocultos
 	ld ix,0d413h		;5458   ; ix -> las 32 fichas de sprite
 	ld b,020h		;545c
@@ -2930,7 +2930,7 @@ pinta_delante:
 	ldir		;5517
 	call actores_de_pantalla		;5519   ; los actores de la pantalla (p00:58F9)
 	call limpia_fichas_sprite		;551c   ; sprites a cero
-	ld ix,0d476h		;551f   ; y las fichas 10-31 a atributos
+	ld ix,0d476h		;551f   ; y las fichas 9-30 a atributos
 	ld b,016h		;5523
 	call fichas_a_atributos		;5525
 	ld a,(0d17dh)		;5528   ; D17D bit 7: la demo
@@ -2973,7 +2973,7 @@ pantalla_lista:
 	ld (hl),0c0h		;556e
 	ld hl,0d90eh		;5570
 	ld (hl),000h		;5573
-	ld hl,0d90fh		;5575
+	ld hl,0d90fh		;5575   ; hl -> bit 7 muerto, bit 4 un rato sin mandos
 	ld (hl),000h		;5578
 	jp bucle_partida		;557a   ; y al bucle de la partida
 
@@ -3126,7 +3126,7 @@ ficha_de_fase:
 	ld a,(0d5e5h)		;565d   ; fases 0x12 en adelante...
 	cp 012h		;5660
 	ld a,003h		;5662   ; (musica 3 por defecto)
-	ld (0d17ah),a		;5664   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;5664   ; musica pedida, para p01:640F = a
 	ld a,007h		;5667   ; ...ronda 7 y musica 7
 	jp nc,L_5680		;5669
 	ld a,(0d5e5h)		;566c   ; las demas: B = fase / 3 + 1 (la ronda)...
@@ -3139,7 +3139,7 @@ L_5671:
 	inc a			;5679
 	inc a			;567a
 	ld a,a			;567b   ; (un `ld a,a` que no hace nada)
-	ld (0d17ah),a		;567c   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;567c   ; musica pedida, para p01:640F = a
 	ld a,b			;567f   ; A = ronda
 L_5680:
 	ld de,00830h		;5680   ; el numero de ronda en (0x30, 0x08)
@@ -3232,14 +3232,14 @@ tarea_jugador:
 	ld ix,0d413h		;570e   ; sus 10 fichas de sprite a atributos
 	ld b,00ah		;5712
 	call fichas_a_atributos		;5714
-	ld a,(0d924h)		;5717   ; D924 bit 7: un sprite mas para el jugador (la ficha 11)
+	ld a,(0d924h)		;5717   ; D924 bit 7: un sprite mas para el jugador (la ficha 10)
 	bit 7,a		;571a
 	jp z,sin_arma		;571c
 	ld a,(0d922h)		;571f   ; su y y su x como desplazamiento
 	ld (0d5deh),a		;5722   ; lo que se suma a la y de los sprites = a
 	ld a,(0d923h)		;5725   ; a = la x de la ficha 10 del jugador
 	ld (0d5ddh),a		;5728   ; lo que se suma a la x de los sprites = a
-	ld hl,0d481h		;572b   ; la ficha de sprite 11 (D481)...
+	ld hl,0d481h		;572b   ; la ficha de sprite 10 (D481)...
 	ld iy,0d902h		;572e   ; ...con los datos del jugador (D902)...
 	ld ix,0963ah		;5732   ; ...y la definicion de p26:963A
 	ex af,af'			;5736   ; A' = 0
@@ -3250,12 +3250,12 @@ tarea_jugador:
 	ld (077f8h),a		;573e   ; registro del mapper: banco A en 0x8000
 	call anima		;5741   ; rellena la ficha
 ficha_del_arma:
-	ld ix,0d481h		;5744   ; la ficha 11 a atributos
+	ld ix,0d481h		;5744   ; la ficha 10 a atributos
 	ld b,001h		;5748
 	call fichas_a_atributos		;574a
 	jr tarea_jugador		;574d
 sin_arma:
-	xor a			;574f   ; ficha 11 sin patron...
+	xor a			;574f   ; ficha 10 sin patron...
 	ld (0d481h),a		;5750   ; la ficha de sprite 10 = a
 	ld (0d482h),a		;5753   ; ficha 10, byte alto del patron = a
 	ld (0d488h),a		;5756   ; ficha 10, byte +7 = a

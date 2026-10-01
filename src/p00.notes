@@ -1,5 +1,8 @@
 
 
+
+
+
 # --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
 B 0x4011 INIT: limpia la RAM, desactiva los ganchos de la BIOS, pone los bancos 0/1/2,
 B 0x4011 inicializa video y sonido (p01), arranca la tarea 0 y se queda esperando: a
@@ -768,7 +771,7 @@ C 0x5506 lo que va detras del mapa: columnas que se alargan (p00:55C5)
 C 0x550C D8D4-D8F3 a 0xFF
 C 0x5519 los actores de la pantalla (p00:58F9)
 C 0x551C sprites a cero
-C 0x551F y las fichas 10-31 a atributos
+C 0x551F y las fichas 9-30 a atributos
 C 0x5528 D17D bit 7: la demo
 C 0x552F en (0x60, 0x70), transparente
 D 0x553A 0x5544 texto_game_over_3  "GAME OVER" (encima de la demo)
@@ -848,18 +851,18 @@ C 0x56F5 D5DF = 0: pausa
 C 0x56FB bancos 6 y 7
 C 0x570B el jugador
 C 0x570E sus 10 fichas de sprite a atributos
-C 0x5717 D924 bit 7: un sprite mas para el jugador (la ficha 11)
+C 0x5717 D924 bit 7: un sprite mas para el jugador (la ficha 10)
 C 0x571F su y y su x como desplazamiento
-C 0x572B la ficha de sprite 11 (D481)...
+C 0x572B la ficha de sprite 10 (D481)...
 C 0x572E ...con los datos del jugador (D902)...
 C 0x5732 ...y la definicion de p26:963A
 C 0x5736 A' = 0
 C 0x5739 banco 26 en 0x8000
 C 0x5741 rellena la ficha
 L 0x5744 ficha_del_arma
-C 0x5744 la ficha 11 a atributos
+C 0x5744 la ficha 10 a atributos
 L 0x574F sin_arma
-C 0x574F ficha 11 sin patron...
+C 0x574F ficha 10 sin patron...
 C 0x5759 ...y oculta
 B 0x5760 TAREA 3: los enemigos. Cada cuadro, si no hay pausa, p03:6000 (bancos 3
 B 0x5760 y 4). En la ultima fase (0x17) espera y...
@@ -1015,8 +1018,8 @@ C 0x40ad a = copia del registro del mapper de 0x8000
 C 0x40b0 registro del mapper: banco A en 0x8000
 C 0x411d 1 mientras la interrupcion hace el trabajo del cuadro = a
 C 0x412a 1 mientras la interrupcion hace el trabajo del cuadro = a
-C 0x414d peticion de sonido para p01:640F = a
-C 0x415c peticion de sonido para p01:63E1 = a
+C 0x414d musica pedida, para p01:640F = a
+C 0x415c efecto pedido, para p01:63E1 = a
 C 0x4194 de = bytes ya copiados a VRAM, de paso
 C 0x41ad bytes ya copiados a VRAM, de paso = hl
 C 0x41b5 de -> los colores de los 32 sprites
@@ -1106,27 +1109,41 @@ C 0x4bbc a = seis sitios de un sprite, un bit cada uno
 C 0x4c3c a = tres grupos de sprites, dos bits cada uno
 C 0x4e15 el desplazamiento vertical de la pantalla = a
 C 0x4e1d 0xFF = el juego corre, 0 = pausa = a
-C 0x4e22 peticion de sonido para p01:63E1 = a
-C 0x4e27 peticion de sonido para p01:640F = a
+C 0x4e22 efecto pedido, para p01:63E1 = a
+C 0x4e27 musica pedida, para p01:640F = a
 C 0x4e2c 3 al empezar = a
 C 0x4e33 bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
-C 0x4ea5 peticion de sonido para p01:640F = a
-C 0x4eaa peticion de sonido para p01:640F = a
-C 0x4eb9 peticion de sonido para p01:640F = a
+C 0x4ea5 musica pedida, para p01:640F = a
+C 0x4eaa musica pedida, para p01:640F = a
+C 0x4eb9 musica pedida, para p01:640F = a
 C 0x4ebd bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x4ec0 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x4ec3 el arma que lleva = a
+C 0x4ec9 la puntuacion, tres bytes BCD = a
+C 0x4ecc puntuacion, cifras 3-4 = a
+C 0x4ecf puntuacion, cifras 5-6 = a
+C 0x4ed2 bit 7: la puntuacion ha cambiado = a
+C 0x4edb bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x4fa1 copia del registro del mapper de 0x6000 = a
 C 0x4fa4 registro del mapper: banco A en 0x6000
 C 0x4fa9 copia del registro del mapper de 0x8000 = a
 C 0x4fac registro del mapper: banco A en 0x8000
-C 0x4fba peticion de sonido para p01:640F = a
+C 0x4fba musica pedida, para p01:640F = a
 C 0x4fbe la fase = a
 C 0x4fc6 copia del registro del mapper de 0x6000 = a
 C 0x4fc9 registro del mapper: banco A en 0x6000
 C 0x4fce copia del registro del mapper de 0x8000 = a
 C 0x4fd1 registro del mapper: banco A en 0x8000
-C 0x4fe2 peticion de sonido para p01:63E1 = a
-C 0x4fe7 peticion de sonido para p01:640F = a
+C 0x4fe2 efecto pedido, para p01:63E1 = a
+C 0x4fe7 musica pedida, para p01:640F = a
 C 0x4feb bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo = a
+C 0x4fee lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x4ff1 el arma que lleva = a
+C 0x4ff7 la puntuacion, tres bytes BCD = a
+C 0x4ffa puntuacion, cifras 3-4 = a
+C 0x4ffd puntuacion, cifras 5-6 = a
+C 0x5000 bit 7: la puntuacion ha cambiado = a
+C 0x5009 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x5012 ix -> las 32 fichas de sprite
 C 0x501c 5 = la demo ha terminado = a
 C 0x5031 y donde se pinta = a
@@ -1143,7 +1160,15 @@ C 0x5163 x donde se pinta = a
 C 0x5184 el desplazamiento vertical de la pantalla = a
 C 0x525b y donde se pinta = a
 C 0x5260 x donde se pinta = a
+C 0x5288 el largo total de la barra = a
+C 0x528b la vida de Rastan = a
+C 0x529f bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x52a5 la vida que muestra la barra = a
 C 0x52a8 bit 7: el jugador usa la ficha 10 = a
+C 0x52ab la puntuacion, tres bytes BCD = a
+C 0x52ae puntuacion, cifras 3-4 = a
+C 0x52b1 puntuacion, cifras 5-6 = a
+C 0x52b4 bit 7: la puntuacion ha cambiado = a
 C 0x52fb 0xFF = el juego corre, 0 = pausa = a
 C 0x532d hl -> la fase
 C 0x536a x donde aparece el jugador en la pantalla nueva = a
@@ -1161,7 +1186,10 @@ C 0x53d6 a = la fila de la pantalla en que se esta
 C 0x53de la fila de la pantalla en que se esta = a
 C 0x53fb y donde aparece el jugador = a
 C 0x5406 la fila de la pantalla en que se esta = a
-C 0x5452 0x27 al entrar en una pantalla = a
+C 0x542b hl -> bit 7 muerto, bit 4 un rato sin mandos
+C 0x544a la pose del cuadro anterior = a
+C 0x544d D8F5 del cuadro anterior = a
+C 0x5452 cuenta del estado del jugador = a
 C 0x5458 ix -> las 32 fichas de sprite
 C 0x5464 hl = el mapa de fondo de la fila 0 de pantallas
 C 0x546a hl = el mapa de fondo de las demas filas
@@ -1176,6 +1204,7 @@ C 0x54f8 x donde se pinta = a
 C 0x5550 la x de Rastan = a
 C 0x5553 a = y donde aparece el jugador
 C 0x5556 la y de Rastan = a
+C 0x5575 hl -> bit 7 muerto, bit 4 un rato sin mandos
 C 0x5580 copia del registro del mapper de 0x8000 = a
 C 0x5583 registro del mapper: banco A en 0x8000
 C 0x5587 copia del registro del mapper de 0xA000 = a
@@ -1189,8 +1218,8 @@ C 0x5643 y donde se pinta = a
 C 0x5648 x donde se pinta = a
 C 0x5657 copia del registro del mapper de 0x8000 = a
 C 0x565a registro del mapper: banco A en 0x8000
-C 0x5664 peticion de sonido para p01:640F = a
-C 0x567c peticion de sonido para p01:640F = a
+C 0x5664 musica pedida, para p01:640F = a
+C 0x567c musica pedida, para p01:640F = a
 C 0x569b la tabla de pantallas de la fase = de
 C 0x56a3 la tabla de bloques de 16x16 de la fase = de
 C 0x56a9 la ultima columna de pantallas = a

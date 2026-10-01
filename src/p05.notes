@@ -1,23 +1,53 @@
 
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x605b p00 pinta_actor_b5
 C 0x6072 ix -> los 8 enemigos de la pantalla
+C 0x6094 p00 alta_actor_b5
 C 0x6097 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x60a5 p00 pinta_actor_b5
+C 0x60bc p00 baja_actor_b5
 C 0x60d6 a = la x de Rastan
 C 0x60e4 a = la x de Rastan
 C 0x6103 x donde se pinta = a
 C 0x610b y donde se pinta = a
+C 0x6117 p00 pinta_bloque_tiles
 C 0x6131 x donde se pinta = a
 C 0x6139 y donde se pinta = a
+C 0x6145 p00 pinta_bloque_tiles
+C 0x6161 p00 alta_actor_b5
 C 0x6164 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x6194 p00 pinta_actor_b5
 C 0x61b2 x donde se pinta = a
 C 0x61ba y donde se pinta = a
+C 0x61c6 p00 pinta_bloque_tiles
 C 0x61e0 x donde se pinta = a
 C 0x61e8 y donde se pinta = a
+C 0x61f4 p00 pinta_bloque_tiles
+C 0x620e p00 alta_actor_b5
 C 0x6211 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x6247 p00 pinta_actor_b5
+C 0x6266 p00 baja_actor_b5
+C 0x62d0 p00 alta_actor_b5
 C 0x62d3 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x62e1 p00 pinta_actor_b5
+C 0x6311 p00 pinta_actor_b5
+C 0x637b p00 alta_actor_b5
 C 0x637e a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x6399 p00 pinta_actor_b5
+C 0x63b2 p00 baja_actor_b5
+C 0x63df p00 alta_actor_b5
 C 0x63e2 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x6409 p00 pinta_actor_b5
+C 0x6430 p00 alta_actor_b5
 C 0x6433 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x645a p00 pinta_actor_b5
+C 0x6494 p00 alta_actor_b5
 C 0x6497 a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
+C 0x64b1 p00 pinta_actor_b5
+C 0x64c2 p00 pinta_actor_b5
+C 0x64cb p00 pinta_actor_b5
+C 0x64e1 p00 baja_actor_b5
 C 0x6512 de -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x653d p00 pinta_actor_b5
+C 0x6589 p00 copia_vram_vram
 # --- fin de anota ---

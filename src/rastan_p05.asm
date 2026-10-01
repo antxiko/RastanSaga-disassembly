@@ -53,7 +53,7 @@ L_6049:
 	ld (ix+006h),a		;6052
 	ld a,(ix+011h)		;6055
 	ld (ix+007h),a		;6058
-	call 057bbh		;605b
+	call 057bbh		;605b   ; p00 pinta_actor_b5
 L_605E:
 	pop bc			;605e
 	ld de,00026h		;605f
@@ -81,7 +81,7 @@ L_6079:
 	and 01fh		;608d
 	cp 00ah		;608f
 	jp nz,L_605E		;6091
-	call 057afh		;6094
+	call 057afh		;6094   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6097   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 0,a		;609a
 	jr nz,L_605E		;609c
@@ -89,7 +89,7 @@ L_609E:
 	ld a,r		;609e
 	bit 3,a		;60a0
 	jp z,L_605E		;60a2
-	call 057bbh		;60a5
+	call 057bbh		;60a5   ; p00 pinta_actor_b5
 	bit 7,(ix+002h)		;60a8
 	jr z,L_605E		;60ac
 	ld h,(ix+000h)		;60ae
@@ -98,7 +98,7 @@ L_609E:
 	ld e,(ix+011h)		;60b7
 	push hl			;60ba
 	push de			;60bb
-	call 057c7h		;60bc
+	call 057c7h		;60bc   ; p00 baja_actor_b5
 	pop de			;60bf
 	pop hl			;60c0
 	ld (ix+000h),h		;60c1
@@ -135,7 +135,7 @@ L_60F2:
 	ld hl,0628eh		;610e
 	ld bc,01020h		;6111
 	ld de,00000h		;6114
-	call 046c9h		;6117
+	call 046c9h		;6117   ; p00 pinta_bloque_tiles
 	pop ix		;611a
 	jp L_616C		;611c
 L_611F:
@@ -153,7 +153,7 @@ L_611F:
 	ld hl,0627eh		;613c
 	ld bc,01020h		;613f
 	ld de,00000h		;6142
-	call 046c9h		;6145
+	call 046c9h		;6145   ; p00 pinta_bloque_tiles
 	pop ix		;6148
 	ld a,(ix+005h)		;614a
 	and a			;614d
@@ -164,7 +164,7 @@ L_611F:
 	ld a,(ix+011h)		;6159
 	add a,008h		;615c
 	ld (ix+007h),a		;615e
-	call 057afh		;6161
+	call 057afh		;6161   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6164   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6167
 	jp nz,L_605E		;6169
@@ -185,7 +185,7 @@ L_616C:
 	add a,008h		;618e
 	ld (ix+011h),a		;6190
 	push bc			;6193
-	call 057bbh		;6194
+	call 057bbh		;6194   ; p00 pinta_actor_b5
 	pop bc			;6197
 	ld (ix+010h),b		;6198
 	ld (ix+011h),c		;619b
@@ -205,7 +205,7 @@ L_61A1:
 	ld hl,062aeh		;61bd
 	ld bc,01020h		;61c0
 	ld de,00000h		;61c3
-	call 046c9h		;61c6
+	call 046c9h		;61c6   ; p00 pinta_bloque_tiles
 	pop ix		;61c9
 	jp L_6219		;61cb
 L_61CE:
@@ -223,7 +223,7 @@ L_61CE:
 	ld hl,0629eh		;61eb
 	ld bc,01020h		;61ee
 	ld de,00000h		;61f1
-	call 046c9h		;61f4
+	call 046c9h		;61f4   ; p00 pinta_bloque_tiles
 	pop ix		;61f7
 	ld a,(ix+005h)		;61f9
 	and a			;61fc
@@ -233,7 +233,7 @@ L_61CE:
 	ld a,(ix+011h)		;6206
 	add a,008h		;6209
 	ld (ix+007h),a		;620b
-	call 057afh		;620e
+	call 057afh		;620e   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6211   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6214
 	jp nz,L_605E		;6216
@@ -256,7 +256,7 @@ L_6219:
 	ld a,(ix+006h)		;6240
 	ld (ix+010h),a		;6243
 	push bc			;6246
-	call 057bbh		;6247
+	call 057bbh		;6247   ; p00 pinta_actor_b5
 	pop bc			;624a
 	ld (ix+010h),b		;624b
 	ld (ix+011h),c		;624e
@@ -270,7 +270,7 @@ L_6254:
 	push hl			;6263
 	push de			;6264
 	push bc			;6265
-	call 057c7h		;6266
+	call 057c7h		;6266   ; p00 baja_actor_b5
 	pop bc			;6269
 	pop de			;626a
 	pop hl			;626b
@@ -302,7 +302,7 @@ L_62BE:
 	ld (ix+006h),a		;62c7
 	ld a,(ix+011h)		;62ca
 	ld (ix+007h),a		;62cd
-	call 057afh		;62d0
+	call 057afh		;62d0   ; p00 alta_actor_b5
 	ld a,(0da19h)		;62d3   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 0,a		;62d6
 	jp nz,L_605E		;62d8
@@ -310,7 +310,7 @@ L_62DB:
 	ld a,(ix+001h)		;62db
 	and a			;62de
 	jr nz,L_62F8		;62df
-	call 057bbh		;62e1
+	call 057bbh		;62e1   ; p00 pinta_actor_b5
 	bit 7,(ix+002h)		;62e4
 	jp z,L_605E		;62e8
 	ld a,001h		;62eb
@@ -328,7 +328,7 @@ L_62F8:
 	inc (ix+007h)		;630a
 	inc (ix+007h)		;630d
 	push bc			;6310
-	call 057bbh		;6311
+	call 057bbh		;6311   ; p00 pinta_actor_b5
 	pop bc			;6314
 	ld a,(ix+007h)		;6315
 	cp 0d3h		;6318
@@ -372,7 +372,7 @@ L_6360:
 	ld (ix+006h),a		;6372
 	ld a,(ix+011h)		;6375
 	ld (ix+007h),a		;6378
-	call 057afh		;637b
+	call 057afh		;637b   ; p00 alta_actor_b5
 	ld a,(0da19h)		;637e   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6381
 	jp nz,L_605E		;6383
@@ -385,7 +385,7 @@ L_6386:
 	add a,(ix+007h)		;6390
 	ld (ix+007h),a		;6393
 	inc (ix+013h)		;6396
-	call 057bbh		;6399
+	call 057bbh		;6399   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;639c
 	cp 013h		;639f
 	jp c,L_605E		;63a1
@@ -396,7 +396,7 @@ L_63A4:
 	ld e,(ix+011h)		;63ad
 	push hl			;63b0
 	push de			;63b1
-	call 057c7h		;63b2
+	call 057c7h		;63b2   ; p00 baja_actor_b5
 	pop de			;63b5
 	pop hl			;63b6
 	ld (ix+000h),h		;63b7
@@ -415,7 +415,7 @@ L_63C6:
 	ld (ix+006h),a		;63d6
 	ld a,(ix+011h)		;63d9
 	ld (ix+007h),a		;63dc
-	call 057afh		;63df
+	call 057afh		;63df   ; p00 alta_actor_b5
 	ld a,(0da19h)		;63e2   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;63e5
 	jp nz,L_605E		;63e7
@@ -432,7 +432,7 @@ L_63EA:
 	inc (ix+006h)		;6400
 	inc (ix+006h)		;6403
 	inc (ix+013h)		;6406
-	call 057bbh		;6409
+	call 057bbh		;6409   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;640c
 	cp 013h		;640f
 	jp c,L_605E		;6411
@@ -448,7 +448,7 @@ L_6417:
 	ld (ix+016h),a		;6427
 	ld a,(ix+011h)		;642a
 	ld (ix+010h),a		;642d
-	call 057afh		;6430
+	call 057afh		;6430   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6433   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 1,a		;6436
 	jp nz,L_605E		;6438
@@ -465,7 +465,7 @@ L_643B:
 	dec (ix+006h)		;6451
 	dec (ix+006h)		;6454
 	inc (ix+013h)		;6457
-	call 057bbh		;645a
+	call 057bbh		;645a   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;645d
 	cp 013h		;6460
 	jp c,L_605E		;6462
@@ -493,7 +493,7 @@ L_647B:
 	ld (ix+006h),a		;648b
 	ld a,(ix+011h)		;648e
 	ld (ix+007h),a		;6491
-	call 057afh		;6494
+	call 057afh		;6494   ; p00 alta_actor_b5
 	ld a,(0da19h)		;6497   ; a = bit 0: no hay grupo libre, bit 1: no hay sitio libre
 	bit 0,a		;649a
 	jp nz,L_605E		;649c
@@ -504,17 +504,17 @@ L_649F:
 	inc (ix+007h)		;64a8
 	inc (ix+007h)		;64ab
 	inc (ix+007h)		;64ae
-	call 057bbh		;64b1
+	call 057bbh		;64b1   ; p00 pinta_actor_b5
 	call L_64F2		;64b4
 	jp nz,L_605E		;64b7
 	set 0,(ix+001h)		;64ba
 	xor a			;64be
 	ld (ix+013h),a		;64bf
-	call 057bbh		;64c2
+	call 057bbh		;64c2   ; p00 pinta_actor_b5
 	jp L_605E		;64c5
 L_64C8:
 	inc (ix+013h)		;64c8
-	call 057bbh		;64cb
+	call 057bbh		;64cb   ; p00 pinta_actor_b5
 	ld a,(ix+013h)		;64ce
 	cp 00ah		;64d1
 	jp nz,L_605E		;64d3
@@ -523,7 +523,7 @@ L_64C8:
 	ld e,(ix+011h)		;64dc
 	push hl			;64df
 	push de			;64e0
-	call 057c7h		;64e1
+	call 057c7h		;64e1   ; p00 baja_actor_b5
 	pop de			;64e4
 	pop hl			;64e5
 	ld (ix+000h),h		;64e6
@@ -572,7 +572,7 @@ L_6521:
 	ld (ix+006h),a		;6534
 	ld a,(ix+011h)		;6537
 	ld (ix+007h),a		;653a
-	call 057bbh		;653d
+	call 057bbh		;653d   ; p00 pinta_actor_b5
 	jp L_605E		;6540
 L_6543:
 	inc (ix+012h)		;6543
@@ -623,7 +623,7 @@ L_6575:
 	ex af,af'			;6585
 	ld a,000h		;6586
 	ex af,af'			;6588
-	call 043afh		;6589
+	call 043afh		;6589   ; p00 copia_vram_vram
 	jp L_605E		;658c
 
 ; ----------------------------------------------------------------------

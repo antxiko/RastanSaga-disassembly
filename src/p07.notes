@@ -2,6 +2,12 @@
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
 C 0x8003 a = y del bloque especial
 C 0x800c a = cual es el bloque especial
+C 0x8030 el arma que lleva = a
+C 0x8034 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x803c lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x8040 hl -> sucesos del jugador en este cuadro: cada bit, un efecto
+C 0x8046 a = puntuacion, cifras 5-6
+C 0x8064 segundos que le quedan al arma = a
 C 0x8073 cual es el bloque especial = a
 C 0x80fb bc -> lo de delante desempaquetado: 11 x 16 bloques
 C 0x8104 a = la x de Rastan
@@ -14,23 +20,79 @@ C 0x8128 ix -> enemigo 4
 C 0x812f ix -> enemigo 5
 C 0x8136 ix -> enemigo 6
 C 0x813d ix -> enemigo 7
+C 0x814a a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x815e a = la pose de Rastan
 C 0x8172 ix -> los 6 actores de la pantalla
+C 0x8330 a = segundos que le quedan al arma
+C 0x8337 segundos que le quedan al arma = a
+C 0x833a a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x833f lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x8343 el arma que lleva = a
+C 0x83e2 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x83e7 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x83f0 hl -> sucesos del jugador en este cuadro: cada bit, un efecto
 C 0x844c ix -> los 6 actores de la pantalla
+C 0x8576 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x857b lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x87aa a = la pose de Rastan
+C 0x8892 a = bit 7 muerto, bit 4 un rato sin mandos
 C 0x88d7 la y de Rastan = a
+C 0x88df hl -> bit 7 muerto, bit 4 un rato sin mandos
+C 0x88e9 hl -> bit 7 muerto, bit 4 un rato sin mandos
 C 0x892b la y de Rastan = a
+C 0x8930 hl -> bit 7 muerto, bit 4 un rato sin mandos
+C 0x893e a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x899b a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x89a0 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x89a4 la x de Rastan = a
+C 0x89ab a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x89b0 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x8a5f a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8a64 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8a68 la x de Rastan = a
+C 0x8a6f a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8a74 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x8af6 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8afb bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8aff la x de Rastan = a
+C 0x8b06 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8b0b bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x8b77 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8b7c bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8b80 la x de Rastan = a
+C 0x8b87 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x8b8c bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x8bc6 a = cual es el bloque especial
 C 0x8bd0 a = x del bloque especial de la pantalla
 C 0x8bd9 a = y del bloque especial
 C 0x8be6 a = cual es el bloque especial
+C 0x8bf0 hl -> sucesos del jugador en este cuadro: cada bit, un efecto
 C 0x8c0e cual es el bloque especial = a
+C 0x8c57 a = el largo total de la barra
+C 0x8c5a la vida de Rastan = a
+C 0x8c5e a = la vida de Rastan
+C 0x8c63 a = el largo total de la barra
+C 0x8c6b la vida de Rastan = a
+C 0x8c8b a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x8c91 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x8c94 a = puntuacion, cifras 5-6
 C 0x8cbb ix -> los 6 actores de la pantalla
+C 0x8cc8 a = el arma que lleva
+C 0x8ccd a = segundos que le quedan al arma
+C 0x8cd5 segundos que le quedan al arma = a
+C 0x8cd8 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x8cdd lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x8cf3 a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x8cf8 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x8cfc a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x8d01 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x8d06 segundos que le quedan al bit 5 de D905 = a
+C 0x8d0b a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x8d14 hl -> la puntuacion, tres bytes BCD
 C 0x918c hl = actor 1, byte +10
 C 0x9192 a = la x de Rastan
 C 0x9196 a = la y de Rastan
+C 0x919a a = la pose de Rastan
 C 0x91a7 a = actor 0, byte +7
 C 0x91ab a = actor 0, byte +6
 C 0x91b0 a = los 6 actores de la pantalla

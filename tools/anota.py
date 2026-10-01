@@ -44,6 +44,21 @@ RE_INS = re.compile(r"^\t([a-z].*?)\s*;([0-9a-f]{4})(?:\s+;\s*(.*))?$")
 RE_DIR = re.compile(r"\b0([0-9a-f]{4})h\b")
 
 
+def nombres_p00():
+    """{direccion: nombre} de las etiquetas L de las notas del banco 0."""
+    n = {}
+    ruta = os.path.join(RAIZ, "work", "notas_p00.txt")
+    if os.path.exists(ruta):
+        for ln in open(ruta, encoding="utf-8"):
+            if ln.startswith("L "):
+                p = ln.split()
+                n[int(p[1], 0)] = p[2]
+    return n
+
+
+P00 = nombres_p00()
+
+
 def que_es(a):
     """Texto corto de la direccion de RAM a, o None."""
     if a in RAM:
@@ -61,6 +76,9 @@ def comenta(ins):
     if not m:
         return None
     a = int(m.group(1), 16)
+    op0 = ins.split(" ")[0]
+    if op0 in ("call", "jp") and a in P00:
+        return "p00 " + P00[a]
     if a in MAPPER and ins.startswith("ld (") and ins.endswith(",a"):
         return "registro del mapper: banco A en " + MAPPER[a]
     t = que_es(a)

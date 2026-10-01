@@ -1,61 +1,1238 @@
 
+
+
+# --- A MANO, POR TANDAS (seccion que reescribe tools/mete_notas.py desde work/notas_pNN.txt) ---
+B 0x6000 RASTAN, el jugador: lo que la tarea 2 (p00:56F2) hace cada cuadro. Si esta
+B 0x6000 muriendo (D90F bit 7) solo cuenta y al final avisa; si no, p06:68A7, la
+B 0x6000 animacion, la barra de vida y la puntuacion.
+L 0x6000 jugador
+C 0x6000 D90F bit 7: muerto
+C 0x6008 p06:68A7
+C 0x600B la pose y el juego de poses de este cuadro...
+C 0x6011 ...a D8F4/D8F5, los que lee la animacion
+C 0x6023 D904 bit 6: si esta puesto...
+C 0x602B ...se borra el bit 5
+C 0x602D la animacion de Rastan
+C 0x6030 la barra de vida
+C 0x6033 la puntuacion, si ha cambiado
+C 0x6036 D188 = 0x80: la cuenta de la muerte, lista
+L 0x603D jugador_muerto
+C 0x6049 D188 bit 1: cada dos cuadros...
+C 0x6050 ...se anima...
+C 0x6055 ...y al otro se borran sus 11 fichas: parpadea
+L 0x605E cuenta_muerte
+C 0x605E D188 - 1...
+C 0x6064 ...y al llegar a 0...
+C 0x6065 ...aviso a la tarea 0 (D17D bit 6)
+B 0x606B La barra de vida, solo si ha cambiado: en (0x50, 0x14)-(.., 0x1A), una
+B 0x606B linea de color 7 de D91C/2 pixeles y el resto, hasta D91D/2, de color 6.
+L 0x606B barra_de_vida
+C 0x606B la vida pintada (D925)...
+C 0x606F ...contra la de ahora (D91C)
+C 0x6074 apuntada
+C 0x607A vida / 2...
+C 0x607C ...pixeles: HL = (0x50 + vida/2, 0x1A)
+C 0x6083 DE = (0x50, 0x14)
+C 0x6088 sin vida: no hay parte llena
+C 0x608C color 7 en los dos pixeles del byte
+C 0x608E rellena
+C 0x6091 lo que falta hasta la vida maxima (D91D)
+C 0x609D nada: la barra esta llena
+C 0x60A1 la parte vacia...
+C 0x60AA ...de color 6
+C 0x60AD rellena
+L 0x60B3 huerfana_puntuacion_0
+C 0x60B3 nadie la llama: escribe la puntuacion a 0 en (0x00, 0x18)...
+D 0x60BE 0x60C6 texto_cero_2  seis espacios y "0"
+C 0x60C6 ...y luego la de verdad
+L 0x60D4 puntuacion
+C 0x60D4 la puntuacion y su marca de cambio
+C 0x60D7 bit 7 de D921: ha cambiado?
+C 0x60DA se borra la marca
+C 0x60DE en (0x00, 0x18)
+C 0x60E5 seis cifras
+L 0x60E9 lee_puntuacion
+C 0x60E9 IX = D8F4: +2A/2B/2C = D91E/D91F/D920, tres bytes BCD
+C 0x60ED E = las dos cifras de abajo
+C 0x60F0 D = las dos de en medio
+C 0x60F3 C = las dos de arriba
+C 0x60F6 B = D921, la marca
+L 0x60FA escribe_puntuacion
+C 0x60FA H = 0: aun no ha salido ninguna cifra distinta de 0
+C 0x60FC cifra 1 (la de arriba)
+C 0x6106 cifra 2
+C 0x610A cifra 3
+C 0x6112 cifra 4
+C 0x6116 cifra 5
+C 0x611E cifra 6 (cae en la rutina)
+L 0x611F escribe_cifra
+C 0x611F la cifra de abajo de A
+C 0x6121 un 0...
+C 0x6123 ...sin ninguna cifra antes: sale un espacio
+C 0x6127 0x10 + cifra...
+C 0x6129 (ya ha salido una)
+C 0x612A ...+ 0x20: el codigo ASCII ('0' + cifra, o espacio)
+C 0x612E escribe la letra
+B 0x6134 Anima a Rastan con tres capas de sprites: la primera en la ficha 2 (tabla
+B 0x6134 p06:639F), la segunda en la ficha 6 (tabla p06:64B3) y la tercera en la
+B 0x6134 ficha 0 (una de las cuatro tablas de p06:6397, segun D8F5). Las definiciones estan en
+B 0x6134 el banco 26 (0x8000). Si la pose (D8F4) o el juego (D8F5) cambian, la
+B 0x6134 animacion empieza de cero.
+L 0x6134 anima_jugador
+C 0x6134 el juego de poses...
+C 0x6138 ...ha cambiado?
+C 0x613F la pose...
+C 0x6143 ...ha cambiado?
+C 0x6147 nada nuevo: se sigue
+C 0x614A pose nueva
+L 0x614D juego_nuevo
+C 0x614D apuntado
+C 0x6153 p06:6302
+L 0x6156 pose_nueva
+C 0x6156 apuntada
+C 0x615C las dos animaciones (D8FE y D900) desde el principio
+L 0x616C capa_1
+C 0x616C pose & 0x7F...
+C 0x6176 ...* 3 + p06:639F
+C 0x617C la definicion
+C 0x6180 el tercer byte, guardado para la capa 3
+C 0x6187 a la ficha 2
+C 0x618A estado de la animacion: D8FE
+C 0x618E banco 26 en 0x8000
+C 0x6196 un paso
+C 0x6199 A' bit 0: la animacion ha dado la vuelta...
+C 0x61A0 ...y se borra D904 bit 5
+L 0x61A5 capa_2
+C 0x61A5 pose * 3 + p06:64B3
+C 0x61B5 la definicion
+C 0x61B9 A' = el tercer byte
+C 0x61BF a la ficha 6
+C 0x61C2 estado: D900
+C 0x61C6 banco 26
+C 0x61CE un paso
+C 0x61D1 la tercera capa: D8F5 & 3...
+C 0x61D9 ...elige una de las cuatro tablas de p06:6397...
+C 0x61E1 ...y la pose, la definicion
+C 0x61F1 A' = el tercer byte de la capa 1
+C 0x61F4 a la ficha 0
+C 0x61F7 con el estado de la capa 1 (D8FE)
+C 0x61FB banco 26
+C 0x6203 sin avanzar: el mismo cuadro que la capa 1
+B 0x6207 Repinta los cuatro bloques de fondo (2x2) que tapa el actor IX en su
+B 0x6207 posicion de salida (+10 x, +11 y), sacandolos de D5F4.
+L 0x6207 repinta_fondo_actor
+C 0x6209 x
+C 0x620D y - 0x20 (la parte de arriba es el marcador)
+C 0x6213 x / 16 + (y - 0x20): la casilla
+C 0x6220 * 2: palabra
+C 0x6222 el bloque de arriba a la izquierda
+C 0x622A en (x, y)
+C 0x6232 opaco
+C 0x6238 pintado
+C 0x623F arriba a la derecha (la palabra siguiente)
+C 0x6247 en (x + 16, y)
+C 0x6257 pintado
+C 0x625E abajo a la izquierda (una fila = 0x20 bytes mas)
+C 0x6266 en (x, y + 16)
+C 0x6276 pintado
+C 0x627C abajo a la derecha
+C 0x6284 en (x + 16, y + 16)
+C 0x6296 pintado
+L 0x629E repinta_fondo_especial
+C 0x629E lo mismo en la posicion del bloque especial
+C 0x62A8 x / 16...
+C 0x62B1 ...+ (y - 0x20): la casilla
+C 0x62B6 el bloque de fondo de esa casilla
+C 0x62C6 opaco
+C 0x62CA pintado
+C 0x62CD y lo de delante en la misma casilla
+C 0x62E5 en D774
+C 0x62EE 0xFF: no hay nada delante
+C 0x62FB transparente
+C 0x62FE pintado
+B 0x6302 Los cinco iconos del marcador, en (0xB0..0xF0, 0x10), segun lo que lleva
+B 0x6302 Rastan (D8F5). Son bloques de la tabla de p00:5BC3; el 0x13 es el hueco.
+L 0x6302 iconos_marcador
+C 0x6304 bits 0-1...
+C 0x630C ...a 0: hueco
+C 0x6312 ...si no, bloque 0x19 + bits
+C 0x6317 en (0xB0, 0x10)
+C 0x631D bits 2-3: hueco o 0x16 + bits
+C 0x6334 en (0xC0, 0x10)
+C 0x633A bit 5: hueco o 0x16
+C 0x6348 en (0xD0, 0x10)
+C 0x634E bit 6: hueco o 0x15
+C 0x635C en (0xE0, 0x10)
+C 0x6362 bit 7: hueco o 0x14
+C 0x6370 en (0xF0, 0x10)
+L 0x6379 pinta_icono
+C 0x637B guarda la tabla de bloques de la fase...
+C 0x6381 ...y pone la de p00:5BC3
+C 0x6389 opaco
+C 0x638D pinta el bloque HL en DE
+C 0x6390 devuelve la tabla de la fase
+D 0x6397 0x639F poses_capa3  Las cuatro tablas de la capa 3, una por valor de D8F5 & 3 (p06:61D1)
+F 0x6397 w4
+D 0x639F 0x64B3 poses_capa1  Capa 1: por cada pose (92), la definicion de animacion (banco 26) y un byte para la capa 3
+F 0x639F 3
+D 0x64B3 0x65C7 poses_capa2  Capa 2: por cada pose, la definicion de animacion y un byte
+F 0x64B3 3
+D 0x65C7 0x667F poses_capa3_0  Capa 3 con D8F5 & 3 = 0: una definicion por pose
+F 0x65C7 w8
+D 0x667F 0x6737 poses_capa3_1  Capa 3 con D8F5 & 3 = 1
+F 0x667F w8
+D 0x6737 0x67EF poses_capa3_2  Capa 3 con D8F5 & 3 = 2
+F 0x6737 w8
+D 0x67EF 0x68A7 poses_capa3_3  Capa 3 con D8F5 & 3 = 3
+F 0x67EF w8
+B 0x68A7 El jugador, cada cuadro: cuentas de tiempo de lo que lleva, los mandos,
+B 0x68A7 sus choques con los actores y los efectos de sonido de lo que le pase.
+L 0x68A7 mueve_jugador
+C 0x68A7 muerto: nada
+C 0x68B0 p06:6A1F
+C 0x68B4 D90F bit 4: un rato sin mandos
+C 0x68B8 D910 bit 1: cuenta D913...
+C 0x68C8 ...y al acabar se borra
+L 0x68CA sin_mandos
+C 0x68CB D913 - 1
+C 0x68D2 a 0: se acaba (p06:68E0)
+C 0x68D4 por debajo de 0x3C se borra el bit 6...
+C 0x68E0 a 0: se borra el bit 4
+L 0x68E8 mandos_a_cero
+C 0x68E8 mientras D913 >= 0x3C, como si no tocara nada
+L 0x68EC cuenta_segundos
+C 0x68EC un cuadro mas...
+C 0x68F1 ...60 cuadros: un segundo
+C 0x68F7 al arma le queda un segundo menos...
+C 0x6901 ...y si se acaba: D905 sin los bits 0-1...
+C 0x6909 ...ni arma...
+C 0x690D ...ni el bit 7
+C 0x6912 D92A: otra cuenta, la del bit 5 de D905
+L 0x6921 mira_actores
+C 0x6921 los sucesos de este cuadro, a cero
+C 0x6928 los 3 actores de D934 (byte +1)...
+C 0x6931 ...de tipo 0x16...
+C 0x6938 ...pierden el bit 7 de +25
+C 0x693C el siguiente, 38 bytes mas alla
+C 0x6940 los botones (p06:69AF)
+C 0x6943 p06:6A37
+C 0x6946 p07:8104
+C 0x6949 p06:7A26
+C 0x694C p06:7B22
+C 0x694F D904 bit 6...
+C 0x6956 ...borra D904 bit 5 y D90F bit 0
+C 0x695D D929 bit 7
+C 0x6965 efecto 5, o 0x11 si tambien el bit 5
+L 0x696F efecto_de_sucesos
+C 0x696F el bit mas importante de D928 decide el efecto:
+C 0x6972 bit 7 -> 1
+C 0x6976 bit 6 -> 2 (los `jr` caen dentro de los `ld bc` de abajo)
+C 0x697A bit 3 -> 6
+C 0x697E bit 2 -> 7
+C 0x6982 bit 5 -> 0x0C
+C 0x6986 bit 4 -> 3
+C 0x698A bit 1 -> 4
+C 0x698E bit 0 -> 0x10; ninguno: sin efecto
+L 0x6995 efectos
+C 0x6995 cada `ld bc,0xNN3E` esconde un `ld a,NN`: se entra a mitad
+L 0x69A9 pide_efecto
+C 0x69A9 (un `ld a,a` que no hace nada)
+C 0x69AA pide el efecto
+L 0x69AE nada
+B 0x69AF Los botones. Boton 1 (bit 4 de los mandos): si la accion anterior ya ha
+B 0x69AF acabado, suceso del bit 4 (y del 5 con el arma 3).
+L 0x69AF botones
+C 0x69B2 B = los mandos
+C 0x69B3 D90F bit 0: ocupado (p06:6A0A)
+C 0x69BB boton 1?
+C 0x69C0 D90F bit 5
+C 0x69C5 D904 bit 5: la animacion aun no ha acabado
+C 0x69CC pose 0x14 (bits 1-4): no se puede
+C 0x69D4 suceso del bit 4 (efecto 3)
+C 0x69D9 con el arma 3...
+C 0x69E0 ...otro suceso (bit 5)
+C 0x69E3 los 3 actores: se borra el bit 7 de su +25
+L 0x69F2 sin_boton_1
+C 0x69F2 D904 bit 5: la animacion sigue...
+C 0x69FC ...no: D90F bit 5 a 0
+L 0x69FF sigue_la_accion
+C 0x69FF D90F bit 5 a 1...
+C 0x6A01 ...y sin izquierda ni derecha mientras dura
+L 0x6A09 fin_botones
+L 0x6A0A accion_ocupado
+C 0x6A0A D90F bit 5 y D904 bit 5 a 1
+C 0x6A14 mandos: fuera arriba, se fuerza abajo (bit 1)
+L 0x6A1F lee_mandos_jugador
+C 0x6A1F los mandos de verdad
+C 0x6A22 en la demo (D17D bit 7)...
+C 0x6A28 ...los mandos son inventados: D181 bit 0 -> boton 1...
+C 0x6A31 ...y siempre a la derecha
+B 0x6A37 El movimiento de Rastan: HL = (x, y) se va cambiando y al final se
+B 0x6A37 coloca (p06:7878). Va por estados: D90F bit 3 (agarrado a un actor),
+B 0x6A37 D90D bit 7, 5 y 4, y el resto (de pie).
+L 0x6A37 movimiento
+C 0x6A37 D8FA y D8FB a 0
+C 0x6A3E H = x
+C 0x6A42 L = y
+C 0x6A46 B = la pose
+C 0x6A4A C = los mandos
+C 0x6A4E D90E bit 6: el boton 2 hay que soltarlo antes de volver a usarlo
+C 0x6A55 suelto: se borra la marca
+L 0x6A60 boton_2_sigue
+C 0x6A60 aun pulsado: no cuenta
+L 0x6A66 segun_estado
+C 0x6A66 D90F bit 3: agarrado (p06:6B1B)
+C 0x6A6E D90D bit 7: p06:71E0
+C 0x6A76 D90D bit 5: p06:6D1E
+C 0x6A7B D90D bit 4: en una cuesta, resbala solo
+C 0x6A7F bit 2: hacia la izquierda
+C 0x6A83 hacia la derecha: medio pixel por cuadro (D906 + 0x80)...
+C 0x6A8F ...sin pasar de x = 0xF0
+L 0x6A98 resbala_izquierda
+C 0x6A98 medio pixel a la izquierda...
+C 0x6AA4 ...sin pasar de 0
+L 0x6AA9 tras_resbalar
+C 0x6AAD boton 2: p06:7175
+C 0x6AB2 si no, p06:6E64
+L 0x6AB5 de_pie
+C 0x6AB9 pose con el bit 5: p06:6AD6
+C 0x6ABD boton 2: p06:7175
+C 0x6AC2 D90F bit 5 (accion del boton 1): p06:6AF2
+C 0x6AC9 abajo: p06:7886
+C 0x6ACE D90F bit 2: p06:6B0A
+C 0x6AD3 si no, p06:6E25
+L 0x6AD6 recorta_mandos
+C 0x6AD6 segun la pose (bits 1-4) solo valen algunos mandos:
+C 0x6AD9 pose 4: solo abajo
+C 0x6ADD poses 0x10, 0x18 y 0x1A: solo arriba
+C 0x6AE1 pose 0x14: arriba y abajo
+C 0x6AED las demas: ninguno
+L 0x6AF2 solo_arriba_abajo
+L 0x6AFB solo_arriba
+L 0x6B04 solo_abajo
+L 0x6B0A paso_lateral
+C 0x6B0A derecha?
+C 0x6B0E izquierda: x - 1
+L 0x6B14 paso_derecha
+C 0x6B14 las dos a la vez: nada
+C 0x6B17 x + 1
+L 0x6B18 coloca
+B 0x6B1B Agarrado a un actor (D914): mientras no pulse el boton 2, su x sale de
+B 0x6B1B una tabla del banco 7 segun el giro del actor (+2, 0-19) y la distancia en
+B 0x6B1B y entre los dos; hay una tabla por clase de actor (+1 = 0, 1, 2, 3).
+L 0x6B1B agarrado
+C 0x6B1B boton 2: se suelta (p06:6CF6)
+C 0x6B20 D90F bit 1 a 0
+C 0x6B28 IX = el actor
+C 0x6B2C su giro (+2)
+C 0x6B32 igual que el de antes: nada que hacer
+C 0x6B38 apuntado en D916
+C 0x6B3B L = y de agarre (D917)
+C 0x6B3F la clase del actor: 0, 1, 2 o 3
+L 0x6B5B clase_0
+C 0x6B4F giros 10-19 son los 0-9 al reves
+C 0x6B5B segun el giro, la y se corrige un poco...
+L 0x6B6B clase_0_alto
+C 0x6B6B ...si esta muy por debajo del actor, un pixel arriba
+L 0x6B76 clase_0_bajo
+L 0x6B7F clase_0_x
+C 0x6B7F B = distancia en y
+C 0x6B84 giro * 20 * 2...
+C 0x6B8F ...en la tabla p07:8D2C (40 bytes por giro)
+C 0x6B93 + distancia / 2
+C 0x6B99 la x relativa + la x del actor - 16
+L 0x6BA4 clase_1
+C 0x6BA4 lo mismo con la tabla p07:8EBC (32 bytes por giro)
+L 0x6BC0 clase_1_alto
+L 0x6BCB clase_1_bajo
+L 0x6BD9 clase_1_x
+C 0x6BE8 tabla p07:8EBC
+L 0x6BFD clase_2
+C 0x6BFD tabla p07:8FFC (24 bytes por giro)
+L 0x6C1F clase_2_a
+L 0x6C2A clase_2_b
+L 0x6C3A clase_2_c
+L 0x6C43 clase_2_x
+C 0x6C52 tabla p07:8FFC
+L 0x6C67 clase_3
+C 0x6C67 tabla p07:90EC
+L 0x6C8B clase_3_a
+L 0x6CA0 clase_3_b
+C 0x6CA1 la y se corrige un pixel por cada umbral que pasa
+L 0x6CBA clase_3_c
+L 0x6CCA clase_3_d
+L 0x6CD3 clase_3_x
+C 0x6CD3 B = distancia en y
+C 0x6CD8 giro * 16 (sin `add hl,hl`: 16 bytes por giro)...
+C 0x6CE1 ...en la tabla p07:90EC
+C 0x6CE5 + distancia / 2
+C 0x6CEB x relativa + x del actor - 16
+B 0x6CF6 Se suelta del actor: le da un empujon hacia el lado al que mira y pasa
+B 0x6CF6 al salto del boton 2 (p06:7175).
+L 0x6CF6 se_suelta
+C 0x6CF6 mirando a la derecha (bit 0 = 0)...
+C 0x6CFD ...E = derecha, D = izquierda
+C 0x6D01 a la izquierda: al reves
+C 0x6D05 si no empuja ya hacia el otro lado...
+C 0x6D0C ...se le anade el empujon
+C 0x6D15 ya no esta agarrado (D90F bit 3)
+C 0x6D1B al salto
+B 0x6D1E D90D bit 5: en una escalera o cuerda (casillas de clase 0x80/0x90).
+B 0x6D1E Arriba y abajo lo mueven de uno en uno, mirando las casillas (p06:78A9).
+L 0x6D1E trepa
+C 0x6D1E D90F bit 1 a 0
+C 0x6D2A pose con el bit 5: nada
+C 0x6D2D accion del boton 1 en marcha: nada
+C 0x6D33 por debajo de y = 0x1F...
+C 0x6D38 ...el boton 2 la suelta (p06:6E12)
+L 0x6D3D trepa_mandos
+C 0x6D3D arriba: p06:6DBC
+C 0x6D41 abajo?
+C 0x6D44 un pixel abajo
+C 0x6D47 las casillas de debajo
+C 0x6D4C la primera: clase menor que 0x20 o 0x80-0x9F u 0xA0...
+C 0x6D53 ...0x20-0x7F: no se puede (p06:6DB9)
+C 0x6D5B la segunda, igual
+C 0x6D6A la tercera, igual
+L 0x6D79 trepa_abajo_mira
+C 0x6D7D tres pixeles mas abajo
+C 0x6D80 las casillas de los pies
+C 0x6D85 0x80 y 0x90 juntas: sigue en la escalera
+L 0x6D95 trepa_abajo_b
+C 0x6D95 o 0x80 y 0x90 en la segunda y tercera
+L 0x6DA5 sigue_trepando
+C 0x6DA5 D90F bit 1: se mueve
+L 0x6DAF baja_de_la_escalera
+C 0x6DAF D90D = 0xC0: deja de trepar
+L 0x6DB9 no_se_puede
+L 0x6DBC trepa_arriba
+C 0x6DBC un pixel arriba...
+C 0x6DBE ...hasta y = 0x1F
+C 0x6DC5 las casillas de encima
+C 0x6DCA E cuenta las que son de escalera (0x10-0x7F no, 0x80-0x9F si)
+C 0x6DCC primera
+C 0x6DDC segunda
+C 0x6DEC tercera
+L 0x6DFC cuenta_escalera
+C 0x6DFC las dos primeras de escalera: sigue
+L 0x6E01 no_sube
+C 0x6E03 la y de antes
+L 0x6E0A sube
+C 0x6E0A D90F bit 1: se mueve
+L 0x6E12 suelta_escalera
+C 0x6E12 con izquierda o derecha...
+C 0x6E19 ...D90E bits 7 y 6, sin el 0...
+C 0x6E22 ...y salta desde la escalera
+B 0x6E25 De pie: izquierda o derecha lo mueven un pixel (D = la direccion para
+B 0x6E25 p06:78A9: 2 derecha, 8 izquierda) y luego mira que hay delante.
+L 0x6E25 anda
+C 0x6E25 mirando a la derecha...
+C 0x6E2B ...o a la izquierda
+C 0x6E2D derecha?
+C 0x6E31 izquierda?
+C 0x6E35 x de 0xF0 a 0xF7: no pasa
+L 0x6E3F anda_izquierda
+C 0x6E3F x - 1
+L 0x6E44 anda_derecha
+C 0x6E44 las dos: nada
+C 0x6E48 hasta x = 0xF0
+C 0x6E50 x + 1
+L 0x6E54 quieto
+C 0x6E54 fuera de cuesta: guarda la pose y ya
+C 0x6E5C en la cuesta, la direccion es...
+C 0x6E5E ...la izquierda o la derecha
+L 0x6E64 mira_delante
+C 0x6E66 las casillas en la direccion D
+C 0x6E6B la de arriba: 0x10 o menos, nada
+C 0x6E74 0x20-0x3F: pared (p06:6EA3)
+C 0x6E78 0x40-0x5F: cuesta (p06:6FE8: la y sigue a la x) (p06:6EAC)
+C 0x6E7D 0x60-0x7F: cuesta del otro lado (p06:6ED8)
+C 0x6E82 0xA0: pared
+L 0x6E86 mira_delante_2
+C 0x6E86 la segunda, igual
+L 0x6EA3 pared
+C 0x6EA5 vuelve a la x de antes
+L 0x6EAC entra_cuesta_a
+C 0x6EAE yendo a la derecha, choca (p06:6F04)
+C 0x6EB2 en los dos ultimos pixeles de la casilla...
+C 0x6EBA ...si no esta ya en una cuesta...
+C 0x6EC2 ...entra en la cuesta (D90D bit 4)
+C 0x6EC9 apunta la casilla: y en D908...
+C 0x6ECF ...x en D907
+L 0x6ED8 entra_cuesta_b
+C 0x6EDA yendo a la izquierda, choca
+C 0x6EDE en los dos primeros pixeles de la casilla...
+C 0x6EEE ...entra en la cuesta del otro lado (bits 4 y 2)
+C 0x6EF5 la casilla en D907/D908
+L 0x6F04 choca
+C 0x6F04 la x de antes
+L 0x6F0B nada_delante
+L 0x6F0D mira_pies
+C 0x6F10 tres pixeles mas abajo
+C 0x6F13 las casillas de los pies
+C 0x6F18 0x80 y 0x90 en las dos primeras: el pie de una escalera
+L 0x6F27 mira_pies_2
+C 0x6F27 o en la segunda y la tercera
+C 0x6F38 a menos de 4 pixeles del borde de la casilla...
+C 0x6F3F ...se centra en la siguiente
+L 0x6F45 escalera_a_la_izquierda
+C 0x6F46 a 4 pixeles o mas del borde: no
+L 0x6F4D sube_a_la_escalera
+C 0x6F4F x al principio de la casilla
+C 0x6F53 la pose de trepar (bits 1-4 = 2)
+C 0x6F59 D90D: fuera la cuesta, en la escalera (bit 5)
+L 0x6F66 sin_escalera
+L 0x6F67 mira_suelo
+C 0x6F69 en una cuesta: p06:6FE8
+C 0x6F73 las casillas de debajo
+C 0x6F78 la primera: 0x10 o menos, nada
+C 0x6F81 0x20-0x3F: suelo con cuesta a un lado (p06:7138)
+C 0x6F86 0x70: p06:7160
+C 0x6F8B 0xA0: p06:7138
+L 0x6F90 mira_suelo_2
+C 0x6F90 la segunda: menos de 0x20, sigue
+C 0x6F97 0x20-0x3F: p06:6FC2
+C 0x6F9B 0x60: p06:7160
+L 0x6FA4 mira_suelo_3
+C 0x6FA4 la tercera: 0x20-0x3F o 0xA0, se queda en pie
+L 0x6FB8 cae
+C 0x6FB8 no hay suelo: D90D = 0xC0, cae
+L 0x6FC2 entra_en_cuesta
+C 0x6FC2 la tercera tiene que ser 0x40-0x5F
+C 0x6FCF por debajo de x = 8 no
+C 0x6FD5 en cuesta (bits 4 y 3)...
+C 0x6FDF ...con D907 = la y
+B 0x6FE8 En una cuesta: la y sigue a la x. D907 guarda la casilla en x y D908 la y
+B 0x6FE8 de la cuesta; cada casilla que se avanza, 8 pixeles mas arriba o abajo.
+L 0x6FE8 en_cuesta
+C 0x6FE8 bit 2: la cuesta del otro lado (p06:708A)
+C 0x6FF0 E = (x & 0x0F) / 2 - 8: la altura dentro de la casilla
+C 0x6FF8 ha cambiado de casilla?
+C 0x7001 hacia la derecha:...
+C 0x7005 ...casilla nueva...
+C 0x700B ...8 pixeles mas abajo
+L 0x7015 cuesta_atras
+C 0x7015 hacia la izquierda: 8 mas arriba
+L 0x7023 y_en_cuesta
+C 0x7023 y = la de la cuesta + E
+C 0x702B mira lo que hay debajo
+C 0x7030 la tercera: 0x20-0x3F o 0xA0, se acaba la cuesta (p06:7124)
+C 0x703C 0x40-0x7F: sigue
+L 0x7045 y_en_cuesta_2
+C 0x7045 la primera: 0x20-0x7F o 0xA0, sigue
+L 0x7055 y_en_cuesta_3
+C 0x7055 la segunda, igual
+L 0x7068 y_en_cuesta_4
+C 0x7068 8 pixeles mas abajo...
+C 0x7070 ...la tercera
+C 0x7076 menos de 0x20: se acaba y cae (p06:716A)
+L 0x7084 sigue_en_cuesta
+L 0x708A cuesta_b
+C 0x708A la del otro lado: E = -(x & 0x0F) / 2 - 1
+C 0x7093 ha cambiado de casilla?
+C 0x70A0 hacia la derecha: 8 mas arriba
+L 0x70B0 cuesta_b_atras
+C 0x70B0 hacia la izquierda: 8 mas abajo
+L 0x70BE y_en_cuesta_b
+C 0x70BE y = la de la cuesta + E
+C 0x70C9 lo que hay debajo
+C 0x70CE la primera: 0x20-0x3F o 0xA0 acaba la cuesta; 0x40-0x7F sigue
+L 0x70E1 y_en_cuesta_b2
+C 0x70E1 la tercera
+L 0x70F1 y_en_cuesta_b3
+C 0x70F1 la segunda (comparada sin `and 0xF0`)
+L 0x7102 y_en_cuesta_b4
+C 0x7104 8 pixeles mas abajo
+C 0x7110 menos de 0x20: cae
+L 0x711E sigue_en_cuesta_b
+L 0x7124 fin_de_cuesta
+C 0x7127 fuera de la cuesta
+C 0x7131 y al principio de la casilla
+L 0x7138 al_borde
+C 0x7138 la segunda casilla 0x50: el arranque de una cuesta
+C 0x7142 en los 4 primeros pixeles no
+C 0x714A D90D = 0x10: en la cuesta
+L 0x714F apunta_cuesta
+C 0x714F D908 = y de la casilla + 8
+C 0x7157 D907 = x de la casilla
+L 0x7160 cuesta_del_otro_lado
+C 0x7162 D90D = 0x14: en la cuesta del otro lado
+L 0x716A sin_suelo
+C 0x716A D90D = 0xC0: cae
+B 0x7175 EL SALTO (boton 2). Elige la trayectoria: con arriba, la de las tablas
+B 0x7175 p06:744A/7469/7488 y si no las de p06:740B/7420/7435; hacia la
+B 0x7175 izquierda, la derecha o recto. Cada tabla es una lista de pasos que se
+B 0x7175 suman a la y (o a la x) hasta un 0x80.
+L 0x7175 salta
+C 0x7175 D90E = 0x40: hay que soltar el boton 2
+L 0x717A salto_trayectoria
+C 0x717B D90F bit 2 a 0
+C 0x7181 arriba: el salto alto
+C 0x7187 los pasos en y del salto normal
+C 0x718A derecha?
+C 0x718E izquierda?
+C 0x7192 hacia la izquierda: D90D = 0x88...
+C 0x7194 ...y los pasos en x de p06:7435
+L 0x7199 salto_derecha
+C 0x719B las dos: recto
+C 0x719D hacia la derecha: pasos en x de p06:7420...
+C 0x71A0 ...D90D = 0x8C
+L 0x71A4 salto_recto
+C 0x71A4 D90D = 0x80, sin pasos en x
+L 0x71AB salto_alto
+C 0x71AC los pasos en y del salto alto
+C 0x71B7 izquierda: 0x89 y p06:7488
+L 0x71BE salto_alto_derecha
+C 0x71C2 derecha: p06:7469 y 0x8D
+L 0x71C9 salto_alto_recto
+L 0x71CE empieza_salto
+C 0x71CE el estado
+C 0x71D1 D90B = los pasos en x
+C 0x71D5 D909 = los pasos en y
+C 0x71D9 suceso del bit 0: efecto 0x10
+B 0x71E0 En el aire (D90D bit 7). Bit 6: cayendo (p06:74A7); bit 1: p06:739E; si
+B 0x71E0 no, un paso mas de la trayectoria.
+L 0x71E0 en_el_aire
+C 0x71E5 bit 1: p06:739E
+C 0x71EA el paso en y...
+C 0x71EF ...0x80: la trayectoria se acaba (p06:736E)
+C 0x71F4 el siguiente, para el cuadro que viene
+C 0x71F9 y + paso
+C 0x71FB bit 3: tambien se mueve en x
+C 0x7203 el paso en x
+C 0x720D x + paso
+C 0x7210 con el bit 0 el paso cuenta doble
+L 0x7219 x_en_el_aire
+C 0x721A bit 2: hacia la izquierda...
+C 0x7221 ...direccion 2 para p06:78A9
+L 0x7225 x_en_el_aire_der
+C 0x7225 ...o la 8
+L 0x7227 choque_lateral_en_el_aire
+C 0x7229 las casillas hacia donde va
+C 0x722C la primera: 0x10 o menos, nada
+C 0x7233 (el `jr c` repetido no hace nada)
+C 0x7235 0x20-0x7F o 0xA0: choca
+L 0x723D choque_lateral_2
+C 0x723D la segunda: 0x20-0x7F o 0xA0, choca
+L 0x7258 choque_lateral_3
+C 0x7258 la tercera: 0x20-0x3F u 0xA0 choca...
+C 0x7267 ...0x40-0x5F y 0x60-0x7F: cuestas (p06:727C/7297)
+L 0x7273 sin_choque_lateral
+L 0x7278 choque_lateral
+L 0x727C cuesta_en_el_aire_a
+C 0x727E solo cuenta yendo hacia la izquierda
+C 0x7286 una cuesta 0x40 exacta choca
+C 0x728E y por la derecha de x = 8 tambien
+L 0x7297 cuesta_en_el_aire_b
+C 0x7299 solo cuenta yendo hacia la derecha
+C 0x72A1 0x40 exacta choca
+C 0x72A9 y por la derecha de x = 8
+L 0x72B2 vuelve_x
+C 0x72B2 choca: la x de antes
+L 0x72B6 choque_arriba
+C 0x72B6 las casillas de encima (direccion 1)
+C 0x72BD la primera: menos de 0x20, 0x80, 0x90 o 0xF0 deja pasar...
+C 0x72CE ...cualquier otra es techo (p06:736C)
+L 0x72D1 choque_arriba_2
+C 0x72D1 la segunda, igual
+L 0x72E5 choque_arriba_3
+C 0x72E5 la tercera, igual
+L 0x72F9 agarra_escalera
+C 0x72FD tres pixeles mas abajo
+C 0x7300 las casillas de los pies
+C 0x7305 0x80 y 0x90: una escalera
+L 0x7314 agarra_escalera_2
+C 0x7314 o en la segunda y la tercera
+C 0x7325 D90E bit 7: aun no puede agarrarse
+C 0x732C en los 6 ultimos pixeles de la casilla...
+C 0x7333 ...se agarra a la siguiente
+L 0x7339 agarra_escalera_izq
+C 0x733A D90E bit 7: aun no
+C 0x7341 en los 6 primeros pixeles
+L 0x7348 se_agarra
+C 0x7348 x al principio de la casilla
+C 0x7351 la pose de trepar (bits 1-4 = 2)
+C 0x7357 D90D = 0x20: en la escalera
+L 0x735F sin_escalera_aire
+C 0x735F ya puede agarrarse: D90E bit 7 a 0
+L 0x7368 sigue_en_el_aire
+L 0x736C techo
+B 0x736E Se acaba la subida (un 0x80 o un techo): los punteros vuelven un paso
+B 0x736E atras y empieza la bajada (D90D bit 1), que recorre las MISMAS tablas al
+B 0x736E reves y con el signo cambiado.
+L 0x736E fin_subida
+C 0x736E un paso atras en y...
+C 0x7377 ...y en x
+C 0x7380 la y de antes
+C 0x7384 bajando (bit 1)
+C 0x738C D90E bit 0 a 0
+C 0x7394 ya no esta agarrado a nada (D914 = 0)
+B 0x739E Bajando. Si se pulsa el boton 2 otra vez con D90E bit 0 y la direccion del
+B 0x739E salto, vuelve a saltar; si no, la tabla al reves con el signo cambiado.
+L 0x739E bajando
+C 0x739E D90E bit 0...
+C 0x73A5 ...boton 2...
+C 0x73AD ...y saltando de lado...
+C 0x73B4 ...hacia la derecha con la derecha pulsada...
+C 0x73BC ...salta otra vez
+L 0x73BF otra_vez_izq
+C 0x73BF ...o hacia la izquierda con la izquierda
+L 0x73C4 paso_de_bajada
+C 0x73C4 el paso de la tabla, hacia atras
+C 0x73C9 0x80: el principio de la tabla, se acaba la trayectoria (p06:73FF)
+C 0x73D3 con el signo cambiado: y - paso
+C 0x73D7 de lado?
+C 0x73DF el paso en x, tambien hacia atras...
+C 0x73E9 ...y sumado
+C 0x73EB hacia la izquierda: direcciones 4 y 2...
+L 0x73F8 bajada_der
+C 0x73F8 ...o 8 y 8
+L 0x73FC mira_al_bajar
+L 0x73FF cae_libre
+C 0x73FF trayectoria acabada: cae (bit 6)
+D 0x740A 0x740B salto_inicio  0x80: el tope del principio para cuando la tabla de abajo se lee al reves
+D 0x740B 0x7420 salto_dy  Salto normal: 20 pasos en y (de -2 a 0) y el 0x80 final
+D 0x7420 0x7435 salto_dx_der  Salto normal a la derecha: 20 pasos en x (+1 o +2) y 0x80
+D 0x7435 0x744A salto_dx_izq  Salto normal a la izquierda: 20 pasos en x (-1 o -2) y 0x80
+D 0x744A 0x7469 salto_alto_dy  Salto alto (con arriba): 30 pasos en y (de -3 a 0) y 0x80
+D 0x7469 0x7488 salto_alto_dx_der  Salto alto a la derecha: 30 pasos en x (0 o +1, que cuentan doble) y 0x80
+D 0x7488 0x74A7 salto_alto_dx_izq  Salto alto a la izquierda: 30 pasos en x (0 o -1, doble) y 0x80
+F 0x740B 21
+F 0x7420 21
+F 0x7435 21
+F 0x744A 31
+F 0x7469 31
+F 0x7488 31
+B 0x74A7 Cayendo: dos pixeles por cuadro, mirando que hay debajo y delante.
+L 0x74A7 cayendo
+C 0x74A7 y + 2
+L 0x74AB mira_al_caer
+C 0x74AB D90E bit 0 a 0
+C 0x74B5 las casillas en la direccion D
+C 0x74B9 la primera: 0x10 o menos, nada; 0x20-0x7F u 0xA0, choca
+L 0x74CA mira_al_caer_2
+C 0x74CA la segunda, igual
+L 0x74E5 mira_al_caer_3
+C 0x74E5 la tercera: 0x20-0x3F, 0x40-0x5F, 0x60-0x7F o 0xA0
+L 0x74FF nada_al_caer
+L 0x7504 choca_al_caer
+L 0x7506 vuelve_x_al_caer
+C 0x7506 la x de antes
+C 0x750A D90E bit 0: ha chocado
+L 0x7514 pared_al_caer
+C 0x7516 en la misma fila de casillas: choca
+C 0x751E muy arriba (y < 3): p06:7856
+L 0x7526 cuesta_al_caer
+C 0x7528 0x50: el arranque de la cuesta
+C 0x752C hacia la derecha: choca
+L 0x7533 arranque_al_caer
+C 0x7533 en la mitad de abajo de la casilla...
+C 0x753B ...hacia la derecha choca
+L 0x7543 cuesta_al_caer_b
+C 0x7545 0x70: el arranque de la otra cuesta
+C 0x7549 hacia la izquierda: choca
+L 0x7550 arranque_al_caer_b
+C 0x7550 en la mitad de abajo...
+C 0x7558 ...hacia la izquierda choca
+B 0x7560 Al caer: si hay una escalera debajo se agarra a ella; si no, mira si
+B 0x7560 cae sobre un actor (p07:80E6) y luego sobre que casilla aterriza.
+L 0x7560 aterriza
+C 0x7562 tres pixeles mas abajo
+C 0x7565 las casillas de los pies
+C 0x756A 0x80 y 0x90 en las dos primeras: escalera
+L 0x757A aterriza_2
+C 0x757A o en la segunda y la tercera
+C 0x758B en los 6 ultimos pixeles de la casilla...
+C 0x7592 ...la de la derecha
+L 0x7598 escalera_al_caer
+C 0x7599 en los 6 primeros pixeles
+C 0x75A0 (este `ld a,0xE1` se pisa enseguida)
+L 0x75A2 agarra_al_caer
+C 0x75A3 x al principio de la casilla
+C 0x75A7 la pose de trepar, conservando los bits 0 y 5
+C 0x75AD en la escalera
+C 0x75B2 D90F bit 0 a 0
+L 0x75BD sobre_actor
+L 0x75BE mira_actor_debajo
+C 0x75BF el punto de debajo de los pies: (x + 16, y + 16)
+C 0x75C7 hay un actor ahi? (p07:80E6)
+C 0x75CC 0: no
+C 0x75CF menos de 0x20: se queda encima
+L 0x75D4 mira_casillas_debajo
+C 0x75D6 D911 cuenta las casillas de clase 0x10 que pisa
+C 0x75DC las tres de debajo
+C 0x75E1 la primera: menos de 0x10, nada
+C 0x75E8 0x10: una mas (p06:789F)
+C 0x75ED 0x20-0x3F u 0xA0: suelo (p06:76F4)
+C 0x75F2 0x40-0x5F: cuesta (p06:773D)
+C 0x75F7 0x60-0x7F: la otra cuesta (p06:7769)
+L 0x7601 mira_casillas_2
+C 0x7601 la segunda
+C 0x760E 0x20-0x3F u 0xA0: suelo
+C 0x7613 0x40-0x5F: p06:77C4
+C 0x7618 0x60-0x7F: p06:77B9
+L 0x7622 mira_casillas_3
+C 0x7622 la tercera: menos de 0x10, sigue cayendo
+C 0x762A 0x10: p06:77E1
+C 0x7630 0x20-0x3F u 0xA0: p06:7645
+C 0x7635 0x40-0x5F: p06:7663
+C 0x7639 0x60-0x7F: p06:76AE
+L 0x7645 suelo_tercera
+C 0x7647 8 pixeles mas arriba...
+C 0x764D ...tiene que haber un 0x70 en la tercera
+C 0x765A y la casilla + 8
+L 0x7663 cae_en_cuesta
+C 0x7665 0x40 exacta
+L 0x7669 cuesta_mitad
+C 0x7669 E = y de la casilla + 8
+L 0x7671 cuesta_arriba
+C 0x7671 E = y de la casilla
+L 0x7675 y_de_cuesta
+C 0x7675 D = E + (x & 0x0F) / 2 - 8: la altura de la cuesta en esa x
+C 0x767E aun no la toca: sigue cayendo
+C 0x7684 D90E: solo el bit 6
+C 0x768C D90D = 0x10: en la cuesta
+C 0x7691 D90F bit 0 a 0
+C 0x769A suceso del bit 1: efecto 4 (al tocar suelo)
+L 0x76A0 pone_en_cuesta
+C 0x76A0 y = la de la cuesta
+C 0x76A2 D908 = E
+C 0x76A5 D907 = x de la casilla
+L 0x76AE cae_en_cuesta_b
+C 0x76B0 0x70 exacta: E = casilla + 0x18
+C 0x76B4 si no, casilla + 0x10
+L 0x76BC cuesta_b_alta
+L 0x76C2 y_de_cuesta_b
+C 0x76C2 D = E - (x & 0x0F) / 2 - 1
+C 0x76CC aun no la toca
+C 0x76DA D90D = 0x14: en la cuesta del otro lado
+C 0x76E8 suceso del bit 1
+L 0x76F1 suelo_segunda
+L 0x76F4 suelo_primera
+C 0x76F4 la segunda: menos de 0x20 o 0x80+: mira la tercera
+C 0x76FB 0xA0: aterriza
+C 0x7704 0x40 justo detras: la cuesta
+L 0x7709 sobre_cuesta
+L 0x770E suelo_tercera_b
+C 0x770E la tercera: 0x20-0x7F u 0xA0, aterriza
+L 0x771F mira_arranque
+C 0x7723 16 pixeles mas arriba...
+C 0x7729 ...la primera tiene que ser 0x50
+C 0x7734 E = casilla + 0x10
+L 0x773D cae_en_arranque
+C 0x773D 0x50: el arranque de la cuesta
+C 0x7743 mitad derecha o izquierda de la casilla
+L 0x774E arranque_a
+C 0x7750 mitad izquierda: E = casilla + 0x10...
+L 0x7760 arranque_b
+C 0x7760 ...mitad derecha: + 0x18
+L 0x7769 cae_en_cuesta_c
+C 0x7769 la segunda: 0x20-0x3F u 0xA0, aterriza
+C 0x777E la primera era 0x60 exacta?
+C 0x7787 mitad de la casilla
+L 0x7790 cuesta_c_60
+L 0x7797 cuesta_c_alta
+C 0x7797 E = casilla + 0x10
+L 0x77A0 cuesta_c_mitad
+C 0x77A0 E = casilla + 8
+L 0x77A9 cuesta_c_2
+C 0x77AE 0x60: E = la casilla
+L 0x77B9 cuesta_d
+C 0x77BE 0x60 exacta?
+L 0x77C4 cuesta_e
+C 0x77C9 0x40 exacta?
+L 0x77CF cuesta_e_alta
+C 0x77CF E = casilla + 0x10
+L 0x77D8 cuesta_e_mitad
+C 0x77D8 E = casilla + 8
+B 0x77E1 Pisa una casilla de clase 0x10 con la tercera: si esta en la mitad de
+B 0x77E1 abajo y no esta ya en un apuro (D90F bits 6 y 4), p06:7818.
+L 0x77E1 casilla_10
+C 0x77E3 en los 10 primeros pixeles de la casilla: nada
+C 0x77EB D90F bit 6: nada
+C 0x77F1 bit 4: p06:77FB
+C 0x77F5 D = 0x10
+L 0x77FB casilla_10_salta
+C 0x77FB con D90F bit 4, el boton 2...
+C 0x7801 ...le hace saltar desde ahi:
+C 0x7802 D90D a 0
+C 0x7806 D90F bit 0 a 0
+C 0x780F suceso del bit 1
+B 0x7818 DANO: le quita D de vida. Si ya esta tocado (D90F bit 6) o sin mandos
+B 0x7818 (bit 4), nada. Si no, se marca tocado durante 0x50 cuadros (D913) con el
+B 0x7818 efecto 5; con D910 bit 7 no pierde vida; si la vida llega a 0, muere
+B 0x7818 (D90F bit 7) con el efecto 0x11.
+L 0x7818 dano
+C 0x781B ya tocado: nada
+C 0x781E sin mandos: nada
+C 0x7821 tocado y sin mandos...
+C 0x7828 ...durante 0x50 cuadros
+C 0x782E sucesos de D929: bits 7 y 6 (efecto 5)
+C 0x7836 D910 bit 7: no pierde vida
+C 0x783C vida - D...
+C 0x7843 ...0 justo: muere
+C 0x7845 aun le queda
+L 0x7846 muere
+C 0x7847 suceso D929 bit 5: efecto 0x11
+C 0x784A vida a 0
+C 0x784E D90F bit 7: muerto
+L 0x7854 en_el_suelo_pop
+L 0x7856 en_el_suelo
+C 0x7856 y al principio de la casilla
+C 0x785A coloca a Rastan
+C 0x7862 D90D a 0: de pie
+C 0x7866 D90F bit 0 a 0
+C 0x786F suceso del bit 1 (efecto 4)
+L 0x7876 coloca_pop
+L 0x7878 coloca_jugador
+C 0x7878 x = H
+C 0x787C y = L
+D 0x7881 0x7886 resto_7881  cinco bytes que nadie ejecuta (`ld a,b / and 0xE1 / jr`)
+L 0x7886 orienta
+C 0x7886 en una cuesta no cambia de lado
+C 0x788E derecha: mira a la derecha (bit 0 = 0)
+C 0x7894 izquierda: mira a la izquierda (bit 0 = 1)
+L 0x789A guarda_pose
+C 0x789A la pose nueva
+L 0x789F cuenta_casilla_10
+C 0x789F D911 + 1, sin tocar A ni las banderas
+B 0x78A9 Lee lo que hay alrededor de (H, L): en B, C y D, el byte alto de tres
+B 0x78A9 casillas seguidas del mapa de delante (D774), la clase de la casilla. La
+B 0x78A9 direccion A elige cuales: 1 encima, 2 a la derecha, 4 debajo, 8 a la
+B 0x78A9 izquierda. Fuera de la pantalla devuelve 0xA0 en las tres.
+L 0x78A9 casillas_alrededor
+C 0x78AA y - 16
+C 0x78AE por la derecha de x = 0xF0: p06:7975
+C 0x78B5 2: a la derecha
+C 0x78BA 4: debajo
+C 0x78BF 8: a la izquierda
+C 0x78C4 1: encima...
+C 0x78C5 ...la fila de y - 0x0C
+C 0x78CA por debajo de la fila 12: fuera
+D 0x78D1 0x78D5 resto_78D1  cuatro bytes que nadie ejecuta (`sub 0x10 / jr`)
+L 0x78D5 fila_de_encima
+C 0x78D5 BC = la fila (y & 0xF0) / 8 * 2...
+C 0x78D9 ...mas la columna: x / 16 * 2
+C 0x78E5 en D774...
+C 0x78E9 ...el byte alto de la palabra
+C 0x78EB A' bit 0 = 0 (la fila salio de pantalla): 0xA0
+L 0x78F7 tres_casillas
+C 0x78F7 la casilla...
+C 0x78FA ...la de su derecha...
+C 0x78FD ...y la siguiente
+C 0x78FF en la mitad izquierda de la casilla...
+C 0x7905 ...la tercera es la segunda
+L 0x7907 mitad_derecha
+C 0x7907 en la derecha, la primera es la segunda
+L 0x7909 fuera_de_pantalla
+C 0x7909 0xA0 en las tres
+L 0x7910 a_la_derecha
+C 0x7910 y - 16, la fila...
+C 0x7919 ...la columna de x + 0x18
+L 0x791C columna
+C 0x7925 por debajo de y = 0xA0: fuera
+C 0x792C en D774
+C 0x7931 tres casillas en columna:
+C 0x7932 la de arriba...
+C 0x7933 ...la de debajo (una fila son 0x20 bytes)...
+C 0x7938 ...y si no esta justo en la fila, la otra
+C 0x793E en la parte de abajo de la casilla...
+C 0x7941 ...la primera es la segunda
+L 0x7943 debajo
+C 0x7943 la fila de y + 0x10...
+C 0x7948 ...sin pasar de la 11
+L 0x794E fila_de_debajo
+C 0x795E en D774
+L 0x7966 a_la_izquierda
+C 0x7966 y - 16, la columna de x + 8
+B 0x7975 Lo mismo cuando x esta por la derecha de 0xF0 (la ultima columna).
+L 0x7975 casillas_borde
+C 0x7976 2: a la derecha
+C 0x797B 4: debajo
+C 0x7980 8: a la izquierda
+C 0x7985 1: encima
+L 0x798B fila_valida
+C 0x798B de la 12 para abajo, una menos
+L 0x7993 fila_de_encima_b
+C 0x7999 la columna de x + 0x10
+C 0x79A5 en D774
+L 0x79B7 dos_casillas
+C 0x79B8 la casilla, dos veces...
+C 0x79BC ...y la de al lado
+L 0x79C4 debajo_b
+L 0x79C9 fila_valida_b
+L 0x79D1 fila_de_debajo_b
+C 0x79E3 en D774
+L 0x79EB a_la_izquierda_b
+C 0x79F5 la columna de x + 8...
+C 0x79F7 ...si aun cabe, como siempre
+C 0x79FC si no, la de mas alla
+C 0x7A08 por debajo de y = 0xA0: fuera
+C 0x7A0F en D774
+C 0x7A15 tres casillas en columna
+B 0x7A26 La pose de Rastan segun lo que esta haciendo: bits 1-4 de D904 (E) y
+B 0x7A26 el bit 0, hacia donde mira (D).
+L 0x7A26 elige_pose
+C 0x7A26 B = D90D
+C 0x7A2A C = D90E
+C 0x7A2E D = hacia donde mira
+C 0x7A34 E = la pose (0 = quieto)
+C 0x7A36 H = los mandos
+C 0x7A3A L = D90F bit 5 (la accion del boton 1)
+C 0x7A40 derecha?
+C 0x7A44 izquierda: mira a la izquierda y anda (2)
+L 0x7A4E pose_derecha
+C 0x7A4E las dos: nada
+C 0x7A52 derecha: mira a la derecha y anda (2)
+L 0x7A56 pose_segun_estado
+C 0x7A59 agarrado: p06:7ABD
+C 0x7A5E en el aire: p06:7A82
+C 0x7A62 en la escalera: p06:7ABD
+C 0x7A66 en una cuesta: p06:7ACE
+C 0x7A6A arriba: p06:7A78
+C 0x7A6E abajo: pose 4
+L 0x7A78 pose_arriba
+C 0x7A78 arriba con la accion del boton 1: pose 0x10
+L 0x7A82 pose_en_el_aire
+C 0x7A82 cayendo o bajando: p06:7A9C
+C 0x7A8A subiendo, sin la accion: pose 8
+L 0x7A93 pose_aire_accion
+C 0x7A93 con arriba: pose 0x12
+C 0x7A97 si no, 8
+L 0x7A9C pose_bajando
+C 0x7A9C sin la accion: 8
+L 0x7AA5 pose_bajando_accion
+C 0x7AA7 sin abajo: como subiendo
+C 0x7AAB con abajo: pose 0x14...
+C 0x7AAD ...y D90F bit 0
+L 0x7AB8 pose_12
+L 0x7ABD pose_trepando
+C 0x7ABD D90F bit 1 (se esta moviendo): pose 0x0A; quieto: 6
+L 0x7AC9 pose_0a
+L 0x7ACE pose_en_cuesta
+C 0x7ACE con la accion y arriba: p06:7AF6
+L 0x7AD6 pose_cuesta
+C 0x7AD6 el lado de la cuesta y hacia donde mira eligen 0x0C o 0x0E
+L 0x7AE3 pose_0c
+L 0x7AE8 pose_cuesta_b
+L 0x7AF1 pose_0e
+L 0x7AF6 pose_cuesta_accion
+C 0x7AF6 lo mismo con 0x16 y 0x18
+L 0x7B03 pose_16
+L 0x7B08 pose_cuesta_accion_b
+L 0x7B11 pose_18
+L 0x7B16 pon_pose
+C 0x7B16 D90F bit 6 (tocado) + lado + pose + accion (bit 5)
+C 0x7B1E la pose
+B 0x7B22 EL ATAQUE. Con la pose de ataque (bit 5) calcula donde da el golpe segun
+B 0x7B22 la pose, el cuadro de la animacion y el arma (D919), y resta su fuerza a
+B 0x7B22 la vida (+0F) de los actores que toca. El arma 3 ademas suelta un disparo
+B 0x7B22 (la ficha 10, D922/D924) que avanza 3 pixeles por cuadro.
+L 0x7B22 ataque
+C 0x7B22 HL = (x, y) de Rastan
+C 0x7B2A C = el cuadro de la animacion + 1
+C 0x7B2F B = la pose
+C 0x7B33 sin ataque: solo el disparo (p06:7FD3)
+C 0x7B38 poses 0x10, 0x12, 0x16 y 0x18: hacia arriba (p06:7C2B)
+C 0x7B4E pose 0x14: hacia abajo (p06:7C4F)
+C 0x7B53 pose 4 (agachado): el golpe 12 pixeles mas abajo
+L 0x7B5B golpe_de_lado
+C 0x7B5B E = 0: golpe de lado
+C 0x7B5D mirando a la izquierda: p06:7BC7
+C 0x7B61 segun el cuadro (0-5) de la animacion...
+L 0x7B74 golpe_der_0
+C 0x7B74 cuadros 0 y 6: (x + 0x11, y - 0x0A)
+L 0x7B7F golpe_der_1
+C 0x7B7F cuadros 1 y 5: (x + 0x14, y + 8)
+L 0x7B8A golpe_der_2
+C 0x7B8A cuadros 2 y 4: (x - 4, y + 8)
+L 0x7B95 golpe_der_3
+C 0x7B95 cuadro 3, el del golpe: depende del arma
+C 0x7BA0 arma 0 y 1: (x - 0x10, y + 1)
+L 0x7BA8 golpe_der_arma2
+C 0x7BA8 arma 2: (x - 0x20, y + 1), mas largo
+L 0x7BB0 golpe_der_arma3
+C 0x7BB0 arma 3: (x - 0x10, y + 1)...
+C 0x7BB5 ...y si no hay disparo en el aire...
+C 0x7BBC ...sale uno de ahi, direccion 3
+L 0x7BC7 golpe_izq
+C 0x7BC7 mirando a la izquierda, lo mismo con las x al reves
+L 0x7BDA golpe_izq_0
+L 0x7BE1 golpe_izq_1
+L 0x7BEC golpe_izq_2
+L 0x7BF7 golpe_izq_3
+C 0x7BF7 cuadro 3: arma 0 y 1, x + 0x20
+L 0x7C0A golpe_izq_arma2
+C 0x7C0A arma 2: x + 0x30
+L 0x7C12 golpe_izq_arma3
+C 0x7C13 (este `add a,4` no sirve: A se pisa)
+C 0x7C19 disparo, direccion 1
+L 0x7C2B golpe_arriba
+C 0x7C2B E = 1: hacia arriba, (x + 8, y - 0x1B)
+C 0x7C35 con el arma 3...
+C 0x7C3D ...disparo hacia arriba (direccion 0)
+L 0x7C4F golpe_abajo
+C 0x7C4F E = 2: hacia abajo, (x + 8, y + 0x18)
+C 0x7C59 con el arma 3...
+C 0x7C61 ...disparo hacia abajo (direccion 2)
+L 0x7C73 fuerza_del_golpe
+C 0x7C73 arma * 8 + E...
+C 0x7C80 ...en p07:80C6 en el suelo...
+C 0x7C86 ...o en p07:80CA en el aire
+C 0x7C8E C = la fuerza
+C 0x7C90 D910 bit 6: p07:91D1
+C 0x7C98 el bloque especial (p06:7FF2)
+C 0x7C9B los 3 objetos de D933
+L 0x7CA4 golpe_a_objeto
+C 0x7CA4 sin vida (+0F = 0): no se le puede dar
+C 0x7CAB hueco
+C 0x7CB2 +25 bit 7: ya le dio este golpe
+C 0x7CB9 segun el tipo, una caja de choque distinta:
+L 0x7D14 caja_a
+C 0x7D14 |x del objeto - x del golpe| y |y - y| dentro de la caja...
+L 0x7D2D caja_b
+L 0x7D45 caja_b_2
+L 0x7D5E caja_c
+L 0x7D76 caja_c_2
+L 0x7D8F huerfana_caja_d
+C 0x7D8F nadie llega aqui: otra caja sin usar
+L 0x7DA8 caja_e
+L 0x7DC1 caja_f
+L 0x7DDA caja_g
+L 0x7DF3 caja_h
+L 0x7E0C caja_tipo_16
+C 0x7E0C tipo 0x16: +25 bit 6 a 0...
+C 0x7E10 ...solo con la pose 0x14 del objeto...
+C 0x7E30 ...y si le da, +25 bit 6
+L 0x7E37 caja_i
+L 0x7E50 huerfana_caja_j
+C 0x7E50 nadie llega aqui
+L 0x7E69 le_da
+C 0x7E69 vida - fuerza
+C 0x7E6D 0 o menos: p07:807C (se acaba)...
+C 0x7E74 ...y vida 0
+C 0x7E75 la vida que le queda
+C 0x7E78 marcado: este golpe ya le dio
+C 0x7E7D suceso del bit 6: efecto 2
+L 0x7E83 siguiente_objeto_golpe
+C 0x7E89 C = 1 si la pose es la 0x14 (hacia abajo)
+L 0x7E96 golpe_a_enemigos
+C 0x7E96 los 8 enemigos de DA20
+L 0x7E9F golpe_a_bloque
+C 0x7E9F solo los de tipo 0x24
+C 0x7EA7 hacia abajo: una caja estrecha
+L 0x7EC2 golpe_a_bloque_lado
+C 0x7EC2 de lado: otra caja
+L 0x7ED6 rompe_bloque
+C 0x7ED6 el tipo 0x24 tapa cuatro casillas de D774 (p07:80E6 da la primera)...
+C 0x7EE2 ...se les borra la clase (nibble alto): arriba a la izquierda...
+C 0x7EE6 ...arriba a la derecha...
+C 0x7EEC ...abajo a la izquierda (0x20 bytes mas)...
+C 0x7EF4 ...abajo a la derecha...
+C 0x7EFA ...y se repinta el fondo encima
+L 0x7F00 siguiente_bloque
+B 0x7F04 El disparo del arma 3 (ficha 10): si sigue en pantalla y no toca una
+B 0x7F04 casilla solida, puede dar a un objeto (fuerza 0x30) y avanza 3 pixeles.
+L 0x7F04 disparo
+C 0x7F04 su posicion
+C 0x7F07 fuerza 0x30
+C 0x7F09 no hay disparo
+C 0x7F0F fuera de la pantalla (x < 4 o >= 0xF4, y < 0x24 o >= 0xCC)...
+C 0x7F21 la casilla de (x + 4, y + 4)...
+C 0x7F2B ...en D774
+C 0x7F30 en la mitad de abajo, la de debajo
+C 0x7F3F 0x10-0x7F o 0xA0: choca
+L 0x7F4C disparo_2
+C 0x7F4C la otra casilla, igual
+L 0x7F5B fin_del_disparo
+C 0x7F5B ya no hay disparo
+L 0x7F60 disparo_objetos
+C 0x7F60 los 3 objetos
+L 0x7F6B disparo_a_objeto
+C 0x7F6B hueco
+C 0x7F72 sin vida
+C 0x7F79 ya tocado
+C 0x7F80 dentro de la caja del disparo?
+C 0x7F94 vida - 0x30
+C 0x7F9C se acaba
+C 0x7FA0 y el disparo tambien
+L 0x7FA6 disparo_avanza
+C 0x7FAA la direccion: 0 arriba, 1 derecha, 2 abajo, 3 izquierda
+L 0x7FBF disparo_arriba
+L 0x7FC5 disparo_derecha
+L 0x7FCB disparo_abajo
+L 0x7FCF guarda_disparo
+L 0x7FD3 sin_ataque
+C 0x7FD3 sin ataque: el punto (x + 9, y - 0x0A) mirando a la derecha...
+L 0x7FE1 sin_ataque_izq
+C 0x7FE1 ...o (x - 1, y - 0x0A)
+L 0x7FE6 mira_especial
+C 0x7FE6 el bloque especial
+C 0x7FE9 D910 bit 6: nada mas
+C 0x7FEF el disparo
+B 0x7FF2 El bloque especial (D92D 1-3): si el punto (H, L) cae dentro, sigue en
+B 0x7FF2 p07:8000 (la rutina cruza la frontera del banco).
+L 0x7FF2 toca_especial
+C 0x7FF2 ninguno
+C 0x7FF7 solo los tipos 1-3
+C 0x7FFA dentro de su caja?
+# --- fin de las notas por tandas ---
+
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0x600e la pose de Rastan para la animacion = a
+C 0x6014 copia de D905 para la animacion y los iconos = a
 C 0x6017 a = la x de Rastan
 C 0x601a lo que se suma a la x de los sprites = a
 C 0x601d a = la y de Rastan
 C 0x6020 lo que se suma a la y de los sprites = a
+C 0x6038 hl -> cuadros que le quedan a la muerte de Rastan
 C 0x603d a = la x de Rastan
 C 0x6040 lo que se suma a la x de los sprites = a
 C 0x6043 a = la y de Rastan
 C 0x6046 lo que se suma a la y de los sprites = a
-C 0x6055 ix -> las 32 fichas de sprite
-C 0x6065 hl -> bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
+C 0x605b p00 vacia_fichas_sprite
+C 0x6077 a = la vida de Rastan
+C 0x6097 a = el largo total de la barra
+C 0x60bb p00 escribe_texto
 C 0x60cd la lista o la cadena que se esta pintando = hl
 C 0x60e2 la lista o la cadena que se esta pintando = hl
-C 0x6187 hl -> ficha de sprite 2
+C 0x6150 D8F5 del cuadro anterior = a
+C 0x6159 la pose del cuadro anterior = a
+C 0x615e estado de la animacion de la capa 1 = a
+C 0x6161 estado de la animacion de la capa 2 = a
 C 0x6190 copia del registro del mapper de 0x8000 = a
 C 0x6193 registro del mapper: banco A en 0x8000
-C 0x61bf hl -> ficha de sprite 6
 C 0x61c8 copia del registro del mapper de 0x8000 = a
 C 0x61cb registro del mapper: banco A en 0x8000
-C 0x61f4 hl -> las 32 fichas de sprite
 C 0x61fd copia del registro del mapper de 0x8000 = a
 C 0x6200 registro del mapper: banco A en 0x8000
-C 0x6222 de -> el fondo desempaquetado: 11 x 16 bloques
-C 0x629e a = x del bloque especial de la pantalla
 C 0x62a2 a = y del bloque especial
-C 0x62b6 de -> el fondo desempaquetado: 11 x 16 bloques
 C 0x62be a = x del bloque especial de la pantalla
 C 0x62c2 a = y del bloque especial
-C 0x62cd a = x del bloque especial de la pantalla
 C 0x62d1 a = y del bloque especial
-C 0x62e5 de -> lo de delante desempaquetado: 11 x 16 bloques
 C 0x62f2 a = x del bloque especial de la pantalla
 C 0x62f6 a = y del bloque especial
-C 0x637b hl = la tabla de bloques de 16x16 de la fase
 C 0x637e la tabla de bloques guardada = hl
 C 0x6384 la tabla de bloques de 16x16 de la fase = hl
-C 0x6390 hl = la tabla de bloques guardada
 C 0x6393 la tabla de bloques de 16x16 de la fase = hl
-C 0x68bf a = 0x27 al entrar en una pantalla
-C 0x68c3 0x27 al entrar en una pantalla = a
-C 0x68cb a = 0x27 al entrar en una pantalla
-C 0x68cf 0x27 al entrar en una pantalla = a
+C 0x68bf a = cuenta del estado del jugador
+C 0x68c3 cuenta del estado del jugador = a
+C 0x68cf cuenta del estado del jugador = a
+C 0x68db bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x68e3 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x68e9 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6906 lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+C 0x690a el arma que lleva = a
+C 0x691c hl -> lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
+C 0x6922 sucesos del jugador en este cuadro: cada bit, un efecto = a
 C 0x692d ix -> actor 0, byte +1
-C 0x69aa peticion de sonido para p01:63E1 = a
+C 0x6958 hl -> bit 7 muerto, bit 4 un rato sin mandos
 C 0x69af a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
-C 0x69e3 hl -> actor 0, byte +25
-C 0x6a01 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x69f7 hl -> bit 7 muerto, bit 4 un rato sin mandos
 C 0x6a06 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
-C 0x6a14 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6a0f hl -> la pose de Rastan
 C 0x6a1b los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
-C 0x6a22 a = bits: 0 fase acabada, 1 fin de partida, 6 aviso a la tarea 0, 7 demo
-C 0x6a28 a = 5 = la demo ha terminado
 C 0x6a33 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
-C 0x6a3e a = la x de Rastan
-C 0x6a42 a = la y de Rastan
-C 0x6a4a a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 C 0x6a63 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 C 0x6aa9 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 C 0x6ab5 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
@@ -65,54 +1242,40 @@ C 0x6af7 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 bot
 C 0x6afb a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
 C 0x6b00 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
 C 0x6b06 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
-C 0x6d05 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
-C 0x6d0c a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
+C 0x6b25 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x6d10 los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2 = a
+C 0x6d23 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x6d26 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
-C 0x6e03 a = la y de Rastan
-C 0x6ea5 a = la x de Rastan
-C 0x6f04 a = la x de Rastan
-C 0x6fdf a = la y de Rastan
-C 0x72b2 a = la x de Rastan
-C 0x7380 a = la y de Rastan
-C 0x73a5 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
-C 0x7506 a = la x de Rastan
-C 0x7516 a = la y de Rastan
-C 0x77fb a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
-C 0x782a 0x27 al entrar en una pantalla = a
+C 0x75b7 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x7696 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x76df a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x76e4 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x780b bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x7818 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x7825 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x782a cuenta del estado del jugador = a
+C 0x7840 la vida de Rastan = a
+C 0x784b la vida de Rastan = a
 C 0x785b la x de Rastan = a
 C 0x785f la y de Rastan = a
+C 0x786b bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x7879 la x de Rastan = a
 C 0x787d la y de Rastan = a
-C 0x78e5 bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x792c bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x795e bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x79a5 bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x79e3 bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x7a0f bc -> lo de delante desempaquetado: 11 x 16 bloques
-C 0x7a36 a = los mandos: 0 arriba, 1 abajo, 2 izquierda, 3 derecha, 4 boton 1, 5 boton 2
-C 0x7b22 a = la y de Rastan
+C 0x789b la pose de Rastan = a
+C 0x7a56 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x7ab2 bit 7 muerto, bit 4 un rato sin mandos = a
 C 0x7b26 a = la x de Rastan
-C 0x7bb5 a = bit 7: el jugador usa la ficha 10
-C 0x7bbc la y de la ficha 10 del jugador = hl
 C 0x7bc1 bit 7: el jugador usa la ficha 10 = a
-C 0x7c19 a = bit 7: el jugador usa la ficha 10
 C 0x7c20 la y de la ficha 10 del jugador = hl
 C 0x7c25 bit 7: el jugador usa la ficha 10 = a
-C 0x7c3d a = bit 7: el jugador usa la ficha 10
 C 0x7c44 la y de la ficha 10 del jugador = hl
 C 0x7c49 bit 7: el jugador usa la ficha 10 = a
-C 0x7c61 a = bit 7: el jugador usa la ficha 10
 C 0x7c68 la y de la ficha 10 del jugador = hl
 C 0x7c6d bit 7: el jugador usa la ficha 10 = a
 C 0x7ca0 ix -> los 6 actores de la pantalla
+C 0x7e8b a = la pose de Rastan
 C 0x7e9b ix -> los 8 enemigos de la pantalla
-C 0x7f04 hl = la y de la ficha 10 del jugador
-C 0x7f09 a = bit 7: el jugador usa la ficha 10
 C 0x7f5c bit 7: el jugador usa la ficha 10 = a
 C 0x7f67 ix -> los 6 actores de la pantalla
-C 0x7faa a = bit 7: el jugador usa la ficha 10
 C 0x7fcf la y de la ficha 10 del jugador = hl
-C 0x7ff2 a = cual es el bloque especial
-C 0x7ffa a = x del bloque especial de la pantalla
 # --- fin de anota ---

@@ -120,11 +120,11 @@ L_6077:
 	ld hl,00000h		;60c8
 	ld de,080ffh		;60cb
 	ld bc,00000h		;60ce
-	call 044f1h		;60d1
+	call 044f1h		;60d1   ; p00 copia_bloque
 	ld hl,08000h		;60d4
 	ld de,080ffh		;60d7
 	ld bc,08000h		;60da
-	call 044f1h		;60dd
+	call 044f1h		;60dd   ; p00 copia_bloque
 	ld a,016h		;60e0
 	ld (0d191h),a		;60e2   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;60e5   ; registro del mapper: banco A en 0x8000
@@ -152,11 +152,11 @@ L_6077:
 	ld hl,00000h		;611e
 	ld de,080ffh		;6121
 	ld bc,00000h		;6124
-	call 044f1h		;6127
+	call 044f1h		;6127   ; p00 copia_bloque
 	ld hl,08000h		;612a
 	ld de,080ffh		;612d
 	ld bc,08000h		;6130
-	call 044f1h		;6133
+	call 044f1h		;6133   ; p00 copia_bloque
 	ld a,010h		;6136
 	ld (0d191h),a		;6138   ; copia del registro del mapper de 0x8000 = a
 	ld (077f8h),a		;613b   ; registro del mapper: banco A en 0x8000

@@ -8,6 +8,8 @@ C 0x60a8 copia del registro del mapper de 0x8000 = a
 C 0x60ab registro del mapper: banco A en 0x8000
 C 0x60b0 copia del registro del mapper de 0xA000 = a
 C 0x60b3 registro del mapper: banco A en 0xA000
+C 0x60d1 p00 copia_bloque
+C 0x60dd p00 copia_bloque
 C 0x60e2 copia del registro del mapper de 0x8000 = a
 C 0x60e5 registro del mapper: banco A en 0x8000
 C 0x60ea copia del registro del mapper de 0xA000 = a
@@ -16,6 +18,8 @@ C 0x60fe copia del registro del mapper de 0x8000 = a
 C 0x6101 registro del mapper: banco A en 0x8000
 C 0x6106 copia del registro del mapper de 0xA000 = a
 C 0x6109 registro del mapper: banco A en 0xA000
+C 0x6127 p00 copia_bloque
+C 0x6133 p00 copia_bloque
 C 0x6138 copia del registro del mapper de 0x8000 = a
 C 0x613b registro del mapper: banco A en 0x8000
 C 0x6140 copia del registro del mapper de 0xA000 = a

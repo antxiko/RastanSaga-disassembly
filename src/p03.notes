@@ -2,79 +2,213 @@
 # --- ANOTA (seccion que reescribe tools/anota.py; no editar a mano) ---
 C 0x6000 a = la fase
 C 0x6073 ix -> los 6 actores de la pantalla
+C 0x607a p00 pinta_actor
 C 0x6084 a = cual es el bloque especial
+C 0x608b p00 azar
 C 0x609c x del bloque especial de la pantalla = a
 C 0x60a6 y del bloque especial = a
+C 0x60a9 p00 azar
 C 0x60b9 cual es el bloque especial = a
-C 0x6143 peticion de sonido para p01:63E1 = a
+C 0x60be p00 pinta_bloque_especial
+C 0x60c3 p00 baja_actor
+C 0x612e p00 pinta_actor
+C 0x6131 p00 pinta_actor
+C 0x6143 efecto pedido, para p01:63E1 = a
+C 0x617e p00 pinta_actor
+C 0x6181 p00 pinta_actor
+C 0x6200 p00 pinta_actor
+C 0x6203 p00 pinta_actor
 C 0x620d a = actor 5, byte +15
+C 0x6288 p00 pinta_actor
 C 0x628b a = actor 4, byte +15
+C 0x62a0 p00 pinta_actor
+C 0x62b0 p00 pinta_actor
+C 0x62bc p00 pinta_actor
+C 0x62c3 p00 pinta_actor
 C 0x62cc ix -> actor 5
 C 0x62ed actor 5, byte +10 = hl
+C 0x62f0 p00 alta_actor
+C 0x62f3 p00 pinta_actor
+C 0x62f9 p00 pinta_actor
+C 0x630c p00 baja_actor
 C 0x6417 a = la y de Rastan
-C 0x6441 0x27 al entrar en una pantalla = a
-C 0x6648 peticion de sonido para p01:63E1 = a
-C 0x669c peticion de sonido para p01:63E1 = a
+C 0x6425 a = bit 7 muerto, bit 4 un rato sin mandos
+C 0x6432 bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x6435 a = la pose de Rastan
+C 0x643c la pose de Rastan = a
+C 0x6441 cuenta del estado del jugador = a
+C 0x644a a = la vida de Rastan
+C 0x644e la vida de Rastan = a
+C 0x6455 la vida de Rastan = a
+C 0x645a bit 7 muerto, bit 4 un rato sin mandos = a
+C 0x6490 p00 pinta_actor
+C 0x64e7 p00 pinta_actor
+C 0x6536 p00 pinta_actor
+C 0x656b p00 pinta_actor
+C 0x658b p00 pinta_actor
+C 0x658e p00 pinta_actor
+C 0x6648 efecto pedido, para p01:63E1 = a
+C 0x6687 p00 pinta_actor
+C 0x668a p00 pinta_actor
+C 0x669c efecto pedido, para p01:63E1 = a
 C 0x66fd a = la y de Rastan
 C 0x6716 a = la y de Rastan
+C 0x6725 p00 pinta_actor
+C 0x672b p00 pinta_actor
+C 0x673a p00 baja_actor
+C 0x673f p00 baja_actor
+C 0x6768 p00 azar
+C 0x676d p00 pinta_actor
+C 0x67b7 p00 pinta_actor
 C 0x67c1 a = actor 3, byte +15
+C 0x67f8 p00 pinta_actor
+C 0x68cd p00 pinta_actor
 C 0x68d0 a = actor 3, byte +15
+C 0x68f1 p00 pinta_actor
 C 0x68f6 a = actor 3, byte +15
+C 0x68fe p00 pinta_actor
+C 0x69a9 p00 pinta_actor
 C 0x69b2 ix -> actor 3
-C 0x69c9 peticion de sonido para p01:63E1 = a
+C 0x69c9 efecto pedido, para p01:63E1 = a
 C 0x69d6 actor 3, byte +10 = hl
+C 0x69db p00 alta_actor
+C 0x69e0 p00 pinta_actor
+C 0x69f3 p00 baja_actor
+C 0x6ab1 p00 pinta_actor
 C 0x6ab7 a = la x de Rastan
 C 0x6abb a = la y de Rastan
 C 0x6adb a = la x de Rastan
 C 0x6adf a = la y de Rastan
+C 0x6aff a = la pose de Rastan para la animacion
 C 0x6b07 a = la x de Rastan
 C 0x6b0b a = la y de Rastan
+C 0x6b2c a = la pose de Rastan para la animacion
 C 0x6b34 a = la x de Rastan
 C 0x6b38 a = la y de Rastan
 C 0x6b60 a = actor 5, byte +15
+C 0x6bcc p00 pinta_actor
 C 0x6bd8 a = actor 5, byte +15
+C 0x6bed p00 pinta_actor
 C 0x6c00 ix -> actor 5
+C 0x6c1e p00 alta_actor
+C 0x6c21 p00 pinta_actor
+C 0x6c2a p00 pinta_actor
 C 0x6c73 a = la x de Rastan
 C 0x6cb2 ix -> actor 5
+C 0x6cba p00 baja_actor
 C 0x6cc0 ix -> actor 5
+C 0x6cc4 p00 baja_actor
 C 0x6ce3 a = actor 4, byte +15
 C 0x6d3c a = actor 4, byte +15
+C 0x6d4a p00 pinta_actor
+C 0x6d52 p00 pinta_actor
+C 0x6d85 p00 pinta_actor
+C 0x6da3 p00 pinta_actor
 C 0x6da6 a = actor 4, byte +15
+C 0x6db3 p00 pinta_actor
+C 0x6dc3 p00 pinta_actor
 C 0x6dd0 ix -> actor 4
+C 0x6dee p00 alta_actor
+C 0x6df1 p00 pinta_actor
+C 0x6df7 p00 pinta_actor
+C 0x6e01 p00 baja_actor
 C 0x6e44 a = la x de Rastan
 C 0x6e7d ix -> actor 4
+C 0x6e85 p00 baja_actor
 C 0x6e8b ix -> actor 4
+C 0x6e8f p00 baja_actor
+C 0x6ea0 p00 pinta_actor
+C 0x6ece p00 pinta_actor
+C 0x6faa p00 pinta_actor
+C 0x6fc8 p00 pinta_actor
+C 0x6fcb p00 pinta_actor
+C 0x70c3 p00 pinta_actor
+C 0x713d p00 pinta_actor
+C 0x7140 p00 pinta_actor
+C 0x7196 p00 pinta_actor
+C 0x71c0 p00 pinta_actor
+C 0x7289 p00 pinta_actor
+C 0x729f p00 pinta_actor
+C 0x72a2 p00 pinta_actor
+C 0x735a p00 pinta_actor
 C 0x736f a = actor 3, byte +15
+C 0x73df p00 pinta_actor
 C 0x73e8 a = actor 3, byte +15
+C 0x7405 p00 pinta_actor
 C 0x740a a = actor 3, byte +15
+C 0x741d p00 pinta_actor
 C 0x7426 ix -> actor 3
+C 0x7444 p00 alta_actor
+C 0x7447 p00 pinta_actor
+C 0x7450 p00 pinta_actor
+C 0x745a p00 baja_actor
 C 0x74a7 a = la x de Rastan
 C 0x74e4 ix -> actor 3
+C 0x74ec p00 baja_actor
 C 0x74f2 ix -> actor 3
+C 0x74f6 p00 baja_actor
+C 0x7505 p00 pinta_actor
+C 0x7508 hl -> la pose de Rastan para la animacion
+C 0x754a p00 pinta_actor
+C 0x761f p00 pinta_actor
+C 0x763d p00 pinta_actor
+C 0x7640 p00 pinta_actor
 C 0x76f8 a = actor 4, byte +15
 C 0x7700 a = actor 4, byte +15
+C 0x7770 p00 pinta_actor
 C 0x7779 a = actor 4, byte +15
+C 0x778e p00 pinta_actor
 C 0x7793 a = actor 4, byte +15
+C 0x779e p00 pinta_actor
 C 0x77b5 ix -> actor 4
+C 0x77d6 p00 alta_actor
+C 0x77d9 p00 pinta_actor
+C 0x77e2 p00 pinta_actor
+C 0x77ec p00 baja_actor
 C 0x7835 a = la x de Rastan
 C 0x7870 ix -> actor 4
+C 0x787e p00 pinta_actor
+C 0x7883 p00 baja_actor
+C 0x7891 p00 pinta_actor
+C 0x7896 p00 baja_actor
+C 0x78a2 p00 pinta_actor
+C 0x78a7 p00 baja_actor
 C 0x78b4 a = actor 4, byte +15
 C 0x78bc a = actor 4, byte +15
+C 0x7924 p00 pinta_actor
 C 0x792d a = actor 4, byte +15
+C 0x7942 p00 pinta_actor
 C 0x7947 a = actor 4, byte +15
+C 0x7953 p00 pinta_actor
 C 0x796a ix -> actor 4
+C 0x798b p00 alta_actor
+C 0x798e p00 pinta_actor
+C 0x7997 p00 pinta_actor
+C 0x79a1 p00 baja_actor
 C 0x79ea a = la x de Rastan
 C 0x7a25 ix -> actor 4
+C 0x7a33 p00 pinta_actor
+C 0x7a38 p00 baja_actor
 C 0x7a40 a = actor 0, byte +3
 C 0x7a45 a = y del bloque especial
 C 0x7a4a a = actor 0, byte +4
 C 0x7a4f a = cual es el bloque especial
+C 0x7a54 p00 azar
+C 0x7ad4 p00 baja_actor
 C 0x7b29 a = la x de Rastan
+C 0x7b60 p00 pinta_actor
+C 0x7b76 p00 pinta_actor
 C 0x7b90 a = la y de Rastan
+C 0x7bcd p00 pinta_actor
+C 0x7c3a p00 pinta_actor
+C 0x7c5c p00 pinta_actor
+C 0x7c70 p00 pinta_actor
 C 0x7cc6 a = la x de Rastan
 C 0x7cdd a = la x de Rastan
 C 0x7cfb a = la y de Rastan
 C 0x7d76 de -> lo de delante desempaquetado: 11 x 16 bloques
+C 0x7e56 p00 pinta_actor
+C 0x7eb9 p00 pinta_actor
 C 0x7f21 actor 0, byte +A = a
 C 0x7f26 actor 0, byte +B = a
 C 0x7f3e a = los 6 actores de la pantalla
@@ -85,8 +219,9 @@ C 0x7f64 a = actor 0, byte +6
 C 0x7f67 lo que se suma a la x de los sprites = a
 C 0x7f6a a = actor 0, byte +7
 C 0x7f6d lo que se suma a la y de los sprites = a
+C 0x7f72 p00 pinta_con_banco_8
 C 0x7fda a = los 6 actores de la pantalla
-C 0x7fe3 peticion de sonido para p01:640F = a
+C 0x7fe3 musica pedida, para p01:640F = a
 C 0x7fe8 los 6 actores de la pantalla = a
 C 0x7fec actor 0, byte +1 = a
 C 0x7ff1 actor 0, byte +A = a

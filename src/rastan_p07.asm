@@ -52,18 +52,18 @@ L_802C:
 	ld a,003h		;802c
 	ld b,000h		;802e
 L_8030:
-	ld (0d919h),a		;8030
+	ld (0d919h),a		;8030   ; el arma que lleva = a
 	ld d,a			;8033
-	ld a,(0d905h)		;8034
+	ld a,(0d905h)		;8034   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	and 0fch		;8037
 	or d			;8039
 	set 4,a		;803a
-	ld (0d905h),a		;803c
+	ld (0d905h),a		;803c   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 	exx			;803f
-	ld hl,0d928h		;8040
+	ld hl,0d928h		;8040   ; hl -> sucesos del jugador en este cuadro: cada bit, un efecto
 	set 3,(hl)		;8043
 	exx			;8045
-	ld a,(0d920h)		;8046
+	ld a,(0d920h)		;8046   ; a = puntuacion, cifras 5-6
 	ld d,05ah		;8049
 	cp 010h		;804b
 	jr nc,L_8063		;804d
@@ -79,7 +79,7 @@ L_8030:
 	ld d,032h		;8061
 L_8063:
 	ld a,d			;8063
-	ld (0d91ah),a		;8064
+	ld (0d91ah),a		;8064   ; segundos que le quedan al arma = a
 	ld e,b			;8067
 	ld d,000h		;8068
 	push bc			;806a
@@ -171,7 +171,7 @@ L_8104:
 	call L_8632		;8141
 	call L_85F6		;8144
 	call L_8BC6		;8147
-	ld a,(0d90fh)		;814a
+	ld a,(0d90fh)		;814a   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	bit 6,a		;814d
 	ret nz			;814f
 	bit 4,a		;8150
@@ -181,7 +181,7 @@ L_8104:
 	ret nz			;8158
 	bit 6,a		;8159
 	jp nz,L_918C		;815b
-	ld a,(0d904h)		;815e
+	ld a,(0d904h)		;815e   ; a = la pose de Rastan
 	and 01eh		;8161
 	cp 004h		;8163
 	jr nz,L_816B		;8165
@@ -407,16 +407,16 @@ L_8316:
 	cp 01fh		;8327
 	jp nc,L_83F6		;8329
 	set 7,(ix+025h)		;832c
-	ld a,(0d91ah)		;8330
+	ld a,(0d91ah)		;8330   ; a = segundos que le quedan al arma
 	or a			;8333
 	jr z,L_8346		;8334
 	xor a			;8336
-	ld (0d91ah),a		;8337
-	ld a,(0d905h)		;833a
+	ld (0d91ah),a		;8337   ; segundos que le quedan al arma = a
+	ld a,(0d905h)		;833a   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	and 0fch		;833d
-	ld (0d905h),a		;833f
+	ld (0d905h),a		;833f   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 	xor a			;8342
-	ld (0d919h),a		;8343
+	ld (0d919h),a		;8343   ; el arma que lleva = a
 L_8346:
 	ld a,(0d926h)		;8346
 	or a			;8349
@@ -489,9 +489,9 @@ L_83D0:
 	ld (0d926h),a		;83da
 	jr nz,L_83EA		;83dd
 	ld (0d91bh),a		;83df
-	ld a,(0d905h)		;83e2
+	ld a,(0d905h)		;83e2   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	and 0b3h		;83e5
-	ld (0d905h),a		;83e7
+	ld (0d905h),a		;83e7   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 L_83EA:
 	srl d		;83ea
 L_83EC:
@@ -499,7 +499,7 @@ L_83EC:
 	add a,c			;83ed
 	ld c,a			;83ee
 	exx			;83ef
-	ld hl,0d928h		;83f0
+	ld hl,0d928h		;83f0   ; hl -> sucesos del jugador en este cuadro: cada bit, un efecto
 	set 7,(hl)		;83f3
 	exx			;83f5
 L_83F6:
@@ -680,9 +680,9 @@ L_8564:
 	ld (0d926h),a		;856e
 	jr nz,L_857E		;8571
 	ld (0d91bh),a		;8573
-	ld a,(0d905h)		;8576
+	ld a,(0d905h)		;8576   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	and 0b3h		;8579
-	ld (0d905h),a		;857b
+	ld (0d905h),a		;857b   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 L_857E:
 	srl d		;857e
 L_8580:
@@ -976,7 +976,7 @@ L_878B:
 	ret			;87a7
 L_87A8:
 	ld d,000h		;87a8
-	ld a,(0d904h)		;87aa
+	ld a,(0d904h)		;87aa   ; a = la pose de Rastan
 	and 01eh		;87ad
 	cp 004h		;87af
 	jr nz,L_87B5		;87b1
@@ -1122,7 +1122,7 @@ L_8873:
 L_8891:
 	ret			;8891
 L_8892:
-	ld a,(0d90fh)		;8892
+	ld a,(0d90fh)		;8892   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	bit 2,a		;8895
 	jp nz,L_88F0		;8897
 	ld a,(0d90dh)		;889a
@@ -1166,11 +1166,11 @@ L_88BC:
 	ld (0d8fdh),a		;88d7   ; la y de Rastan = a
 	ld (0d914h),ix		;88da
 	push hl			;88de
-	ld hl,0d90fh		;88df
+	ld hl,0d90fh		;88df   ; hl -> bit 7 muerto, bit 4 un rato sin mandos
 	set 2,(hl)		;88e2
 	ld hl,0d90dh		;88e4
 	ld (hl),000h		;88e7
-	ld hl,0d90fh		;88e9
+	ld hl,0d90fh		;88e9   ; hl -> bit 7 muerto, bit 4 un rato sin mandos
 	res 0,(hl)		;88ec
 	pop hl			;88ee
 	ret			;88ef
@@ -1213,7 +1213,7 @@ L_8914:
 	ret			;892e
 L_892F:
 	push hl			;892f
-	ld hl,0d90fh		;8930
+	ld hl,0d90fh		;8930   ; hl -> bit 7 muerto, bit 4 un rato sin mandos
 	res 2,(hl)		;8933
 	ld hl,0d90dh		;8935
 	set 7,(hl)		;8938
@@ -1221,7 +1221,7 @@ L_892F:
 	pop hl			;893c
 	ret			;893d
 L_893E:
-	ld a,(0d90fh)		;893e
+	ld a,(0d90fh)		;893e   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	bit 3,a		;8941
 	ret nz			;8943
 	ld de,(0d914h)		;8944
@@ -1275,15 +1275,15 @@ L_8960:
 	add a,004h		;8996
 	cp 009h		;8998
 	ret nc			;899a
-	ld a,(0d90fh)		;899b
+	ld a,(0d90fh)		;899b   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	set 3,a		;899e
-	ld (0d90fh),a		;89a0
+	ld (0d90fh),a		;89a0   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,e			;89a3
 	ld (0d8fch),a		;89a4   ; la x de Rastan = a
 	ld (0d914h),ix		;89a7
-	ld a,(0d90fh)		;89ab
+	ld a,(0d90fh)		;89ab   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	res 0,a		;89ae
-	ld (0d90fh),a		;89b0
+	ld (0d90fh),a		;89b0   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,(ix+002h)		;89b3
 	and 07fh		;89b6
 	ld (0d916h),a		;89b8
@@ -1388,15 +1388,15 @@ L_8A33:
 	add a,004h		;8a5a
 	cp 009h		;8a5c
 	ret nc			;8a5e
-	ld a,(0d90fh)		;8a5f
+	ld a,(0d90fh)		;8a5f   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	set 3,a		;8a62
-	ld (0d90fh),a		;8a64
+	ld (0d90fh),a		;8a64   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,e			;8a67
 	ld (0d8fch),a		;8a68   ; la x de Rastan = a
 	ld (0d914h),ix		;8a6b
-	ld a,(0d90fh)		;8a6f
+	ld a,(0d90fh)		;8a6f   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	res 0,a		;8a72
-	ld (0d90fh),a		;8a74
+	ld (0d90fh),a		;8a74   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,(ix+002h)		;8a77
 	and 07fh		;8a7a
 	ld (0d916h),a		;8a7c
@@ -1475,15 +1475,15 @@ L_8ACA:
 	add a,004h		;8af1
 	cp 009h		;8af3
 	ret nc			;8af5
-	ld a,(0d90fh)		;8af6
+	ld a,(0d90fh)		;8af6   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	set 3,a		;8af9
-	ld (0d90fh),a		;8afb
+	ld (0d90fh),a		;8afb   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,e			;8afe
 	ld (0d8fch),a		;8aff   ; la x de Rastan = a
 	ld (0d914h),ix		;8b02
-	ld a,(0d90fh)		;8b06
+	ld a,(0d90fh)		;8b06   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	res 0,a		;8b09
-	ld (0d90fh),a		;8b0b
+	ld (0d90fh),a		;8b0b   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,(ix+002h)		;8b0e
 	and 07fh		;8b11
 	ld (0d916h),a		;8b13
@@ -1550,15 +1550,15 @@ L_8B4A:
 	add a,004h		;8b72
 	cp 009h		;8b74
 	ret nc			;8b76
-	ld a,(0d90fh)		;8b77
+	ld a,(0d90fh)		;8b77   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	set 3,a		;8b7a
-	ld (0d90fh),a		;8b7c
+	ld (0d90fh),a		;8b7c   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,e			;8b7f
 	ld (0d8fch),a		;8b80   ; la x de Rastan = a
 	ld (0d914h),ix		;8b83
-	ld a,(0d90fh)		;8b87
+	ld a,(0d90fh)		;8b87   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	res 0,a		;8b8a
-	ld (0d90fh),a		;8b8c
+	ld (0d90fh),a		;8b8c   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ld a,(ix+002h)		;8b8f
 	and 07fh		;8b92
 	ld (0d916h),a		;8b94
@@ -1615,7 +1615,7 @@ L_8BC6:
 	ld c,a			;8bec
 	ld b,000h		;8bed
 	exx			;8bef
-	ld hl,0d928h		;8bf0
+	ld hl,0d928h		;8bf0   ; hl -> sucesos del jugador en este cuadro: cada bit, un efecto
 	set 2,(hl)		;8bf3
 	exx			;8bf5
 	ld hl,08c31h		;8bf6
@@ -1658,20 +1658,20 @@ L_8C53:
 	ld c,020h		;8c53
 	jr L_8C5E		;8c55
 L_8C57:
-	ld a,(0d91dh)		;8c57
-	ld (0d91ch),a		;8c5a
+	ld a,(0d91dh)		;8c57   ; a = el largo total de la barra
+	ld (0d91ch),a		;8c5a   ; la vida de Rastan = a
 	ret			;8c5d
 L_8C5E:
-	ld a,(0d91ch)		;8c5e
+	ld a,(0d91ch)		;8c5e   ; a = la vida de Rastan
 	add a,c			;8c61
 	ld b,a			;8c62
-	ld a,(0d91dh)		;8c63
+	ld a,(0d91dh)		;8c63   ; a = el largo total de la barra
 	cp b			;8c66
 	jr nc,L_8C6A		;8c67
 	ld b,a			;8c69
 L_8C6A:
 	ld a,b			;8c6a
-	ld (0d91ch),a		;8c6b
+	ld (0d91ch),a		;8c6b   ; la vida de Rastan = a
 	ret			;8c6e
 L_8C6F:
 	ld d,004h		;8c6f
@@ -1695,11 +1695,11 @@ L_8C84:
 	add a,a			;8c88
 	add a,a			;8c89
 	ld d,a			;8c8a
-	ld a,(0d905h)		;8c8b
+	ld a,(0d905h)		;8c8b   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	and 0f3h		;8c8e
 	or d			;8c90
-	ld (0d905h),a		;8c91
-	ld a,(0d920h)		;8c94
+	ld (0d905h),a		;8c91   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
+	ld a,(0d920h)		;8c94   ; a = puntuacion, cifras 5-6
 	ld d,009h		;8c97
 	cp 010h		;8c99
 	jr nc,L_8CB1		;8c9b
@@ -1727,18 +1727,18 @@ L_8CBF:
 	djnz L_8CBF		;8cc5
 	ret			;8cc7
 L_8CC8:
-	ld a,(0d919h)		;8cc8
+	ld a,(0d919h)		;8cc8   ; a = el arma que lleva
 	or a			;8ccb
 	ret z			;8ccc
-	ld a,(0d91ah)		;8ccd
+	ld a,(0d91ah)		;8ccd   ; a = segundos que le quedan al arma
 	add a,a			;8cd0
 	jr nc,L_8CD5		;8cd1
 	ld a,0ffh		;8cd3
 L_8CD5:
-	ld (0d91ah),a		;8cd5
-	ld a,(0d905h)		;8cd8
+	ld (0d91ah),a		;8cd5   ; segundos que le quedan al arma = a
+	ld a,(0d905h)		;8cd8   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	set 7,a		;8cdb
-	ld (0d905h),a		;8cdd
+	ld (0d905h),a		;8cdd   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 	ret			;8ce0
 L_8CE1:
 	ld a,(0d91bh)		;8ce1
@@ -1751,26 +1751,26 @@ L_8CE1:
 	ld a,01fh		;8cee
 L_8CF0:
 	ld (0d926h),a		;8cf0
-	ld a,(0d905h)		;8cf3
+	ld a,(0d905h)		;8cf3   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	set 6,a		;8cf6
-	ld (0d905h),a		;8cf8
+	ld (0d905h),a		;8cf8   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 	ret			;8cfb
 L_8CFC:
-	ld a,(0d905h)		;8cfc
+	ld a,(0d905h)		;8cfc   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	set 5,a		;8cff
-	ld (0d905h),a		;8d01
+	ld (0d905h),a		;8d01   ; lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7 = a
 	ld a,03ch		;8d04
-	ld (0d92ah),a		;8d06
+	ld (0d92ah),a		;8d06   ; segundos que le quedan al bit 5 de D905 = a
 	ret			;8d09
 L_8D0A:
 	ret			;8d0a
 L_8D0B:
-	ld a,(0d905h)		;8d0b
+	ld a,(0d905h)		;8d0b   ; a = lo que lleva Rastan: bits 0-1, 2-3, 5, 6, 7
 	bit 5,a		;8d0e
 	call nz,L_8D13		;8d10
 L_8D13:
 	ld a,e			;8d13
-	ld hl,0d91eh		;8d14
+	ld hl,0d91eh		;8d14   ; hl -> la puntuacion, tres bytes BCD
 	add a,(hl)			;8d17
 	daa			;8d18
 	ld (hl),a			;8d19
@@ -1880,7 +1880,7 @@ L_918C:
 	ld h,a			;9195
 	ld a,(0d8fdh)		;9196   ; a = la y de Rastan
 	ld l,a			;9199
-	ld a,(0d904h)		;919a
+	ld a,(0d904h)		;919a   ; a = la pose de Rastan
 	and 01eh		;919d
 	cp 004h		;919f
 	jr nz,L_91A7		;91a1

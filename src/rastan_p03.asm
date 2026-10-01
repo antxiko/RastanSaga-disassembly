@@ -79,13 +79,13 @@ L_6073:
 	ld b,003h		;6077
 	ret			;6079
 L_607A:
-	call 04a8bh		;607a
+	call 04a8bh		;607a   ; p00 pinta_actor
 	bit 7,(ix+002h)		;607d
 	jp z,L_605C		;6081
 	ld a,(0d92dh)		;6084   ; a = cual es el bloque especial
 	and a			;6087
 	jp nz,L_60C3		;6088
-	call 044deh		;608b
+	call 044deh		;608b   ; p00 azar
 	and 024h		;608e
 	cp 004h		;6090
 	jp nz,L_60C3		;6092
@@ -98,7 +98,7 @@ L_607A:
 	and 0f0h		;60a4
 	ld (0d92ch),a		;60a6   ; y del bloque especial = a
 L_60A9:
-	call 044deh		;60a9
+	call 044deh		;60a9   ; p00 azar
 	ld b,a			;60ac
 	ld a,r		;60ad
 	xor b			;60af
@@ -108,10 +108,10 @@ L_60A9:
 	jp z,L_60A9		;60b6
 	ld (0d92dh),a		;60b9   ; cual es el bloque especial = a
 	push ix		;60bc
-	call 048b6h		;60be
+	call 048b6h		;60be   ; p00 pinta_bloque_especial
 	pop ix		;60c1
 L_60C3:
-	call 04b10h		;60c3
+	call 04b10h		;60c3   ; p00 baja_actor
 	jp L_605C		;60c6
 
 ; ----------------------------------------------------------------------
@@ -144,9 +144,9 @@ L_610A:
 	call L_7B90		;6125
 	call L_7E83		;6128
 	call L_6184		;612b
-	jp 04a8bh		;612e
+	jp 04a8bh		;612e   ; p00 pinta_actor
 L_6131:
-	jp 04a8bh		;6131
+	jp 04a8bh		;6131   ; p00 pinta_actor
 L_6134:
 	ld a,(ix+00fh)		;6134
 	and a			;6137
@@ -155,7 +155,7 @@ L_6134:
 	and a			;613e
 	jr nz,L_614A		;613f
 	ld a,009h		;6141
-	ld (0d178h),a		;6143   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;6143   ; efecto pedido, para p01:63E1 = a
 	ld (ix+010h),0ffh		;6146
 L_614A:
 	call L_7B29		;614a
@@ -178,9 +178,9 @@ L_614A:
 	jp z,L_6181		;6175
 	call L_7E83		;6178
 	call L_7B90		;617b
-	jp 04a8bh		;617e
+	jp 04a8bh		;617e   ; p00 pinta_actor
 L_6181:
-	jp 04a8bh		;6181
+	jp 04a8bh		;6181   ; p00 pinta_actor
 L_6184:
 	ld b,004h		;6184
 	ld a,r		;6186
@@ -250,9 +250,9 @@ L_61EB:
 	cp 020h		;61f9
 	jr nz,L_6203		;61fb
 	call L_7E83		;61fd
-	jp 04a8bh		;6200
+	jp 04a8bh		;6200   ; p00 pinta_actor
 L_6203:
-	jp 04a8bh		;6203
+	jp 04a8bh		;6203   ; p00 pinta_actor
 L_6206:
 	ld a,(ix+00fh)		;6206
 	and a			;6209
@@ -307,7 +307,7 @@ L_6275:
 	jp L_7B64		;6281
 L_6284:
 	ld (ix+013h),0ffh		;6284
-	jp 04a8bh		;6288
+	jp 04a8bh		;6288   ; p00 pinta_actor
 L_628B:
 	ld a,(0d9e0h)		;628b   ; a = actor 4, byte +15
 	cp 00fh		;628e
@@ -316,7 +316,7 @@ L_628B:
 	ld (ix+010h),000h		;6296
 	ld (ix+011h),00fh		;629a
 	push ix		;629e
-	call 04a8bh		;62a0
+	call 04a8bh		;62a0   ; p00 pinta_actor
 	pop ix		;62a3
 	ld a,(ix+015h)		;62a5
 	and a			;62a8
@@ -324,16 +324,16 @@ L_628B:
 L_62AC:
 	dec a			;62ac
 	ld (ix+011h),a		;62ad
-	jp 04a8bh		;62b0
+	jp 04a8bh		;62b0   ; p00 pinta_actor
 L_62B3:
 	ld a,r		;62b3
 	jp po,L_62BF		;62b5
 	dec a			;62b8
 	ld (ix+013h),a		;62b9
-	jp 04a8bh		;62bc
+	jp 04a8bh		;62bc   ; p00 pinta_actor
 L_62BF:
 	set 1,(ix+001h)		;62bf
-	jp 04a8bh		;62c3
+	jp 04a8bh		;62c3   ; p00 pinta_actor
 L_62C6:
 	push ix		;62c6
 	push ix		;62c8
@@ -351,13 +351,13 @@ L_62DC:
 	call L_6312		;62e7
 	ld hl,063d6h		;62ea
 	ld (0da01h),hl		;62ed   ; actor 5, byte +10 = hl
-	call 048f9h		;62f0
-	call 04a8bh		;62f3
+	call 048f9h		;62f0   ; p00 alta_actor
+	call 04a8bh		;62f3   ; p00 pinta_actor
 L_62F6:
 	pop ix		;62f6
 	ret			;62f8
 L_62F9:
-	call 04a8bh		;62f9
+	call 04a8bh		;62f9   ; p00 pinta_actor
 	pop ix		;62fc
 	ret			;62fe
 L_62FF:
@@ -365,7 +365,7 @@ L_62FF:
 	ld hl,063d6h		;6303
 	ld (ix+010h),l		;6306
 	ld (ix+011h),h		;6309
-	call 04b10h		;630c
+	call 04b10h		;630c   ; p00 baja_actor
 	pop ix		;630f
 	ret			;6311
 L_6312:
@@ -485,33 +485,33 @@ L_6417:
 	ret			;6422
 L_6423:
 	ld d,008h		;6423
-	ld a,(0d90fh)		;6425
+	ld a,(0d90fh)		;6425   ; a = bit 7 muerto, bit 4 un rato sin mandos
 	bit 6,a		;6428
 	ret nz			;642a
 	bit 4,a		;642b
 	ret nz			;642d
 	set 4,a		;642e
 	set 6,a		;6430
-	ld (0d90fh),a		;6432
-	ld a,(0d904h)		;6435
+	ld (0d90fh),a		;6432   ; bit 7 muerto, bit 4 un rato sin mandos = a
+	ld a,(0d904h)		;6435   ; a = la pose de Rastan
 	set 6,a		;6438
 	res 5,a		;643a
-	ld (0d904h),a		;643c
+	ld (0d904h),a		;643c   ; la pose de Rastan = a
 	ld a,050h		;643f
-	ld (0d913h),a		;6441   ; 0x27 al entrar en una pantalla = a
+	ld (0d913h),a		;6441   ; cuenta del estado del jugador = a
 	ld a,(0d910h)		;6444
 	bit 7,a		;6447
 	ret nz			;6449
-	ld a,(0d91ch)		;644a
+	ld a,(0d91ch)		;644a   ; a = la vida de Rastan
 	sub d			;644d
-	ld (0d91ch),a		;644e
+	ld (0d91ch),a		;644e   ; la vida de Rastan = a
 	jr z,L_6454		;6451
 	ret nc			;6453
 L_6454:
 	xor a			;6454
-	ld (0d91ch),a		;6455
+	ld (0d91ch),a		;6455   ; la vida de Rastan = a
 	ld a,080h		;6458
-	ld (0d90fh),a		;645a
+	ld (0d90fh),a		;645a   ; bit 7 muerto, bit 4 un rato sin mandos = a
 	ret			;645d
 L_645E:
 	ld a,(ix+00fh)		;645e
@@ -535,7 +535,7 @@ L_645E:
 	set 2,(ix+001h)		;6485
 	res 1,(ix+001h)		;6489
 	call L_7E83		;648d
-	jp 04a8bh		;6490
+	jp 04a8bh		;6490   ; p00 pinta_actor
 L_6493:
 	res 2,(ix+001h)		;6493
 	call L_7EBD		;6497
@@ -572,7 +572,7 @@ L_64D6:
 	push af			;64e2
 	call z,L_7E18		;64e3
 	pop af			;64e6
-	jp z,04a8bh		;64e7
+	jp z,04a8bh		;64e7   ; p00 pinta_actor
 	cp 002h		;64ea
 	jp z,L_6591		;64ec
 	cp 003h		;64ef
@@ -608,7 +608,7 @@ L_6525:
 	push af			;6531
 	call z,L_7E18		;6532
 	pop af			;6535
-	jp z,04a8bh		;6536
+	jp z,04a8bh		;6536   ; p00 pinta_actor
 	cp 002h		;6539
 	jp z,L_65A2		;653b
 	cp 003h		;653e
@@ -631,7 +631,7 @@ L_6560:
 	res 1,(ix+001h)		;6564
 L_6568:
 	call L_7E83		;6568
-	jp 04a8bh		;656b
+	jp 04a8bh		;656b   ; p00 pinta_actor
 L_656E:
 	ld a,r		;656e
 	and a			;6570
@@ -644,9 +644,9 @@ L_656E:
 	jp nc,L_658E		;6580
 	set 1,(ix+001h)		;6583
 	res 2,(ix+001h)		;6587
-	jp 04a8bh		;658b
+	jp 04a8bh		;658b   ; p00 pinta_actor
 L_658E:
-	jp 04a8bh		;658e
+	jp 04a8bh		;658e   ; p00 pinta_actor
 L_6591:
 	ld a,(ix+017h)		;6591
 	and 0f0h		;6594
@@ -740,7 +740,7 @@ L_6639:
 	and a			;6643
 	jr nz,L_664F		;6644
 	ld a,009h		;6646
-	ld (0d178h),a		;6648   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;6648   ; efecto pedido, para p01:63E1 = a
 	ld (ix+010h),0ffh		;664b
 L_664F:
 	call L_7B29		;664f
@@ -765,9 +765,9 @@ L_664F:
 	jr z,L_668A		;6680
 	jr c,L_668A		;6682
 	call L_7B90		;6684
-	jp 04a8bh		;6687
+	jp 04a8bh		;6687   ; p00 pinta_actor
 L_668A:
-	jp 04a8bh		;668a
+	jp 04a8bh		;668a   ; p00 pinta_actor
 L_668D:
 	ld a,(ix+00fh)		;668d
 	and a			;6690
@@ -776,7 +776,7 @@ L_668D:
 	and a			;6697
 	jr nz,L_66A3		;6698
 	ld a,009h		;669a
-	ld (0d178h),a		;669c   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;669c   ; efecto pedido, para p01:63E1 = a
 	ld (ix+010h),0ffh		;669f
 L_66A3:
 	ld a,(ix+00fh)		;66a3
@@ -837,19 +837,19 @@ L_670F:
 	jp L_7C14		;671f
 L_6722:
 	dec (ix+007h)		;6722
-	jp 04a8bh		;6725
+	jp 04a8bh		;6725   ; p00 pinta_actor
 L_6728:
 	inc (ix+007h)		;6728
-	jp 04a8bh		;672b
+	jp 04a8bh		;672b   ; p00 pinta_actor
 L_672E:
 	call L_7B29		;672e
 	and a			;6731
 	jp nz,L_7E18		;6732
 	ld a,(ix+006h)		;6735
 	cp 0dch		;6738
-	jp nc,04b10h		;673a
+	jp nc,04b10h		;673a   ; p00 baja_actor
 	cp 01eh		;673d
-	jp c,04b10h		;673f
+	jp c,04b10h		;673f   ; p00 baja_actor
 	jp L_7BA7		;6742
 L_6745:
 	ld a,(ix+00fh)		;6745
@@ -867,9 +867,9 @@ L_6745:
 	dec a			;6761
 	ld (ix+010h),a		;6762
 	call L_7D0F		;6765
-	call 044deh		;6768
+	call 044deh		;6768   ; p00 azar
 	and 0ffh		;676b
-	jp po,04a8bh		;676d
+	jp po,04a8bh		;676d   ; p00 pinta_actor
 L_6770:
 	ld a,(ix+006h)		;6770
 	cp 001h		;6773
@@ -901,7 +901,7 @@ L_67B0:
 	jp L_7B64		;67b0
 L_67B3:
 	ld (ix+010h),008h		;67b3
-	jp 04a8bh		;67b7
+	jp 04a8bh		;67b7   ; p00 pinta_actor
 L_67BA:
 	ld a,(ix+00fh)		;67ba
 	and a			;67bd
@@ -926,7 +926,7 @@ L_67BA:
 	set 1,(ix+001h)		;67ed
 	res 2,(ix+001h)		;67f1
 	call L_7E83		;67f5
-	jp 04a8bh		;67f8
+	jp 04a8bh		;67f8   ; p00 pinta_actor
 L_67FB:
 	res 1,(ix+001h)		;67fb
 	res 2,(ix+001h)		;67ff
@@ -1017,7 +1017,7 @@ L_68C2:
 	res 1,(ix+001h)		;68c6
 L_68CA:
 	call L_7E83		;68ca
-	jp 04a8bh		;68cd
+	jp 04a8bh		;68cd   ; p00 pinta_actor
 L_68D0:
 	ld a,(0d9bah)		;68d0   ; a = actor 3, byte +15
 	cp 00fh		;68d3
@@ -1031,14 +1031,14 @@ L_68D0:
 	set 2,(ix+001h)		;68e7
 	res 1,(ix+001h)		;68eb
 	push ix		;68ef
-	call 04a8bh		;68f1
+	call 04a8bh		;68f1   ; p00 pinta_actor
 	pop ix		;68f4
 	ld a,(0d9bah)		;68f6   ; a = actor 3, byte +15
 	and a			;68f9
 	jp z,L_69AC		;68fa
 	ret			;68fd
 L_68FE:
-	jp 04a8bh		;68fe
+	jp 04a8bh		;68fe   ; p00 pinta_actor
 L_6901:
 	ld a,(ix+017h)		;6901
 	and 0f0h		;6904
@@ -1121,7 +1121,7 @@ L_6994:
 L_69A1:
 	res 1,(ix+001h)		;69a1
 	res 2,(ix+001h)		;69a5
-	jp 04a8bh		;69a9
+	jp 04a8bh		;69a9   ; p00 pinta_actor
 L_69AC:
 	push ix		;69ac
 	push ix		;69ae
@@ -1136,15 +1136,15 @@ L_69C0:
 	bit 7,(iy+002h)		;69c0
 	jp z,L_69E3		;69c4
 	ld a,00dh		;69c7
-	ld (0d178h),a		;69c9   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;69c9   ; efecto pedido, para p01:63E1 = a
 	ld (ix+015h),00fh		;69cc
 	call L_69F9		;69d0
 	ld hl,08bcfh		;69d3
 	ld (0d9b5h),hl		;69d6   ; actor 3, byte +10 = hl
 	push ix		;69d9
-	call 048f9h		;69db
+	call 048f9h		;69db   ; p00 alta_actor
 	pop ix		;69de
-	call 04a8bh		;69e0
+	call 04a8bh		;69e0   ; p00 pinta_actor
 L_69E3:
 	pop ix		;69e3
 	ret			;69e5
@@ -1153,7 +1153,7 @@ L_69E6:
 	ld hl,08bcfh		;69ea
 	ld (ix+010h),l		;69ed
 	ld (ix+011h),h		;69f0
-	call 04b10h		;69f3
+	call 04b10h		;69f3   ; p00 baja_actor
 	pop ix		;69f6
 	ret			;69f8
 L_69F9:
@@ -1243,7 +1243,7 @@ L_6AAE:
 	ld a,004h		;6aae
 	ret			;6ab0
 L_6AB1:
-	call 04a8bh		;6ab1
+	call 04a8bh		;6ab1   ; p00 pinta_actor
 	pop ix		;6ab4
 	ret			;6ab6
 L_6AB7:
@@ -1293,7 +1293,7 @@ L_6ADB:
 	call L_6423		;6afb
 	ret			;6afe
 L_6AFF:
-	ld a,(0d8f4h)		;6aff
+	ld a,(0d8f4h)		;6aff   ; a = la pose de Rastan para la animacion
 	and 01eh		;6b02
 	cp 004h		;6b04
 	ret z			;6b06
@@ -1321,7 +1321,7 @@ L_6AFF:
 	xor a			;6b2a
 	ret			;6b2b
 L_6B2C:
-	ld a,(0d8f4h)		;6b2c
+	ld a,(0d8f4h)		;6b2c   ; a = la pose de Rastan para la animacion
 	and 01eh		;6b2f
 	cp 004h		;6b31
 	ret z			;6b33
@@ -1396,7 +1396,7 @@ L_6BBE:
 	jp L_7B48		;6bc5
 L_6BC8:
 	res 1,(ix+001h)		;6bc8
-	jp 04a8bh		;6bcc
+	jp 04a8bh		;6bcc   ; p00 pinta_actor
 L_6BCF:
 	call L_7CC6		;6bcf
 	cp 040h		;6bd2
@@ -1411,7 +1411,7 @@ L_6BD8:
 	jp nc,L_6BC8		;6be4
 	set 1,(ix+001h)		;6be7
 	push ix		;6beb
-	call 04a8bh		;6bed
+	call 04a8bh		;6bed   ; p00 pinta_actor
 	pop ix		;6bf0
 	ld a,(ix+015h)		;6bf2
 	and a			;6bf5
@@ -1432,15 +1432,15 @@ L_6C10:
 	jp z,L_6C24		;6c14
 	ld (ix+015h),00fh		;6c17
 	call L_6C30		;6c1b
-	call 048f9h		;6c1e
-	call 04a8bh		;6c21
+	call 048f9h		;6c1e   ; p00 alta_actor
+	call 04a8bh		;6c21   ; p00 pinta_actor
 L_6C24:
 	pop ix		;6c24
 	ret			;6c26
 L_6C27:
 	jp L_6C66		;6c27
 L_6C2A:
-	call 04a8bh		;6c2a
+	call 04a8bh		;6c2a   ; p00 pinta_actor
 	pop ix		;6c2d
 	ret			;6c2f
 L_6C30:
@@ -1504,12 +1504,12 @@ L_6CAF:
 L_6CB2:
 	ld ix,0d9f1h		;6cb2   ; ix -> actor 5
 	ld (ix+015h),000h		;6cb6
-	call 04b10h		;6cba
+	call 04b10h		;6cba   ; p00 baja_actor
 	pop ix		;6cbd
 	ret			;6cbf
 L_6CC0:
 	ld ix,0d9f1h		;6cc0   ; ix -> actor 5
-	call 04b10h		;6cc4
+	call 04b10h		;6cc4   ; p00 baja_actor
 	pop ix		;6cc7
 	ret			;6cc9
 
@@ -1569,11 +1569,11 @@ L_6D3C:
 	jp nz,L_6D4E		;6d40
 	call L_7E83		;6d43
 	res 1,(ix+001h)		;6d46
-	call 04a8bh		;6d4a
+	call 04a8bh		;6d4a   ; p00 pinta_actor
 	ret			;6d4d
 L_6D4E:
 	res 1,(ix+001h)		;6d4e
-	call 04a8bh		;6d52
+	call 04a8bh		;6d52   ; p00 pinta_actor
 	ret			;6d55
 L_6D56:
 	ld a,(ix+006h)		;6d56
@@ -1593,7 +1593,7 @@ L_6D56:
 	jp nz,L_6DA6		;6d7b
 	res 1,(ix+001h)		;6d7e
 	call L_7D0F		;6d82
-	jp 04a8bh		;6d85
+	jp 04a8bh		;6d85   ; p00 pinta_actor
 L_6D88:
 	ld a,(ix+017h)		;6d88
 	and 0f0h		;6d8b
@@ -1605,21 +1605,21 @@ L_6D88:
 	jp nz,L_6DA6		;6d99
 	res 1,(ix+001h)		;6d9c
 	call L_7D0F		;6da0
-	jp 04a8bh		;6da3
+	jp 04a8bh		;6da3   ; p00 pinta_actor
 L_6DA6:
 	ld a,(0d9e0h)		;6da6   ; a = actor 4, byte +15
 	cp 00fh		;6da9
 	jr z,L_6DBF		;6dab
 	set 1,(ix+001h)		;6dad
 	push ix		;6db1
-	call 04a8bh		;6db3
+	call 04a8bh		;6db3   ; p00 pinta_actor
 	pop ix		;6db6
 	ld a,(ix+015h)		;6db8
 	and a			;6dbb
 	jp z,L_6DCA		;6dbc
 L_6DBF:
 	res 1,(ix+001h)		;6dbf
-	jp 04a8bh		;6dc3
+	jp 04a8bh		;6dc3   ; p00 pinta_actor
 L_6DC6:
 	call L_7E18		;6dc6
 	ret			;6dc9
@@ -1638,18 +1638,18 @@ L_6DE0:
 	jp z,L_6DF4		;6de4
 	ld (ix+015h),00fh		;6de7
 	call L_6E07		;6deb
-	call 048f9h		;6dee
-	call 04a8bh		;6df1
+	call 048f9h		;6dee   ; p00 alta_actor
+	call 04a8bh		;6df1   ; p00 pinta_actor
 L_6DF4:
 	pop ix		;6df4
 	ret			;6df6
 L_6DF7:
-	call 04a8bh		;6df7
+	call 04a8bh		;6df7   ; p00 pinta_actor
 	pop ix		;6dfa
 	ret			;6dfc
 L_6DFD:
 	ld (ix+015h),000h		;6dfd
-	call 04b10h		;6e01
+	call 04b10h		;6e01   ; p00 baja_actor
 	pop ix		;6e04
 	ret			;6e06
 L_6E07:
@@ -1708,12 +1708,12 @@ L_6E7A:
 L_6E7D:
 	ld ix,0d9cbh		;6e7d   ; ix -> actor 4
 	ld (ix+015h),000h		;6e81
-	call 04b10h		;6e85
+	call 04b10h		;6e85   ; p00 baja_actor
 	pop ix		;6e88
 	ret			;6e8a
 L_6E8B:
 	ld ix,0d9cbh		;6e8b   ; ix -> actor 4
-	call 04b10h		;6e8f
+	call 04b10h		;6e8f   ; p00 baja_actor
 	pop ix		;6e92
 	ret			;6e94
 L_6E95:
@@ -1722,7 +1722,7 @@ L_6E95:
 	jp z,L_7AAF		;6e99
 	ld a,r		;6e9c
 	and 052h		;6e9e
-	jp po,04a8bh		;6ea0
+	jp po,04a8bh		;6ea0   ; p00 pinta_actor
 	ld a,(ix+012h)		;6ea3
 	and a			;6ea6
 	jp nz,L_700A		;6ea7
@@ -1741,7 +1741,7 @@ L_6E95:
 	res 1,(ix+001h)		;6ec3
 	res 2,(ix+001h)		;6ec7
 	call L_7E83		;6ecb
-	jp 04a8bh		;6ece
+	jp 04a8bh		;6ece   ; p00 pinta_actor
 L_6ED1:
 	call L_7B29		;6ed1
 	and a			;6ed4
@@ -1835,7 +1835,7 @@ L_6F9F:
 	res 2,(ix+001h)		;6f9f
 	res 3,(ix+001h)		;6fa3
 	call L_7E83		;6fa7
-	jp 04a8bh		;6faa
+	jp 04a8bh		;6faa   ; p00 pinta_actor
 L_6FAD:
 	call L_7B29		;6fad
 	and a			;6fb0
@@ -1846,9 +1846,9 @@ L_6FAD:
 	set 1,(ix+001h)		;6fbc
 	res 2,(ix+001h)		;6fc0
 	res 3,(ix+001h)		;6fc4
-	jp 04a8bh		;6fc8
+	jp 04a8bh		;6fc8   ; p00 pinta_actor
 L_6FCB:
-	jp 04a8bh		;6fcb
+	jp 04a8bh		;6fcb   ; p00 pinta_actor
 L_6FCE:
 	ld a,(ix+017h)		;6fce
 	and 0f0h		;6fd1
@@ -1967,7 +1967,7 @@ L_70A9:
 L_70BD:
 	call L_7E83		;70bd
 	call L_7E83		;70c0
-	jp 04a8bh		;70c3
+	jp 04a8bh		;70c3   ; p00 pinta_actor
 L_70C6:
 	ld a,(ix+00fh)		;70c6
 	and a			;70c9
@@ -2024,9 +2024,9 @@ L_712C:
 	call L_7E83		;7133
 	call L_7E83		;7136
 	res 1,(ix+001h)		;7139
-	jp 04a8bh		;713d
+	jp 04a8bh		;713d   ; p00 pinta_actor
 L_7140:
-	jp 04a8bh		;7140
+	jp 04a8bh		;7140   ; p00 pinta_actor
 L_7143:
 	jp L_7EB5		;7143
 L_7146:
@@ -2071,7 +2071,7 @@ L_718B:
 	jp z,L_7AAF		;718f
 	ld a,r		;7192
 	and 076h		;7194
-	jp po,04a8bh		;7196
+	jp po,04a8bh		;7196   ; p00 pinta_actor
 	ld a,(ix+012h)		;7199
 	and a			;719c
 	jp nz,L_72D9		;719d
@@ -2089,7 +2089,7 @@ L_718B:
 	ld (ix+007h),a		;71b6
 	res 1,(ix+001h)		;71b9
 	call L_7E83		;71bd
-	jp 04a8bh		;71c0
+	jp 04a8bh		;71c0   ; p00 pinta_actor
 L_71C3:
 	call L_7EBD		;71c3
 	cp 0ffh		;71c6
@@ -2177,7 +2177,7 @@ L_7282:
 	res 1,(ix+001h)		;7282
 L_7286:
 	call L_7E83		;7286
-	jp 04a8bh		;7289
+	jp 04a8bh		;7289   ; p00 pinta_actor
 L_728C:
 	call L_7B29		;728c
 	and a			;728f
@@ -2186,9 +2186,9 @@ L_728C:
 	cp 018h		;7296
 	jp nc,L_72A2		;7298
 	set 1,(ix+001h)		;729b
-	jp 04a8bh		;729f
+	jp 04a8bh		;729f   ; p00 pinta_actor
 L_72A2:
-	jp 04a8bh		;72a2
+	jp 04a8bh		;72a2   ; p00 pinta_actor
 L_72A5:
 	ld a,(ix+017h)		;72a5
 	and 0f0h		;72a8
@@ -2280,7 +2280,7 @@ L_7345:
 	cp 004h		;7352
 	jr z,L_735D		;7354
 	ld (ix+014h),000h		;7356
-	jp 04a8bh		;735a
+	jp 04a8bh		;735a   ; p00 pinta_actor
 L_735D:
 	res 2,(ix+001h)		;735d
 	ld (ix+014h),0ffh		;7361
@@ -2337,7 +2337,7 @@ L_73D7:
 	cp 020h		;73da
 	jp nc,L_73DF		;73dc
 L_73DF:
-	jp 04a8bh		;73df
+	jp 04a8bh		;73df   ; p00 pinta_actor
 L_73E2:
 	cp 020h		;73e2
 	jr nc,L_73E8		;73e4
@@ -2353,7 +2353,7 @@ L_73E8:
 	res 2,(ix+001h)		;73fb
 	res 3,(ix+001h)		;73ff
 	push ix		;7403
-	call 04a8bh		;7405
+	call 04a8bh		;7405   ; p00 pinta_actor
 	pop ix		;7408
 	ld a,(0d9bah)		;740a   ; a = actor 3, byte +15
 	and a			;740d
@@ -2362,7 +2362,7 @@ L_7411:
 	res 1,(ix+001h)		;7411
 	res 2,(ix+001h)		;7415
 	res 3,(ix+001h)		;7419
-	jp 04a8bh		;741d
+	jp 04a8bh		;741d   ; p00 pinta_actor
 L_7420:
 	push ix		;7420
 	push ix		;7422
@@ -2378,20 +2378,20 @@ L_7436:
 	jp z,L_744A		;743a
 	ld (ix+015h),00fh		;743d
 	call L_7460		;7441
-	call 048f9h		;7444
-	call 04a8bh		;7447
+	call 048f9h		;7444   ; p00 alta_actor
+	call 04a8bh		;7447   ; p00 pinta_actor
 L_744A:
 	pop ix		;744a
 	ret			;744c
 L_744D:
 	jp L_7496		;744d
 L_7450:
-	call 04a8bh		;7450
+	call 04a8bh		;7450   ; p00 pinta_actor
 	pop ix		;7453
 	ret			;7455
 L_7456:
 	ld (ix+015h),000h		;7456
-	call 04b10h		;745a
+	call 04b10h		;745a   ; p00 baja_actor
 	pop ix		;745d
 	ret			;745f
 L_7460:
@@ -2454,12 +2454,12 @@ L_74E1:
 L_74E4:
 	ld ix,0d9a5h		;74e4   ; ix -> actor 3
 	ld (ix+015h),000h		;74e8
-	call 04b10h		;74ec
+	call 04b10h		;74ec   ; p00 baja_actor
 	pop ix		;74ef
 	ret			;74f1
 L_74F2:
 	ld ix,0d9a5h		;74f2   ; ix -> actor 3
-	call 04b10h		;74f6
+	call 04b10h		;74f6   ; p00 baja_actor
 	pop ix		;74f9
 	ret			;74fb
 L_74FC:
@@ -2467,8 +2467,8 @@ L_74FC:
 	and a			;74ff
 	jp z,L_7AAF		;7500
 	ld a,r		;7503
-	jp po,04a8bh		;7505
-	ld hl,0d8f4h		;7508
+	jp po,04a8bh		;7505   ; p00 pinta_actor
+	ld hl,0d8f4h		;7508   ; hl -> la pose de Rastan para la animacion
 	ld a,(hl)			;750b
 	and 01eh		;750c
 	cp 004h		;750e
@@ -2496,7 +2496,7 @@ L_751C:
 	res 2,(ix+001h)		;753f
 	res 1,(ix+001h)		;7543
 	call L_7E83		;7547
-	jp 04a8bh		;754a
+	jp 04a8bh		;754a   ; p00 pinta_actor
 L_754D:
 	res 2,(ix+001h)		;754d
 	call L_7EBD		;7551
@@ -2587,7 +2587,7 @@ L_7610:
 	res 1,(ix+001h)		;7618
 L_761C:
 	call L_7E83		;761c
-	jp 04a8bh		;761f
+	jp 04a8bh		;761f   ; p00 pinta_actor
 L_7622:
 	call L_7B29		;7622
 	and a			;7625
@@ -2598,9 +2598,9 @@ L_7622:
 	set 1,(ix+001h)		;7631
 	res 2,(ix+001h)		;7635
 	res 3,(ix+001h)		;7639
-	jp 04a8bh		;763d
+	jp 04a8bh		;763d   ; p00 pinta_actor
 L_7640:
-	jp 04a8bh		;7640
+	jp 04a8bh		;7640   ; p00 pinta_actor
 L_7643:
 	ld a,(ix+017h)		;7643
 	and 0f0h		;7646
@@ -2741,7 +2741,7 @@ L_7768:
 	cp 020h		;776b
 	jp nc,L_7770		;776d
 L_7770:
-	jp 04a8bh		;7770
+	jp 04a8bh		;7770   ; p00 pinta_actor
 L_7773:
 	cp 020h		;7773
 	jr nc,L_7779		;7775
@@ -2755,14 +2755,14 @@ L_7779:
 	jp nc,L_7770		;7785
 	set 1,(ix+001h)		;7788
 	push ix		;778c
-	call 04a8bh		;778e
+	call 04a8bh		;778e   ; p00 pinta_actor
 	pop ix		;7791
 	ld a,(0d9e0h)		;7793   ; a = actor 4, byte +15
 	and a			;7796
 	jp z,L_77AF		;7797
 L_779A:
 	res 1,(ix+001h)		;779a
-	jp 04a8bh		;779e
+	jp 04a8bh		;779e   ; p00 pinta_actor
 L_77A1:
 	call L_7CC6		;77a1
 	cp 040h		;77a4
@@ -2786,20 +2786,20 @@ L_77C8:
 	jp z,L_77DC		;77cc
 	ld (ix+015h),00fh		;77cf
 	call L_77F2		;77d3
-	call 048f9h		;77d6
-	call 04a8bh		;77d9
+	call 048f9h		;77d6   ; p00 alta_actor
+	call 04a8bh		;77d9   ; p00 pinta_actor
 L_77DC:
 	pop ix		;77dc
 	ret			;77de
 L_77DF:
 	jp L_7828		;77df
 L_77E2:
-	call 04a8bh		;77e2
+	call 04a8bh		;77e2   ; p00 pinta_actor
 	pop ix		;77e5
 	ret			;77e7
 L_77E8:
 	ld (ix+015h),000h		;77e8
-	call 04b10h		;77ec
+	call 04b10h		;77ec   ; p00 baja_actor
 	pop ix		;77ef
 	ret			;77f1
 L_77F2:
@@ -2861,26 +2861,26 @@ L_7870:
 	ld (ix+015h),0f1h		;7874
 	ld (ix+001h),003h		;7878
 	push ix		;787c
-	call 04a8bh		;787e
+	call 04a8bh		;787e   ; p00 pinta_actor
 	pop ix		;7881
-	call 04b10h		;7883
+	call 04b10h		;7883   ; p00 baja_actor
 	pop ix		;7886
 	ret			;7888
 L_7889:
 	bit 7,(ix+002h)		;7889
 	jr nz,L_789C		;788d
 	push ix		;788f
-	call 04a8bh		;7891
+	call 04a8bh		;7891   ; p00 pinta_actor
 	pop ix		;7894
-	call 04b10h		;7896
+	call 04b10h		;7896   ; p00 baja_actor
 	pop ix		;7899
 	ret			;789b
 L_789C:
 	ld (ix+015h),000h		;789c
 	push ix		;78a0
-	call 04a8bh		;78a2
+	call 04a8bh		;78a2   ; p00 pinta_actor
 	pop ix		;78a5
-	call 04b10h		;78a7
+	call 04b10h		;78a7   ; p00 baja_actor
 	pop ix		;78aa
 	ret			;78ac
 L_78AD:
@@ -2934,7 +2934,7 @@ L_791A:
 L_7921:
 	jp L_7B64		;7921
 L_7924:
-	jp 04a8bh		;7924
+	jp 04a8bh		;7924   ; p00 pinta_actor
 L_7927:
 	cp 020h		;7927
 	jr nc,L_792D		;7929
@@ -2949,7 +2949,7 @@ L_792D:
 	set 1,(ix+001h)		;793c
 L_7940:
 	push ix		;7940
-	call 04a8bh		;7942
+	call 04a8bh		;7942   ; p00 pinta_actor
 	pop ix		;7945
 	ld a,(0d9e0h)		;7947   ; a = actor 4, byte +15
 	and a			;794a
@@ -2957,7 +2957,7 @@ L_7940:
 	ret			;794e
 L_794F:
 	res 1,(ix+001h)		;794f
-	jp 04a8bh		;7953
+	jp 04a8bh		;7953   ; p00 pinta_actor
 L_7956:
 	call L_7CC6		;7956
 	cp 040h		;7959
@@ -2981,20 +2981,20 @@ L_797D:
 	jp z,L_7991		;7981
 	ld (ix+015h),00fh		;7984
 	call L_79A7		;7988
-	call 048f9h		;798b
-	call 04a8bh		;798e
+	call 048f9h		;798b   ; p00 alta_actor
+	call 04a8bh		;798e   ; p00 pinta_actor
 L_7991:
 	pop ix		;7991
 	ret			;7993
 L_7994:
 	jp L_79DD		;7994
 L_7997:
-	call 04a8bh		;7997
+	call 04a8bh		;7997   ; p00 pinta_actor
 	pop ix		;799a
 	ret			;799c
 L_799D:
 	ld (ix+015h),000h		;799d
-	call 04b10h		;79a1
+	call 04b10h		;79a1   ; p00 baja_actor
 	pop ix		;79a4
 	ret			;79a6
 L_79A7:
@@ -3056,9 +3056,9 @@ L_7A25:
 	ld (ix+015h),0f1h		;7a29
 	ld (ix+001h),007h		;7a2d
 	push ix		;7a31
-	call 04a8bh		;7a33
+	call 04a8bh		;7a33   ; p00 pinta_actor
 	pop ix		;7a36
-	call 04b10h		;7a38
+	call 04b10h		;7a38   ; p00 baja_actor
 	pop ix		;7a3b
 	ret			;7a3d
 L_7A3E:
@@ -3075,7 +3075,7 @@ L_7A3E:
 	ld a,(0d92dh)		;7a4f   ; a = cual es el bloque especial
 	sub b			;7a52
 	ld e,a			;7a53
-	call 044deh		;7a54
+	call 044deh		;7a54   ; p00 azar
 	ld c,a			;7a57
 	and 01ch		;7a58
 	cp 004h		;7a5a
@@ -3160,7 +3160,7 @@ L_7AAF:
 	and a			;7ad0
 	jr z,L_7AD8		;7ad1
 	push hl			;7ad3
-	call 04b10h		;7ad4
+	call 04b10h		;7ad4   ; p00 baja_actor
 	pop hl			;7ad7
 L_7AD8:
 	pop ix		;7ad8
@@ -3213,7 +3213,7 @@ L_7B56:
 	dec (ix+006h)		;7b59
 L_7B5C:
 	res 1,(ix+001h)		;7b5c
-	call 04a8bh		;7b60
+	call 04a8bh		;7b60   ; p00 pinta_actor
 	ret			;7b63
 L_7B64:
 	bit 0,(ix+001h)		;7b64
@@ -3224,7 +3224,7 @@ L_7B6F:
 	dec (ix+006h)		;7b6f
 L_7B72:
 	res 1,(ix+001h)		;7b72
-	call 04a8bh		;7b76
+	call 04a8bh		;7b76   ; p00 pinta_actor
 	ret			;7b79
 
 ; ----------------------------------------------------------------------
@@ -3268,7 +3268,7 @@ L_7BC3:
 	dec (ix+006h)		;7bc6
 L_7BC9:
 	res 1,(ix+001h)		;7bc9
-	call 04a8bh		;7bcd
+	call 04a8bh		;7bcd   ; p00 pinta_actor
 	ret			;7bd0
 L_7BD1:
 	dec (ix+007h)		;7bd1
@@ -3306,7 +3306,7 @@ L_7C30:
 	dec (ix+006h)		;7c33
 L_7C36:
 	set 1,(ix+001h)		;7c36
-	call 04a8bh		;7c3a
+	call 04a8bh		;7c3a   ; p00 pinta_actor
 	ret			;7c3d
 L_7C3E:
 	dec (ix+007h)		;7c3e
@@ -3320,7 +3320,7 @@ L_7C46:
 	inc (ix+006h)		;7c52
 	inc (ix+006h)		;7c55
 	res 1,(ix+001h)		;7c58
-	call 04a8bh		;7c5c
+	call 04a8bh		;7c5c   ; p00 pinta_actor
 	ret			;7c5f
 L_7C60:
 	dec (ix+006h)		;7c60
@@ -3328,7 +3328,7 @@ L_7C60:
 	dec (ix+006h)		;7c66
 	dec (ix+006h)		;7c69
 	res 1,(ix+001h)		;7c6c
-	call 04a8bh		;7c70
+	call 04a8bh		;7c70   ; p00 pinta_actor
 	ret			;7c73
 L_7C74:
 	ld a,(ix+010h)		;7c74
@@ -3584,7 +3584,7 @@ L_7E4B:
 	inc a			;7e4e
 	ld (ix+007h),a		;7e4f
 	res 1,(ix+001h)		;7e52
-	call 04a8bh		;7e56
+	call 04a8bh		;7e56   ; p00 pinta_actor
 	ret			;7e59
 L_7E5A:
 	inc (ix+007h)		;7e5a
@@ -3637,7 +3637,7 @@ L_7EAF:
 	ret			;7eb4
 L_7EB5:
 	set 1,(ix+001h)		;7eb5
-	call 04a8bh		;7eb9
+	call 04a8bh		;7eb9   ; p00 pinta_actor
 	ret			;7ebc
 L_7EBD:
 	call L_7D56		;7ebd
@@ -3726,7 +3726,7 @@ L_7F3E:
 	ld a,(0d93ah)		;7f6a   ; a = actor 0, byte +7
 	ld (0d5deh),a		;7f6d   ; lo que se suma a la y de los sprites = a
 	ld b,00ch		;7f70
-	call 058c3h		;7f72
+	call 058c3h		;7f72   ; p00 pinta_con_banco_8
 	ret			;7f75
 
 ; ----------------------------------------------------------------------
@@ -3750,7 +3750,7 @@ L_7FDA:
 	cp 007h		;7fdd
 	jr z,$+36		;7fdf
 	ld a,007h		;7fe1
-	ld (0d17ah),a		;7fe3   ; peticion de sonido para p01:640F = a
+	ld (0d17ah),a		;7fe3   ; musica pedida, para p01:640F = a
 	ld a,007h		;7fe6
 	ld (0d933h),a		;7fe8   ; los 6 actores de la pantalla = a
 	xor a			;7feb

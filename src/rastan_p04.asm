@@ -270,7 +270,7 @@ L_8262:
 	call 07f1fh		;8293
 	pop ix		;8296
 	ld a,009h		;8298
-	ld (0d178h),a		;829a   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;829a   ; efecto pedido, para p01:63E1 = a
 	jp 07f3eh		;829d
 L_82A0:
 	ld (ix+000h),002h		;82a0
@@ -373,7 +373,7 @@ L_8386:
 	and a			;8389
 	call z,07e18h		;838a
 	ld a,009h		;838d
-	ld (0d178h),a		;838f   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;838f   ; efecto pedido, para p01:63E1 = a
 L_8392:
 	ld a,(ix+006h)		;8392
 	cp 010h		;8395
@@ -604,8 +604,8 @@ L_85C4:
 L_85D3:
 	ld (ix+014h),000h		;85d3
 	ld a,008h		;85d7
-	ld (0d178h),a		;85d9   ; peticion de sonido para p01:63E1 = a
-	call 044deh		;85dc
+	ld (0d178h),a		;85d9   ; efecto pedido, para p01:63E1 = a
+	call 044deh		;85dc   ; p00 azar
 	jp po,L_85ED		;85df
 	ld (ix+006h),0c7h		;85e2
 	ld (ix+007h),032h		;85e6
@@ -617,8 +617,8 @@ L_85ED:
 L_85F8:
 	ld (ix+014h),000h		;85f8
 	ld a,008h		;85fc
-	ld (0d178h),a		;85fe   ; peticion de sonido para p01:63E1 = a
-	call 044deh		;8601
+	ld (0d178h),a		;85fe   ; efecto pedido, para p01:63E1 = a
+	call 044deh		;8601   ; p00 azar
 	jp po,L_8612		;8604
 	ld (ix+006h),0a7h		;8607
 	ld (ix+007h),032h		;860b
@@ -630,7 +630,7 @@ L_8612:
 L_861D:
 	ld (ix+014h),000h		;861d
 	ld a,008h		;8621
-	ld (0d178h),a		;8623   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;8623   ; efecto pedido, para p01:63E1 = a
 	jp po,L_8634		;8626
 	ld (ix+006h),0a7h		;8629
 	ld (ix+007h),032h		;862d
@@ -642,8 +642,8 @@ L_8634:
 L_863F:
 	ld (ix+014h),000h		;863f
 	ld a,008h		;8643
-	ld (0d178h),a		;8645   ; peticion de sonido para p01:63E1 = a
-	call 044deh		;8648
+	ld (0d178h),a		;8645   ; efecto pedido, para p01:63E1 = a
+	call 044deh		;8648   ; p00 azar
 	jp po,L_8659		;864b
 	ld (ix+006h),015h		;864e
 	ld (ix+006h),032h		;8652
@@ -671,20 +671,20 @@ L_8682:
 	jp z,L_8696		;8686
 	ld (ix+015h),00fh		;8689
 	call L_86AC		;868d
-	call 048f9h		;8690
-	call 04a8bh		;8693
+	call 048f9h		;8690   ; p00 alta_actor
+	call 04a8bh		;8693   ; p00 pinta_actor
 L_8696:
 	pop ix		;8696
 	ret			;8698
 L_8699:
 	jp L_86E4		;8699
 L_869C:
-	call 04a8bh		;869c
+	call 04a8bh		;869c   ; p00 pinta_actor
 	pop ix		;869f
 	ret			;86a1
 L_86A2:
 	ld (ix+015h),000h		;86a2
-	call 04b10h		;86a6
+	call 04b10h		;86a6   ; p00 baja_actor
 	pop ix		;86a9
 	ret			;86ab
 L_86AC:
@@ -748,26 +748,26 @@ L_872E:
 	ld ix,0d9cbh		;872e   ; ix -> actor 4
 	ld (ix+015h),0f1h		;8732
 	push ix		;8736
-	call 04a8bh		;8738
+	call 04a8bh		;8738   ; p00 pinta_actor
 	pop ix		;873b
-	call 04b10h		;873d
+	call 04b10h		;873d   ; p00 baja_actor
 	pop ix		;8740
 	ret			;8742
 L_8743:
 	bit 7,(ix+002h)		;8743
 	jr nz,L_8756		;8747
 	push ix		;8749
-	call 04a8bh		;874b
+	call 04a8bh		;874b   ; p00 pinta_actor
 	pop ix		;874e
-	call 04b10h		;8750
+	call 04b10h		;8750   ; p00 baja_actor
 	pop ix		;8753
 	ret			;8755
 L_8756:
 	ld (ix+015h),000h		;8756
 	push ix		;875a
-	call 04a8bh		;875c
+	call 04a8bh		;875c   ; p00 pinta_actor
 	pop ix		;875f
-	call 04b10h		;8761
+	call 04b10h		;8761   ; p00 baja_actor
 	pop ix		;8764
 	ret			;8766
 L_8767:
@@ -913,7 +913,7 @@ L_889A:
 	ld (ix+011h),000h		;88a6
 	jp 07f3eh		;88aa
 L_88AD:
-	ld a,(0d8f4h)		;88ad
+	ld a,(0d8f4h)		;88ad   ; a = la pose de Rastan para la animacion
 	bit 5,a		;88b0
 	jp nz,L_8963		;88b2
 L_88B5:
@@ -1067,7 +1067,7 @@ L_8A5B:
 	cp 00fh		;8a5e
 	jp z,07f3eh		;8a60
 	ld a,00fh		;8a63
-	ld (0d178h),a		;8a65   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;8a65   ; efecto pedido, para p01:63E1 = a
 	ld a,(ix+001h)		;8a68
 	and 001h		;8a6b
 	or 002h		;8a6d
@@ -1080,7 +1080,7 @@ L_8A5B:
 	and a			;8a80
 	jp z,L_8B6B		;8a81
 	ld a,00eh		;8a84
-	ld (0d178h),a		;8a86   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;8a86   ; efecto pedido, para p01:63E1 = a
 	ld a,(ix+001h)		;8a89
 	and 001h		;8a8c
 	or 006h		;8a8e
@@ -1136,7 +1136,7 @@ DATA_8B31:
 
 L_8B55:
 	ld a,00eh		;8b55
-	ld (0d178h),a		;8b57   ; peticion de sonido para p01:63E1 = a
+	ld (0d178h),a		;8b57   ; efecto pedido, para p01:63E1 = a
 	xor a			;8b5a
 	ld (0d96bh),a		;8b5b   ; actor 1, byte +12 = a
 	ld a,(ix+001h)		;8b5e
@@ -1162,9 +1162,9 @@ L_8B80:
 	ld hl,08bcfh		;8b8e
 	ld (0d9b5h),hl		;8b91   ; actor 3, byte +10 = hl
 	push ix		;8b94
-	call 048f9h		;8b96
+	call 048f9h		;8b96   ; p00 alta_actor
 	pop ix		;8b99
-	call 04a8bh		;8b9b
+	call 04a8bh		;8b9b   ; p00 pinta_actor
 	pop ix		;8b9e
 	ret			;8ba0
 L_8BA1:
@@ -1242,8 +1242,8 @@ L_8C3C:
 	jp L_89CE		;8c4b
 L_8C4E:
 	ld a,005h		;8c4e
-	ld (0d17ah),a		;8c50   ; peticion de sonido para p01:640F = a
-	call 0431fh		;8c53
+	ld (0d17ah),a		;8c50   ; musica pedida, para p01:640F = a
+	call 0431fh		;8c53   ; p00 borra_vram
 	xor a			;8c56
 	ld (0d933h),a		;8c57   ; los 6 actores de la pantalla = a
 	ld (0d934h),a		;8c5a   ; actor 0, byte +1 = a
@@ -1275,12 +1275,12 @@ L_8C6A:
 	exx			;8c93
 	ld b,000h		;8c94
 	exx			;8c96
-	call 046c9h		;8c97
+	call 046c9h		;8c97   ; p00 pinta_bloque_tiles
 L_8C9A:
 	jp L_8C9A		;8c9a
 L_8C9D:
 	di			;8c9d
-	call 0445dh		;8c9e
+	call 0445dh		;8c9e   ; p00 espera_vdp
 	ld a,(0d933h)		;8ca1   ; a = los 6 actores de la pantalla
 	inc a			;8ca4
 	ld (0d933h),a		;8ca5   ; los 6 actores de la pantalla = a
@@ -1299,7 +1299,7 @@ L_8C9D:
 	ld h,000h		;8cbb
 	ld d,0feh		;8cbd
 	xor a			;8cbf
-	call 0440eh		;8cc0
+	call 0440eh		;8cc0   ; p00 rellena_vram
 	ret			;8cc3
 L_8CC4:
 	ld a,(0d933h)		;8cc4   ; a = los 6 actores de la pantalla
@@ -1337,7 +1337,7 @@ L_8CF6:
 	and a			;8cf7
 	ret z			;8cf8
 	push hl			;8cf9
-	call 04633h		;8cfa
+	call 04633h		;8cfa   ; p00 escribe_letra
 	pop hl			;8cfd
 	inc hl			;8cfe
 	jr L_8CF6		;8cff
