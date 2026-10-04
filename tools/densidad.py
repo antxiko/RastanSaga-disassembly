@@ -39,7 +39,7 @@ def main():
         print("  %-32s 0x%04X  %3d instr  %2d comentarios  %2d %%"
               % (nom, a, n, c, c * 100 // n))
     if not tot_n:
-        # Diez de los dieciseis bancos son datos de punta a punta: no tienen ni
+        # Veinticinco de los treinta y dos bancos son datos de punta a punta: no tienen ni
         # una instruccion que contar, y eso no es un error.
         print("  ---- este banco no lleva codigo: nada que medir")
         return

@@ -116,7 +116,7 @@ L 0x6335 cae_pose_2
 L 0x6340 cae_pose_3
 C 0x6340 (el `set 1` repetido)
 L 0x634B huerfana_cosa_nada
-C 0x634B nadie llega aqui
+C 0x634B sin salto localizado y no se ejecuta en lo medido
 B 0x634E Tipos 0x1E y 0x17: saltan en arco (los pasos en y de p05:6468) hacia
 B 0x634E arriba (pose 0), a la derecha (1) o a la izquierda (2).
 L 0x634E salta_en_arco
@@ -148,7 +148,7 @@ C 0x6406 siguiente
 C 0x640C 19 pasos
 L 0x6417 arco_izq
 C 0x6417 al azar (R & 9)
-C 0x6424 (aqui guarda la x en +16 y la y en la x: un error)
+C 0x6424 guarda la x en +16 y la y en +10, donde va la x de su sitio
 C 0x6430 alta
 L 0x643B arco_izq_paso
 C 0x643B el paso en y...
@@ -412,7 +412,7 @@ C 0x641A tiene sprites?
 C 0x641B si: un paso
 C 0x641D R & 9...
 C 0x6421 ...= 0: nada
-C 0x6427 x a +16 (sin uso)
+C 0x6427 x a +16
 C 0x642A y...
 C 0x642D ...a la x de su sitio
 C 0x6436 sin sitio

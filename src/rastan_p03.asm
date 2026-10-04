@@ -214,8 +214,8 @@ cambia_al_azar:
 	jr $+15		;618c
 
 ; ----------------------------------------------------------------------
-; DATOS resto_618E: trozos de codigo que nadie ejecuta (`cp 8`, `cp 0x10`, `ld
-;   a,(ix+6)`)
+; DATOS resto_618E: trozos de codigo que no se ejecuta en lo medido (`cp 8`,
+;   `cp 0x10`, `ld a,(ix+6)`)
 ;   0x618e..0x619b  (13 bytes)
 DATA_resto_618E:
 	defb 0feh,008h,018h,00eh,0feh,010h,018h,00fh,0ddh,07eh,006h,080h,0c9h	; 618e  .........~...
@@ -231,8 +231,8 @@ x_menos_b:
 	ret			;619f
 
 ; ----------------------------------------------------------------------
-; DATOS resto_61A0: dos trozos que nadie ejecuta (`ld a,(ix+7) / add a,b /
-;   ret` y `sub b`)
+; DATOS resto_61A0: dos trozos que no se ejecuta en lo medido (`ld a,(ix+7) /
+;   add a,b / ret` y `sub b`)
 ;   0x61a0..0x61aa  (10 bytes)
 DATA_resto_61A0:
 	defb 0ddh,07eh,007h,080h,0c9h,0ddh,07eh,007h,090h,0c9h	; 61a0  .~....~...
@@ -504,19 +504,21 @@ proyectil_y:
 
 ; ----------------------------------------------------------------------
 ; DATOS pasos_proyectil: Los pasos del proyectil del tipo 0x10: un byte de
-;   cabecera y pares (x, y) hasta 0xFF
-;   0x63d6..0x63f3  (29 bytes)
+;   cabecera y pares (x, y) hasta el 0xFF de 0x63FA (p03:6369 lo lee hasta
+;   ahi, medido)
+;   0x63d6..0x63fb  (37 bytes)
 DATA_pasos_proyectil:
 	defb 000h,000h,000h,002h,001h,002h,000h,002h,000h,002h,001h,002h,002h,002h,002h,002h	; 63d6  ................
-	defb 002h,002h,000h,002h,002h,002h,002h,002h,001h,002h,000h,002h,001h	; 63e6  .............
+	defb 002h,002h,000h,002h,002h,002h,002h,002h,001h,002h,000h,002h,001h,002h,000h,002h	; 63e6  ................
+	defb 002h,002h,002h,002h,0ffh	; 63f6
 
 ; ----------------------------------------------------------------------
-; DATOS resto_63F3: codigo que nadie ejecuta (mira la x de Rastan contra el
-;   actor)
-;   0x63f3..0x640f  (28 bytes)
-DATA_resto_63F3:
-	defb 002h,000h,002h,002h,002h,002h,002h,0ffh,03ah,0fch,0d8h,057h,0ddh,0cbh,001h,046h	; 63f3  ........:..W...F
-	defb 028h,00ah,0ddh,07eh,006h,0d6h,010h,0bah,0dah,017h,064h,0c9h	; 6403  (..~......d.
+; DATOS resto_63FB: codigo que no se ejecuta en lo medido (ld a,(D8FC): mira
+;   la x de Rastan contra el actor)
+;   0x63fb..0x640f  (20 bytes)
+DATA_resto_63FB:
+	defb 03ah,0fch,0d8h,057h,0ddh,0cbh,001h,046h,028h,00ah,0ddh,07eh,006h,0d6h,010h,0bah	; 63fb  :..W...F(..~....
+	defb 0dah,017h,064h,0c9h	; 640b
 
 ; ======================================================================
 ; CODIGO 0x640f..0x6600  (497 bytes)
@@ -524,7 +526,7 @@ DATA_resto_63F3:
 
 
 huerfana_choca_x:
-	ld a,(ix+006h)		;640f   ; nadie la llama: si la x del actor >= D...
+	ld a,(ix+006h)		;640f   ; sin llamada localizada y no se ejecuta en lo medido: si la x del actor >= D...
 	cp d			;6412
 	jp nc,choca_y		;6413
 	ret			;6416
@@ -730,7 +732,7 @@ tipo_01_salto_alto:
 	ld (ix+011h),010h		;65bb
 	jp tipo_01_fin		;65bf
 huerfana_baja:
-	ld (ix+012h),010h		;65c2   ; nadie llega aqui: +12 = 16
+	ld (ix+012h),010h		;65c2   ; sin salto localizado y no se ejecuta en lo medido: +12 = 16
 	jp tipo_01_fin		;65c6
 tipo_01_bajando:
 	ld a,(ix+007h)		;65c9   ; 2 pixeles abajo
@@ -759,7 +761,7 @@ tipo_01_cumbre:
 	jp tipo_01_pinta		;65fd
 
 ; ----------------------------------------------------------------------
-; DATOS resto_6600: dos `ret` que nadie ejecuta
+; DATOS resto_6600: dos `ret` que no se ejecuta en lo medido
 ;   0x6600..0x6602  (2 bytes)
 DATA_resto_6600:
 	defb 0c9h,0c9h	; 6600
@@ -915,7 +917,7 @@ tipo_04_baja:
 	inc (ix+007h)		;6728   ; un pixel abajo
 	jp 04a8bh		;672b   ; p00 pinta_actor
 huerfana_tipo_04:
-	call de_cara		;672e   ; nadie la llama: de cara a Rastan, se da la vuelta...
+	call de_cara		;672e   ; sin llamada localizada y no se ejecuta en lo medido: de cara a Rastan, se da la vuelta...
 	and a			;6731
 	jp nz,da_la_vuelta		;6732
 	ld a,(ix+006h)		;6735   ; ...fuera de x 0x1E-0xDB, baja...
@@ -1143,7 +1145,7 @@ tipo_03_salto_alto:
 	ld (ix+011h),010h		;692b
 	jp tipo_03_fin		;692f
 huerfana_tipo_03_baja:
-	ld (ix+012h),010h		;6932   ; nadie llega aqui
+	ld (ix+012h),010h		;6932   ; sin salto localizado y no se ejecuta en lo medido
 	jp tipo_03_fin		;6936
 tipo_03_bajando:
 	inc (ix+007h)		;6939   ; 2 abajo, un cuadro menos
@@ -1166,7 +1168,7 @@ tipo_03_cumbre:
 	jp tipo_03_pinta		;6965
 
 ; ----------------------------------------------------------------------
-; DATOS resto_6968: dos `ret` que nadie ejecuta
+; DATOS resto_6968: dos `ret` que no se ejecuta en lo medido
 ;   0x6968..0x696a  (2 bytes)
 DATA_resto_6968:
 	defb 0c9h,0c9h	; 6968
@@ -1613,13 +1615,14 @@ acaba_proyectil_05:
 	pop ix		;6cbd
 	ret			;6cbf
 huerfana_baja_actor5:
-	ld ix,0d9f1h		;6cc0   ; nadie la llama: baja del actor 5
+	ld ix,0d9f1h		;6cc0   ; sin llamada localizada y no se ejecuta en lo medido: baja del actor 5
 	call 04b10h		;6cc4   ; p00 baja_actor
 	pop ix		;6cc7
 	ret			;6cc9
 
 ; ----------------------------------------------------------------------
-; DATOS resto_6CCA: un trozo que nadie ejecuta (distancia en y a Rastan)
+; DATOS resto_6CCA: un trozo que no se ejecuta en lo medido (distancia en y a
+;   Rastan)
 ;   0x6cca..0x6cdc  (18 bytes)
 DATA_resto_6CCA:
 	defb 03ah,0fdh,0d8h,0ddh,046h,007h,090h,0e6h,07fh,0feh,008h,038h,002h,0afh,0c9h,03eh	; 6cca  :...F......8...>
@@ -1823,7 +1826,7 @@ acaba_proyectil_09_b:
 	pop ix		;6e88
 	ret			;6e8a
 huerfana_baja_actor4:
-	ld ix,0d9cbh		;6e8b   ; nadie la llama: baja del actor 4
+	ld ix,0d9cbh		;6e8b   ; sin llamada localizada y no se ejecuta en lo medido: baja del actor 4
 	call 04b10h		;6e8f   ; p00 baja_actor
 	pop ix		;6e92
 	ret			;6e94
@@ -1987,7 +1990,7 @@ tipo_13_salto_alto:
 	ld (ix+011h),010h		;6ffc
 	jp tipo_13_fin		;7000
 huerfana_tipo_13_baja:
-	ld (ix+012h),010h		;7003   ; nadie llega aqui
+	ld (ix+012h),010h		;7003   ; sin salto localizado y no se ejecuta en lo medido
 	jp tipo_13_fin		;7007
 tipo_13_bajando:
 	ld a,(ix+007h)		;700a   ; 2 abajo, un cuadro menos
@@ -2015,7 +2018,7 @@ tipo_13_cumbre:
 	jp tipo_13_pinta		;703a
 
 ; ----------------------------------------------------------------------
-; DATOS resto_703D: dos `ret` que nadie ejecuta
+; DATOS resto_703D: dos `ret` que no se ejecuta en lo medido
 ;   0x703d..0x703f  (2 bytes)
 DATA_resto_703D:
 	defb 0c9h,0c9h	; 703d
@@ -2342,7 +2345,7 @@ tipo_06_salto_alto:
 	ld (ix+011h),010h		;72cb
 	jp tipo_06_fin		;72cf
 huerfana_tipo_06_baja:
-	ld (ix+012h),010h		;72d2   ; nadie llega aqui
+	ld (ix+012h),010h		;72d2   ; sin salto localizado y no se ejecuta en lo medido
 	jp tipo_06_fin		;72d6
 tipo_06_bajando:
 	ld a,(ix+007h)		;72d9   ; 2 abajo, un cuadro menos
@@ -2370,7 +2373,7 @@ tipo_06_cumbre:
 	jp tipo_06_pinta		;7309
 
 ; ----------------------------------------------------------------------
-; DATOS resto_730C: dos `ret` que nadie ejecuta
+; DATOS resto_730C: dos `ret` que no se ejecuta en lo medido
 ;   0x730c..0x730e  (2 bytes)
 DATA_resto_730C:
 	defb 0c9h,0c9h	; 730c
@@ -2530,7 +2533,7 @@ proyectil_12_pinta:
 	pop ix		;7453
 	ret			;7455
 huerfana_acaba_12:
-	ld (ix+015h),000h		;7456   ; nadie llega aqui
+	ld (ix+015h),000h		;7456   ; sin salto localizado y no se ejecuta en lo medido
 	call 04b10h		;745a   ; p00 baja_actor
 	pop ix		;745d
 	ret			;745f
@@ -2598,7 +2601,7 @@ acaba_proyectil_12:
 	pop ix		;74ef
 	ret			;74f1
 huerfana_baja_actor3:
-	ld ix,0d9a5h		;74f2   ; nadie la llama: baja del actor 3
+	ld ix,0d9a5h		;74f2   ; sin llamada localizada y no se ejecuta en lo medido: baja del actor 3
 	call 04b10h		;74f6   ; p00 baja_actor
 	pop ix		;74f9
 	ret			;74fb
@@ -2768,7 +2771,7 @@ tipo_11_salto_alto:
 	ld (ix+011h),020h		;7671
 	jp tipo_11_fin		;7675
 huerfana_tipo_11_baja:
-	ld (ix+012h),020h		;7678   ; nadie llega aqui
+	ld (ix+012h),020h		;7678   ; sin salto localizado y no se ejecuta en lo medido
 	jp tipo_11_fin		;767c
 tipo_11_bajando:
 	ld a,(ix+007h)		;767f   ; un pixel abajo, un cuadro menos
@@ -2796,7 +2799,7 @@ tipo_11_cumbre:
 	jp tipo_11_pinta		;76b5
 
 ; ----------------------------------------------------------------------
-; DATOS resto_76B8: dos `ret` que nadie ejecuta
+; DATOS resto_76B8: dos `ret` que no se ejecuta en lo medido
 ;   0x76b8..0x76ba  (2 bytes)
 DATA_resto_76B8:
 	defb 0c9h,0c9h	; 76b8
@@ -2889,7 +2892,7 @@ tipo_14_lejos:
 tipo_14_anda:
 	jp anda_1		;7765   ; un pixel
 huerfana_tipo_14_quieto:
-	call distancia_y		;7768   ; nadie llega aqui (la distancia en y no decide nada)
+	call distancia_y		;7768   ; sin salto localizado y no se ejecuta en lo medido (la distancia en y no decide nada)
 	cp 020h		;776b
 	jp nc,tipo_14_pinta		;776d
 tipo_14_pinta:
@@ -2950,7 +2953,7 @@ proyectil_14_pinta:
 	pop ix		;77e5
 	ret			;77e7
 huerfana_acaba_14:
-	ld (ix+015h),000h		;77e8   ; nadie llega aqui
+	ld (ix+015h),000h		;77e8   ; sin salto localizado y no se ejecuta en lo medido
 	call 04b10h		;77ec   ; p00 baja_actor
 	pop ix		;77ef
 	ret			;77f1
@@ -3112,7 +3115,7 @@ tipo_15_pinta_y_lanza:
 	jp z,proyectil_15		;794b
 	ret			;794e
 huerfana_tipo_15_sin_pose:
-	res 1,(ix+001h)		;794f   ; nadie llega aqui
+	res 1,(ix+001h)		;794f   ; sin salto localizado y no se ejecuta en lo medido
 	jp 04a8bh		;7953   ; p00 pinta_actor
 tipo_15_parado:
 	call distancia_x		;7956   ; entre 0x20 y 0x40 en x: lanza
@@ -3149,7 +3152,7 @@ proyectil_15_pinta:
 	pop ix		;799a
 	ret			;799c
 huerfana_acaba_15:
-	ld (ix+015h),000h		;799d   ; nadie llega aqui
+	ld (ix+015h),000h		;799d   ; sin salto localizado y no se ejecuta en lo medido
 	call 04b10h		;79a1   ; p00 baja_actor
 	pop ix		;79a4
 	ret			;79a6
@@ -3219,8 +3222,8 @@ choca_proyectil_15:
 	ret			;7a3d
 
 ; ----------------------------------------------------------------------
-; Huerfana: un paso al azar de 4 pixeles dentro de una caja hecha con los
-; bytes +3/+4 del actor 0 y D92C/D92D (5 pixeles de margen). Nadie la llama.
+; Sin llamada localizada y no se ejecuta en lo medido: un paso al azar de 4 pixeles dentro de una caja hecha con los
+; bytes +3/+4 del actor 0 y D92C/D92D (5 pixeles de margen). Sin llamada localizada; no se ejecuta en lo medido.
 ; ----------------------------------------------------------------------
 huerfana_paso_al_azar:
 	ld b,005h		;7a3e   ; margen de 5
@@ -3273,7 +3276,7 @@ paso_izq_azar:
 	ld (ix+006h),a		;7a89   ; guardado
 	ret			;7a8c   ; vuelve
 paso_abajo_azar:
-	ld a,(ix+007h)		;7a8d   ; y + 4, sin pasar de D (y lo guarda en la x: un error)
+	ld a,(ix+007h)		;7a8d   ; y + 4, sin pasar de D, y lo guarda en la x
 	inc a			;7a90   ; + 4...
 	inc a			;7a91
 	inc a			;7a92
@@ -3416,7 +3419,7 @@ anda_1_pinta:
 	ret			;7b79
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7B7A: otra version de anda_1 que nadie ejecuta
+; DATOS resto_7B7A: otra version de anda_1 que no se ejecuta en lo medido
 ;   0x7b7a..0x7b90  (22 bytes)
 DATA_resto_7B7A:
 	defb 0ddh,0cbh,001h,046h,028h,005h,0ddh,034h,006h,018h,003h,0ddh,035h,006h,0ddh,0cbh	; 7b7a  ...F(..4....5...
@@ -3465,7 +3468,7 @@ hacia_y_sube:
 	jr hacia_y_anda		;7bd7
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7BD9: otra rutina de acercarse que nadie ejecuta
+; DATOS resto_7BD9: otra rutina de acercarse que no se ejecuta en lo medido
 ;   0x7bd9..0x7c14  (59 bytes)
 DATA_resto_7BD9:
 	defb 03ah,0fdh,0d8h,04fh,0ddh,07eh,007h,006h,030h,080h,047h,079h,0b8h,028h,008h,038h	; 7bd9  :..O.~..0.Gy.(.8
@@ -3531,8 +3534,8 @@ anda_segun_10_b:
 	ret			;7c81
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7C82: rutinas que nadie ejecuta (un contador en +10 y otra de
-;   acercarse en x)
+; DATOS resto_7C82: rutinas que no se ejecuta en lo medido (un contador en +10
+;   y otra de acercarse en x)
 ;   0x7c82..0x7cc6  (68 bytes)
 DATA_resto_7C82:
 	defb 047h,0ddh,07eh,010h,03ch,0b8h,028h,005h,0ddh,077h,010h,0afh,0c9h,0afh,0ddh,077h	; 7c82  G.~.<.(..w.....w
@@ -3639,7 +3642,7 @@ vuelve_y_anda_der:
 	ret			;7d3f
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7D40: otro trozo que nadie ejecuta (mira x >= 0xFB)
+; DATOS resto_7D40: otro trozo que no se ejecuta en lo medido (mira x >= 0xFB)
 ;   0x7d40..0x7d56  (22 bytes)
 DATA_resto_7D40:
 	defb 0ddh,07eh,006h,0feh,0fbh,0d2h,050h,07dh,0ddh,07eh,006h,0feh,001h,0dah,053h,07dh	; 7d40  .~....P}.~....S}
@@ -3745,7 +3748,7 @@ corre_ventana:
 	ret			;7ddf
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7DE0: otra lectura de casillas que nadie ejecuta
+; DATOS resto_7DE0: otra lectura de casillas que no se ejecuta en lo medido
 ;   0x7de0..0x7e18  (56 bytes)
 DATA_resto_7DE0:
 	defb 0ddh,07eh,006h,067h,0ddh,07eh,007h,06fh,024h,02ch,07dh,0d6h,010h,0e6h,0f0h,006h	; 7de0  .~.g.~.o$,}.....
@@ -3769,7 +3772,8 @@ da_la_vuelta_izq:
 	ret			;7e28
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7E29: trozos que nadie ejecuta (moverse en diagonal)
+; DATOS resto_7E29: trozos que no se ejecuta en lo medido (moverse en
+;   diagonal)
 ;   0x7e29..0x7e4b  (34 bytes)
 DATA_resto_7E29:
 	defb 0ddh,07eh,001h,0e6h,001h,0cah,03eh,07eh,0ddh,035h,006h,0ddh,035h,006h,0ddh,035h	; 7e29  .~....>~.5..5..5
@@ -3875,7 +3879,7 @@ nada_debajo_16_si:
 	ret			;7ef0
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7EF1: otro trozo de andar que nadie ejecuta
+; DATOS resto_7EF1: otro trozo de andar que no se ejecuta en lo medido
 ;   0x7ef1..0x7f1f  (46 bytes)
 DATA_resto_7EF1:
 	defb 0ddh,0cbh,001h,046h,028h,009h,0ddh,07eh,006h,03ch,0ddh,077h,006h,018h,007h,0ddh	; 7ef1  ...F(..~.<.w....

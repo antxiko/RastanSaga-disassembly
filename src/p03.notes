@@ -101,10 +101,10 @@ L 0x6184 cambia_al_azar
 C 0x6184 B = 4
 C 0x6186 R & 0x18: al azar
 C 0x618A (este `cp 0` no sirve: el `jr` salta siempre)
-D 0x618E 0x619B resto_618E  trozos de codigo que nadie ejecuta (`cp 8`, `cp 0x10`, `ld a,(ix+6)`)
+D 0x618E 0x619B resto_618E  trozos de codigo que no se ejecuta en lo medido (`cp 8`, `cp 0x10`, `ld a,(ix+6)`)
 L 0x619B x_menos_b
 C 0x619B la x del actor - B
-D 0x61A0 0x61AA resto_61A0  dos trozos que nadie ejecuta (`ld a,(ix+7) / add a,b / ret` y `sub b`)
+D 0x61A0 0x61AA resto_61A0  dos trozos que no se ejecuta en lo medido (`ld a,(ix+7) / add a,b / ret` y `sub b`)
 B 0x61AA Tipo 0x0E: si esta de espaldas a Rastan se da la vuelta; si no, anda mientras
 B 0x61AA tenga suelo delante, y cae si no hay nada debajo.
 L 0x61AA tipo_0e
@@ -209,10 +209,10 @@ C 0x63B6 0xFF: se acaba
 C 0x63BC y + paso
 C 0x63C3 apunta por donde va
 C 0x63C9 pose 0x10 con el lado
-D 0x63D6 0x63F3 pasos_proyectil  Los pasos del proyectil del tipo 0x10: un byte de cabecera y pares (x, y) hasta 0xFF
-D 0x63F3 0x640F resto_63F3  codigo que nadie ejecuta (mira la x de Rastan contra el actor)
+D 0x63D6 0x63FB pasos_proyectil  Los pasos del proyectil del tipo 0x10: un byte de cabecera y pares (x, y) hasta el 0xFF de 0x63FA (p03:6369 lo lee hasta ahi, medido)
+D 0x63FB 0x640F resto_63FB  codigo que no se ejecuta en lo medido (ld a,(D8FC): mira la x de Rastan contra el actor)
 L 0x640F huerfana_choca_x
-C 0x640F nadie la llama: si la x del actor >= D...
+C 0x640F sin llamada localizada y no se ejecuta en lo medido: si la x del actor >= D...
 L 0x6417 choca_y
 C 0x6417 ...y su y < la de Rastan...
 C 0x641F ...le hace dano
@@ -287,7 +287,7 @@ L 0x65A2 tipo_01_escalon_der
 L 0x65B3 tipo_01_salto_alto
 C 0x65B3 pose del salto, +11 = 16 cuadros subiendo
 L 0x65C2 huerfana_baja
-C 0x65C2 nadie llega aqui: +12 = 16
+C 0x65C2 sin salto localizado y no se ejecuta en lo medido: +12 = 16
 L 0x65C9 tipo_01_bajando
 C 0x65C9 2 pixeles abajo
 C 0x65D1 un cuadro menos
@@ -298,7 +298,7 @@ C 0x65EB un cuadro menos...
 C 0x65F2 ...y al acabar...
 L 0x65F9 tipo_01_cumbre
 C 0x65F9 ...16 cuadros bajando
-D 0x6600 0x6602 resto_6600  dos `ret` que nadie ejecuta
+D 0x6600 0x6602 resto_6600  dos `ret` que no se ejecuta en lo medido
 L 0x6602 tipo_01_otra
 C 0x6602 0x0F: da la vuelta
 L 0x6609 tipo_01_otra_der
@@ -353,7 +353,7 @@ C 0x6722 un pixel arriba
 L 0x6728 tipo_04_baja
 C 0x6728 un pixel abajo
 L 0x672E huerfana_tipo_04
-C 0x672E nadie la llama: de cara a Rastan, se da la vuelta...
+C 0x672E sin llamada localizada y no se ejecuta en lo medido: de cara a Rastan, se da la vuelta...
 C 0x6735 ...fuera de x 0x1E-0xDB, baja...
 C 0x6742 ...y si no, va hacia la y A
 B 0x6745 Tipo 0x0D: de cara a Rastan; cae si no hay nada debajo; retrocede un rato
@@ -431,7 +431,7 @@ L 0x6912 tipo_03_escalon_der
 L 0x6923 tipo_03_salto_alto
 C 0x6923 pose del salto, 16 cuadros subiendo
 L 0x6932 huerfana_tipo_03_baja
-C 0x6932 nadie llega aqui
+C 0x6932 sin salto localizado y no se ejecuta en lo medido
 L 0x6939 tipo_03_bajando
 C 0x6939 2 abajo, un cuadro menos
 L 0x6945 tipo_03_subiendo
@@ -439,7 +439,7 @@ C 0x6945 pose del salto, 2 arriba
 C 0x6953 un cuadro menos...
 L 0x6961 tipo_03_cumbre
 C 0x6961 ...y 16 bajando
-D 0x6968 0x696A resto_6968  dos `ret` que nadie ejecuta
+D 0x6968 0x696A resto_6968  dos `ret` que no se ejecuta en lo medido
 L 0x696A tipo_03_otra
 L 0x6971 tipo_03_otra_der
 L 0x6979 tipo_03_vuelta_cerca
@@ -593,8 +593,8 @@ C 0x6CB2 el actor 5...
 C 0x6CB6 ...ya no esta...
 C 0x6CBA ...y se da de baja
 L 0x6CC0 huerfana_baja_actor5
-C 0x6CC0 nadie la llama: baja del actor 5
-D 0x6CCA 0x6CDC resto_6CCA  un trozo que nadie ejecuta (distancia en y a Rastan)
+C 0x6CC0 sin llamada localizada y no se ejecuta en lo medido: baja del actor 5
+D 0x6CCA 0x6CDC resto_6CCA  un trozo que no se ejecuta en lo medido (distancia en y a Rastan)
 B 0x6CDC Tipo 9: de cara a Rastan. Lejos (mas de 0x50 en x) anda hacia el; justo a
 B 0x6CDC 0x50 se para; mas cerca retrocede o lanza un proyectil (el actor 4).
 L 0x6CDC tipo_09
@@ -660,7 +660,7 @@ L 0x6E7D acaba_proyectil_09_b
 C 0x6E7D el actor 4 ya no esta...
 C 0x6E85 ...y se da de baja
 L 0x6E8B huerfana_baja_actor4
-C 0x6E8B nadie la llama: baja del actor 4
+C 0x6E8B sin llamada localizada y no se ejecuta en lo medido: baja del actor 4
 B 0x6E95 Tipo 0x13: como el tipo 1 (anda, sube escalones, salta) pero no se mueve
 B 0x6E95 en todos los cuadros: R & 0x52 con paridad impar, solo se pinta.
 L 0x6E95 tipo_13
@@ -715,14 +715,14 @@ L 0x6FDF tipo_13_escalon_der
 L 0x6FF0 tipo_13_salto_alto
 C 0x6FF0 pose bit 3, 16 cuadros subiendo
 L 0x7003 huerfana_tipo_13_baja
-C 0x7003 nadie llega aqui
+C 0x7003 sin salto localizado y no se ejecuta en lo medido
 L 0x700A tipo_13_bajando
 C 0x700A 2 abajo, un cuadro menos
 L 0x701C tipo_13_subiendo
 C 0x701C 2 arriba, un cuadro menos
 L 0x7036 tipo_13_cumbre
 C 0x7036 16 cuadros bajando
-D 0x703D 0x703F resto_703D  dos `ret` que nadie ejecuta
+D 0x703D 0x703F resto_703D  dos `ret` que no se ejecuta en lo medido
 L 0x703F tipo_13_otra
 L 0x7046 tipo_13_otra_der
 L 0x704E tipo_13_vuelta_cerca
@@ -830,14 +830,14 @@ L 0x72B6 tipo_06_escalon_der
 L 0x72C7 tipo_06_salto_alto
 C 0x72C7 16 cuadros subiendo
 L 0x72D2 huerfana_tipo_06_baja
-C 0x72D2 nadie llega aqui
+C 0x72D2 sin salto localizado y no se ejecuta en lo medido
 L 0x72D9 tipo_06_bajando
 C 0x72D9 2 abajo, un cuadro menos
 L 0x72EB tipo_06_subiendo
 C 0x72EB 2 arriba, un cuadro menos
 L 0x7305 tipo_06_cumbre
 C 0x7305 16 cuadros bajando
-D 0x730C 0x730E resto_730C  dos `ret` que nadie ejecuta
+D 0x730C 0x730E resto_730C  dos `ret` que no se ejecuta en lo medido
 L 0x730E tipo_06_otra
 L 0x7315 tipo_06_otra_der
 L 0x731D tipo_06_vuelta_cerca
@@ -892,7 +892,7 @@ L 0x744A proyectil_12_fin
 L 0x744D sigue_proyectil_12
 L 0x7450 proyectil_12_pinta
 L 0x7456 huerfana_acaba_12
-C 0x7456 nadie llega aqui
+C 0x7456 sin salto localizado y no se ejecuta en lo medido
 L 0x7460 coloca_proyectil_12
 C 0x7460 pose 0x0F
 C 0x7464 +13 = el lado del que lanza
@@ -915,7 +915,7 @@ L 0x74E1 proyectil_12_sigue
 L 0x74E4 acaba_proyectil_12
 C 0x74E4 el actor 3 ya no esta, baja
 L 0x74F2 huerfana_baja_actor3
-C 0x74F2 nadie la llama: baja del actor 3
+C 0x74F2 sin llamada localizada y no se ejecuta en lo medido: baja del actor 3
 B 0x74FC Tipo 0x11: no se mueve en todos los cuadros (paridad de R); si Rastan
 B 0x74FC esta agachado (pose 4), pone su pose del bit 2; luego como el tipo 1.
 L 0x74FC tipo_11
@@ -972,7 +972,7 @@ L 0x7654 tipo_11_escalon_der
 L 0x7665 tipo_11_salto_alto
 C 0x7665 pose del bit 3 y 32 cuadros subiendo
 L 0x7678 huerfana_tipo_11_baja
-C 0x7678 nadie llega aqui
+C 0x7678 sin salto localizado y no se ejecuta en lo medido
 L 0x767F tipo_11_bajando
 C 0x767F un pixel abajo, un cuadro menos
 L 0x7690 tipo_11_subiendo
@@ -981,7 +981,7 @@ C 0x769C un pixel arriba
 C 0x76A3 un cuadro menos...
 L 0x76B1 tipo_11_cumbre
 C 0x76B1 ...y 28 bajando
-D 0x76B8 0x76BA resto_76B8  dos `ret` que nadie ejecuta
+D 0x76B8 0x76BA resto_76B8  dos `ret` que no se ejecuta en lo medido
 L 0x76BA tipo_11_otra
 L 0x76C1 tipo_11_otra_der
 L 0x76C9 tipo_11_vuelta_cerca
@@ -1006,7 +1006,7 @@ C 0x775E a 0x40 o mas en x: anda
 L 0x7765 tipo_14_anda
 C 0x7765 un pixel
 L 0x7768 huerfana_tipo_14_quieto
-C 0x7768 nadie llega aqui (la distancia en y no decide nada)
+C 0x7768 sin salto localizado y no se ejecuta en lo medido (la distancia en y no decide nada)
 L 0x7770 tipo_14_pinta
 L 0x7773 tipo_14_medio
 C 0x7773 a menos de 0x20: anda
@@ -1032,7 +1032,7 @@ L 0x77DC proyectil_14_fin
 L 0x77DF sigue_proyectil_14
 L 0x77E2 proyectil_14_pinta
 L 0x77E8 huerfana_acaba_14
-C 0x77E8 nadie llega aqui
+C 0x77E8 sin salto localizado y no se ejecuta en lo medido
 L 0x77F2 coloca_proyectil_14
 C 0x77F2 pose 1
 C 0x77F6 +13 = el lado del que lanza
@@ -1084,7 +1084,7 @@ C 0x7934 cerca en y: pose de lanzar
 L 0x7940 tipo_15_pinta_y_lanza
 C 0x7947 sin proyectil: lo lanza
 L 0x794F huerfana_tipo_15_sin_pose
-C 0x794F nadie llega aqui
+C 0x794F sin salto localizado y no se ejecuta en lo medido
 L 0x7956 tipo_15_parado
 C 0x7956 entre 0x20 y 0x40 en x: lanza
 L 0x7964 proyectil_15
@@ -1101,7 +1101,7 @@ L 0x7991 proyectil_15_fin
 L 0x7994 sigue_proyectil_15
 L 0x7997 proyectil_15_pinta
 L 0x799D huerfana_acaba_15
-C 0x799D nadie llega aqui
+C 0x799D sin salto localizado y no se ejecuta en lo medido
 L 0x79A7 coloca_proyectil_15
 C 0x79A7 pose 5
 C 0x79AB +13 = el lado
@@ -1125,8 +1125,8 @@ C 0x7A25 al chocar: +15 = 0xF1...
 C 0x7A2D ...pose 7...
 C 0x7A31 ...pintado...
 C 0x7A38 ...y baja
-B 0x7A3E Huerfana: un paso al azar de 4 pixeles dentro de una caja hecha con los
-B 0x7A3E bytes +3/+4 del actor 0 y D92C/D92D (5 pixeles de margen). Nadie la llama.
+B 0x7A3E Sin llamada localizada y no se ejecuta en lo medido: un paso al azar de 4 pixeles dentro de una caja hecha con los
+B 0x7A3E bytes +3/+4 del actor 0 y D92C/D92D (5 pixeles de margen). Sin llamada localizada; no se ejecuta en lo medido.
 L 0x7A3E huerfana_paso_al_azar
 C 0x7A3E margen de 5
 C 0x7A40 H = actor 0 +3 + 5
@@ -1139,7 +1139,7 @@ C 0x7A6B 4 a la derecha, sin pasar de H
 L 0x7A7C paso_izq_azar
 C 0x7A7C 4 a la izquierda, sin bajar de L
 L 0x7A8D paso_abajo_azar
-C 0x7A8D y + 4, sin pasar de D (y lo guarda en la x: un error)
+C 0x7A8D y + 4, sin pasar de D, y lo guarda en la x
 L 0x7A9E paso_arriba_azar
 C 0x7A9E y - 4, sin bajar de E (tambien en la x)
 B 0x7AAF MUERTE DE UN ACTOR (vida +0F = 0): si lleva otro actor de la mano (un
@@ -1180,7 +1180,7 @@ L 0x7B64 anda_1
 C 0x7B64 lo mismo de pixel en pixel
 L 0x7B6F anda_1_izq
 L 0x7B72 anda_1_pinta
-D 0x7B7A 0x7B90 resto_7B7A  otra version de anda_1 que nadie ejecuta
+D 0x7B7A 0x7B90 resto_7B7A  otra version de anda_1 que no se ejecuta en lo medido
 L 0x7B90 acerca_y
 C 0x7B90 la y de Rastan
 C 0x7B96 por encima: 2 pixeles abajo
@@ -1197,7 +1197,7 @@ L 0x7BC9 hacia_y_pinta
 C 0x7BC9 pose sin el bit 1, pintado
 L 0x7BD1 hacia_y_sube
 C 0x7BD1 arriba 2
-D 0x7BD9 0x7C14 resto_7BD9  otra rutina de acercarse que nadie ejecuta
+D 0x7BD9 0x7C14 resto_7BD9  otra rutina de acercarse que no se ejecuta en lo medido
 L 0x7C14 hacia_y_b
 C 0x7C14 como p03:7BA7 pero con la pose del bit 1
 L 0x7C22 hacia_y_b_anda
@@ -1214,7 +1214,7 @@ L 0x7C74 anda_segun_10
 C 0x7C74 +10 = 0: deprisa (4)...
 L 0x7C7E anda_segun_10_b
 C 0x7C7E ...si no, 2
-D 0x7C82 0x7CC6 resto_7C82  rutinas que nadie ejecuta (un contador en +10 y otra de acercarse en x)
+D 0x7C82 0x7CC6 resto_7C82  rutinas que no se ejecuta en lo medido (un contador en +10 y otra de acercarse en x)
 L 0x7CC6 distancia_x
 C 0x7CC6 |(x de Rastan + 16) - (x del actor + 16)|
 C 0x7CD3 el actor mas a la derecha
@@ -1234,7 +1234,7 @@ L 0x7D23 vuelve_y_anda
 C 0x7D23 se da la vuelta...
 C 0x7D26 ...y 2 pixeles hacia el nuevo lado
 L 0x7D37 vuelve_y_anda_der
-D 0x7D40 0x7D56 resto_7D40  otro trozo que nadie ejecuta (mira x >= 0xFB)
+D 0x7D40 0x7D56 resto_7D40  otro trozo que no se ejecuta en lo medido (mira x >= 0xFB)
 B 0x7D56 Las clases de las casillas de alrededor del actor (byte alto de D774), en
 B 0x7D56 +17..+24: cuatro filas desde la suya, tres o cuatro casillas por fila, la
 B 0x7D56 ventana corrida una casilla hacia donde mira.
@@ -1254,13 +1254,13 @@ C 0x7DB4 otra fila: +1B..+1E
 C 0x7DCE y otra: +23, +24
 L 0x7DDD corre_ventana
 C 0x7DDD una casilla mas (2 bytes)
-D 0x7DE0 0x7E18 resto_7DE0  otra lectura de casillas que nadie ejecuta
+D 0x7DE0 0x7E18 resto_7DE0  otra lectura de casillas que no se ejecuta en lo medido
 L 0x7E18 da_la_vuelta
 C 0x7E18 el bit 0 de la pose: hacia donde mira
 C 0x7E1F a la derecha
 L 0x7E24 da_la_vuelta_izq
 C 0x7E24 a la izquierda
-D 0x7E29 0x7E4B resto_7E29  trozos que nadie ejecuta (moverse en diagonal)
+D 0x7E29 0x7E4B resto_7E29  trozos que no se ejecuta en lo medido (moverse en diagonal)
 L 0x7E4B cae_1
 C 0x7E4B y + 1
 C 0x7E52 pose sin el bit 1
@@ -1297,7 +1297,7 @@ L 0x7ED7 nada_debajo_16
 C 0x7ED7 lo mismo con +18 y +19, la fila siguiente: debajo de los actores de 16 de alto
 L 0x7EE4 nada_debajo_16_2
 L 0x7EEE nada_debajo_16_si
-D 0x7EF1 0x7F1F resto_7EF1  otro trozo de andar que nadie ejecuta
+D 0x7EF1 0x7F1F resto_7EF1  otro trozo de andar que no se ejecuta en lo medido
 B 0x7F1F El actor 0 (D933) con animacion propia: sus poses salen de la tabla de
 B 0x7F1F p03:7F76 por tipo, y sus 12 sprites, desde la ficha 17, con el banco 8.
 L 0x7F1F anima_actor0_desde_cero

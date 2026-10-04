@@ -377,7 +377,7 @@ cae_pose_3:
 	set 1,(ix+001h)		;6344   ; (repetido)
 	jp siguiente_cosa		;6348   ; la siguiente
 huerfana_cosa_nada:
-	jp siguiente_cosa		;634b   ; nadie llega aqui
+	jp siguiente_cosa		;634b   ; sin salto localizado y no se ejecuta en lo medido
 
 ; ----------------------------------------------------------------------
 ; Tipos 0x1E y 0x17: saltan en arco (los pasos en y de p05:6468) hacia
@@ -475,8 +475,8 @@ arco_izq:
 	ld a,r		;641d   ; R & 9...
 	and 009h		;641f
 	jp z,siguiente_cosa		;6421   ; ...= 0: nada
-	ld a,(ix+010h)		;6424   ; (aqui guarda la x en +16 y la y en la x: un error)
-	ld (ix+016h),a		;6427   ; x a +16 (sin uso)
+	ld a,(ix+010h)		;6424   ; guarda la x en +16 y la y en +10, donde va la x de su sitio
+	ld (ix+016h),a		;6427   ; x a +16
 	ld a,(ix+011h)		;642a   ; y...
 	ld (ix+010h),a		;642d   ; ...a la x de su sitio
 	call 057afh		;6430   ; alta

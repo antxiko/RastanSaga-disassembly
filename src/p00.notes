@@ -111,13 +111,13 @@ C 0x41DF ...256 x 8 pixeles...
 C 0x41E2 ...los dos en la pagina 1
 C 0x41E8 HMMM
 L 0x41EC huerfana_vdp_r32
-C 0x41EC nadie la llama: espera a que el VDP acabe el comando anterior...
+C 0x41EC sin llamada localizada y no se ejecuta en lo medido: espera a que el VDP acabe el comando anterior...
 C 0x41EF ...y apunta a R#32 con autoincremento (R#17 = 0x20)
 C 0x41FE 15 registros de comando (R#32-R#46) desde p00:4206
 C 0x4203 los manda por el puerto 3 del VDP
-D 0x4206 0x4215 comando_vdp  Los 15 registros de un comando del VDP (R#32-R#46) que vuelca p00:41EC; nadie lo usa
+D 0x4206 0x4215 comando_vdp  Los 15 registros de un comando del VDP (R#32-R#46) que vuelca p00:41EC, que no se ejecuta en lo medido
 L 0x4215 huerfana_tarea_on
-C 0x4215 nadie la llama: pone a 1 el contador de la tarea A (C000+A)
+C 0x4215 sin llamada localizada y no se ejecuta en lo medido: pone a 1 el contador de la tarea A (C000+A)
 L 0x421D apaga_tareas
 C 0x421D los 16 contadores C000-C00F a 0: ninguna tarea corre
 B 0x4228 EL PLANIFICADOR. Hay 16 tareas; la i tiene su contador en C000+i (0 =
@@ -184,7 +184,7 @@ C 0x4301 R#15 del PSG = 0x8F: puerto de joystick 1 y salidas en alto
 C 0x4309 R#14: las patas del joystick (0 = pulsada)
 C 0x430E invertidas: 1 = pulsada; bits 0-3 direcciones, 4-5 gatillos
 L 0x4313 multiplica_h_por_e
-C 0x4313 nadie la llama: HL = H * E, por sumas y desplazamientos
+C 0x4313 sin llamada localizada y no se ejecuta en lo medido: HL = H * E, por sumas y desplazamientos
 C 0x4316 ocho bits
 C 0x4318 HL*2; si salia un 1 de H...
 C 0x431B ...se suma E
@@ -192,7 +192,7 @@ L 0x431F borra_vram
 C 0x431F pantalla apagada mientras...
 C 0x4323 ...se llenan de 0 los primeros 32 KB de VRAM
 C 0x432E pantalla encendida
-B 0x4332 Huerfana: un rectangulo de bytes de la CPU a la VRAM con el comando HMMC
+B 0x4332 Sin llamada localizada y no se ejecuta en lo medido: un rectangulo de bytes de la CPU a la VRAM con el comando HMMC
 B 0x4332 del V9938. HL = esquina de destino, DE = la otra esquina, A' = pagina, IX =
 B 0x4332 los bytes.
 L 0x4332 huerfana_hmmc
@@ -248,7 +248,7 @@ C 0x4489 puerto 2, el de la paleta
 C 0x448A rojo y azul...
 C 0x448E ...y verde
 C 0x4492 16 colores
-B 0x449B Huerfana: un fundido. Los 48 componentes de D574 (16 colores x R,G,B) se
+B 0x449B Sin llamada localizada y no se ejecuta en lo medido: un fundido. Los 48 componentes de D574 (16 colores x R,G,B) se
 B 0x449B acercan un paso a los de DE, y los colores marcados en D5A4 se mandan con
 B 0x449B p00:4445... que no escribe la paleta sino que lee un estado: sin terminar.
 L 0x449B huerfana_fundido
@@ -297,7 +297,7 @@ C 0x45CF destino: D213 + sprite*16, sus colores en RAM
 C 0x45E0 los 16 colores de lineas iguales:
 C 0x45E3 el primero...
 C 0x45E9 ...y se copia sobre los otros 15
-D 0x45EC 0x45EE resto_45EC  `pop hl / ret` sueltos que nadie ejecuta
+D 0x45EC 0x45EE resto_45EC  `pop hl / ret` sueltos que no se ejecuta en lo medido
 B 0x45EE Un tile de 8x8 a la pantalla: HL = numero de tile, DE = destino (E = x,
 B 0x45EE D = y). Los tiles estan en VRAM a partir de la pagina 1 (tile + 512, 32 por
 B 0x45EE fila). B' bit 0 = 0 lo copia entero (HMMM), = 1 con el color 0
@@ -461,7 +461,7 @@ C 0x49F1 se marca ocupado
 C 0x49F6 +0E = sitio con el bit 5
 C 0x49FE ficha 0x0A + sitio
 C 0x4A11 un sprite
-D 0x4A19 0x4A1B resto_4A19  dos `ret` sueltos que nadie ejecuta
+D 0x4A19 0x4A1B resto_4A19  dos `ret` sueltos que no se ejecuta en lo medido
 B 0x4A1B Pinta un actor recien dado de alta: busca la definicion de su pose (tipo
 B 0x4A1B +0, pose +1, en el banco 30 o 26 en 0x8000), la convierte en fichas de
 B 0x4A1B sprite (p00:5AA5) y las pasa a la tabla de atributos.
@@ -701,7 +701,7 @@ C 0x5303 D910 bit 0: fase acabada
 C 0x530A o D17D bit 0 (se borra al mirarlo)
 L 0x5313 fase_siguiente
 C 0x5313 D5E5 + 1: la fase siguiente
-C 0x5318 la 0x11 no se juega: de la 0x10 se pasa a la 0x12
+C 0x5318 al acabar la 0x10 se salta la 0x11 y se pasa a la 0x12 (el truco de 0x4010 cambia de fase sin pasar por aqui)
 L 0x5321 truco_fases
 C 0x5321 con el byte 0x4010 de la cabecera encendido...
 C 0x5328 ...fila 0: tecla 7 = fase siguiente...

@@ -394,7 +394,7 @@ caja_ataque_e_izq:
 	jp le_alcanza		;82c7
 
 ; ----------------------------------------------------------------------
-; Huerfana (ninguna entrada de la tabla la elige): segun la pose, una caja
+; Ninguna entrada de la tabla la elige y no se ejecuta en lo medido: segun la pose, una caja
 ; y un dano; con las poses 0-1 ademas le quita el arma y el escudo.
 ; ----------------------------------------------------------------------
 huerfana_ataque_f:
@@ -799,7 +799,7 @@ DATA_cuerpo_por_tipo:
 	defb 010h,000h,0e7h,084h	; 85ee
 
 ; ----------------------------------------------------------------------
-; DATOS cuerpo_tipo_24: la entrada del tipo 24, que no se usa
+; DATOS cuerpo_tipo_24: la entrada del tipo 24, que no se lee en lo medido
 ;   0x85f2..0x85f6  (4 bytes)
 DATA_cuerpo_tipo_24:
 	defb 002h,000h,0e7h,084h	; 85f2
@@ -1199,7 +1199,7 @@ choque_contacto:
 	ret			;8854
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8855: un `ret` que nadie ejecuta
+; DATOS resto_8855: un `ret` que no se ejecuta en lo medido
 ;   0x8855..0x8856  (1 bytes)
 DATA_resto_8855:
 	defb 0c9h	; 8855
@@ -2561,8 +2561,8 @@ L_9498:
 	jr $+46		;949d
 
 ; ----------------------------------------------------------------------
-; DATOS resto_949F: 44 bytes de codigo que nadie ejecuta (mas cajas del jefe
-;   5)
+; DATOS resto_949F: 44 bytes de codigo que no se ejecuta en lo medido (mas
+;   cajas del jefe 5)
 ;   0x949f..0x94cb  (44 bytes)
 DATA_resto_949F:
 	defb 0feh,006h,028h,039h,030h,026h,0e6h,001h,020h,011h,07bh,095h,0c6h,027h,0feh,03fh	; 949f  ..(90&.. .{..'.?

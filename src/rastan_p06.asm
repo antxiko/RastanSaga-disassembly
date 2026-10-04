@@ -127,7 +127,7 @@ L_60B1:
 	pop de			;60b1   ; DE fuera de la pila
 	ret			;60b2   ; vuelve
 huerfana_puntuacion_0:
-	exx			;60b3   ; nadie la llama: escribe la puntuacion a 0 en (0x00, 0x18)...
+	exx			;60b3   ; sin llamada localizada y no se ejecuta en lo medido: escribe la puntuacion a 0 en (0x00, 0x18)...
 	ld b,000h		;60b4   ; B' = 0: opaco
 	exx			;60b6
 	ld d,018h		;60b7   ; D = 0x18
@@ -3201,7 +3201,8 @@ coloca_jugador:
 	ret			;7880
 
 ; ----------------------------------------------------------------------
-; DATOS resto_7881: cinco bytes que nadie ejecuta (`ld a,b / and 0xE1 / jr`)
+; DATOS resto_7881: cinco bytes que no se ejecuta en lo medido (`ld a,b / and
+;   0xE1 / jr`)
 ;   0x7881..0x7886  (5 bytes)
 DATA_resto_7881:
 	defb 078h,0e6h,0e1h,018h,014h	; 7881
@@ -3264,7 +3265,8 @@ casillas_alrededor:
 	jp fuera_de_pantalla		;78ce
 
 ; ----------------------------------------------------------------------
-; DATOS resto_78D1: cuatro bytes que nadie ejecuta (`sub 0x10 / jr`)
+; DATOS resto_78D1: cuatro bytes que no se ejecuta en lo medido (`sub 0x10 /
+;   jr`)
 ;   0x78d1..0x78d5  (4 bytes)
 DATA_resto_78D1:
 	defb 0d6h,010h,018h,0f5h	; 78d1
@@ -3989,7 +3991,7 @@ caja_c_2:
 	jp nc,siguiente_objeto_golpe		;7d89   ; no cabe: fuera
 	jp le_da		;7d8c   ; le da
 huerfana_caja_d:
-	ld a,(ix+006h)		;7d8f   ; nadie llega aqui: otra caja sin usar
+	ld a,(ix+006h)		;7d8f   ; sin salto localizado y no se ejecuta en lo medido: otra caja
 	sub h			;7d92   ; la diferencia en x...
 	add a,01fh		;7d93   ; ...corrida +31...
 	cp 01dh		;7d95   ; ...cabe en la caja si va de -31 a -3
@@ -4079,7 +4081,7 @@ caja_i:
 	jp nc,siguiente_objeto_golpe		;7e4a   ; no cabe: fuera
 	jp le_da		;7e4d
 huerfana_caja_j:
-	ld a,(ix+006h)		;7e50   ; nadie llega aqui
+	ld a,(ix+006h)		;7e50   ; sin salto localizado y no se ejecuta en lo medido
 	sub h			;7e53   ; la diferencia en x...
 	add a,00eh		;7e54   ; ...corrida +14...
 	cp 01dh		;7e56   ; ...cabe en la caja si va de -14 a 14

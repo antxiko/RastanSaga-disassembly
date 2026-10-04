@@ -188,7 +188,7 @@ C 0x644D las cabeceras de p01:6481
 L 0x6455 pon_cabecera
 C 0x6463 mezclador = 0xB8
 L 0x646C huerfana_silencio
-C 0x646C nadie la llama: sonido apagado y el mezclador todo cerrado
+C 0x646C sin llamada localizada y no se ejecuta en lo medido: sonido apagado y el mezclador todo cerrado
 D 0x6478 0x6481 resto_6478  Dos rutinas de sonido sin llamada localizada: sub a / ld (D069),a / ret (sonido encendido) y ld a,1 / jr 6479 (D069 = 1, apagado); ni call ni jp en los 32 bancos y no se ejecutan en el recorrido medido (tools/omsx_lecturas.tcl)
 D 0x6481 0x64B1 voces_cabecera  Las cabeceras de las tres voces de musica (16 bytes cada una)
 F 0x6481 16

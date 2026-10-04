@@ -117,11 +117,11 @@ jefe_1_cerca:
 	jp nc,jefe_1_salta		;80c1
 	jp 07f3eh		;80c4   ; animacion
 huerfana_jefe_1_x20:
-	ld (ix+006h),020h		;80c7   ; nadie llega aqui: x = 0x20 y salta
+	ld (ix+006h),020h		;80c7   ; sin salto localizado y no se ejecuta en lo medido: x = 0x20 y salta
 	jp jefe_1_salta		;80cb
 
 ; ----------------------------------------------------------------------
-; DATOS resto_80CE: 18 bytes que nadie ejecuta
+; DATOS resto_80CE: 18 bytes que no se ejecuta en lo medido
 ;   0x80ce..0x80e0  (18 bytes)
 DATA_resto_80CE:
 	defb 0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h,03eh,07fh,0ddh,036h,006h,0dch,0c3h	; 80ce  .........>..6...
@@ -353,11 +353,11 @@ jefe_2_cerca:
 	jp nc,jefe_2_salta		;831b
 	jp 07f3eh		;831e   ; p03 anima_actor0
 huerfana_jefe_2_x20:
-	ld (ix+006h),020h		;8321   ; nadie llega aqui
+	ld (ix+006h),020h		;8321   ; sin salto localizado y no se ejecuta en lo medido
 	jp jefe_2_salta		;8325
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8328: 18 bytes que nadie ejecuta
+; DATOS resto_8328: 18 bytes que no se ejecuta en lo medido
 ;   0x8328..0x833a  (18 bytes)
 DATA_resto_8328:
 	defb 0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h,03eh,07fh,0ddh,036h,006h,0dch,0c3h	; 8328  .........>..6...
@@ -572,7 +572,7 @@ jefe_3_cerca:
 	jp 07f3eh		;8543   ; p03 anima_actor0
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8546: 22 bytes que nadie ejecuta
+; DATOS resto_8546: 22 bytes que no se ejecuta en lo medido
 ;   0x8546..0x855c  (22 bytes)
 DATA_resto_8546:
 	defb 0ddh,036h,006h,0d1h,0ddh,036h,007h,050h,0c3h,03eh,07fh,0ddh,036h,006h,011h,0ddh	; 8546  .6...6.P.>..6...
@@ -601,7 +601,7 @@ jefe_aleja_1_der:
 	ret			;8577
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8578: 19 bytes que nadie ejecuta
+; DATOS resto_8578: 19 bytes que no se ejecuta en lo medido
 ;   0x8578..0x858b  (19 bytes)
 DATA_resto_8578:
 	defb 0ddh,0cbh,001h,0ceh,0c3h,03eh,07fh,03ah,0f4h,0d8h,0cbh,06fh,020h,002h,0afh,0c9h	; 8578  .....>.:...o ...
@@ -723,7 +723,7 @@ proyectil_jefe_3_pinta:
 	pop ix		;869f
 	ret			;86a1
 huerfana_acaba_jefe_3:
-	ld (ix+015h),000h		;86a2   ; nadie llega aqui
+	ld (ix+015h),000h		;86a2   ; sin salto localizado y no se ejecuta en lo medido
 	call 04b10h		;86a6   ; p00 baja_actor
 	pop ix		;86a9
 	ret			;86ab
@@ -815,7 +815,7 @@ jefe_3_ya_lanzo:
 	jp 07f3eh		;876b   ; p03 anima_actor0
 
 ; ----------------------------------------------------------------------
-; DATOS resto_876E: 17 bytes que nadie ejecuta
+; DATOS resto_876E: 17 bytes que no se ejecuta en lo medido
 ;   0x876e..0x877f  (17 bytes)
 DATA_resto_876E:
 	defb 0ddh,07eh,014h,03ch,0feh,002h,028h,004h,0ddh,077h,014h,0c9h,0ddh,0cbh,014h,0feh	; 876e  .~.<..(..w......
@@ -914,11 +914,11 @@ jefe_4_cerca:
 	jp nc,jefe_4_borde		;8849
 	jp 07f3eh		;884c   ; p03 anima_actor0
 huerfana_jefe_4_x20:
-	ld (ix+006h),020h		;884f   ; nadie llega aqui
+	ld (ix+006h),020h		;884f   ; sin salto localizado y no se ejecuta en lo medido
 	jp jefe_4_borde		;8853
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8856: 11 bytes que nadie ejecuta
+; DATOS resto_8856: 11 bytes que no se ejecuta en lo medido
 ;   0x8856..0x8861  (11 bytes)
 DATA_resto_8856:
 	defb 0ddh,0cbh,010h,0a6h,0ddh,0cbh,001h,08eh,0c3h,03eh,07fh	; 8856  .........>.
@@ -1144,8 +1144,8 @@ jefe_5_lanza:
 	jp 07f3eh		;8a97   ; p03 anima_actor0
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8A9A: 127 bytes de codigo que nadie ejecuta (otra version del
-;   jefe 5)
+; DATOS resto_8A9A: 127 bytes de codigo que no se ejecuta en lo medido (otra
+;   version del jefe 5)
 ;   0x8a9a..0x8b19  (127 bytes)
 DATA_resto_8A9A:
 	defb 0ddh,07eh,006h,0feh,020h,0dch,018h,07eh,0feh,0b4h,0d4h,018h,07eh,0ddh,0cbh,002h	; 8a9a  .~.. ..~....~...
@@ -1180,7 +1180,7 @@ distancia_jefe_5_der:
 	ret			;8b30
 
 ; ----------------------------------------------------------------------
-; DATOS resto_8B31: 36 bytes que nadie ejecuta
+; DATOS resto_8B31: 36 bytes que no se ejecuta en lo medido
 ;   0x8b31..0x8b55  (36 bytes)
 DATA_resto_8B31:
 	defb 0ddh,07eh,006h,0c6h,018h,047h,03ah,0fch,0d8h,0c6h,010h,04fh,0ddh,0cbh,001h,046h	; 8b31  .~...G:....O...F

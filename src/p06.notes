@@ -53,7 +53,7 @@ C 0x60A1 la parte vacia...
 C 0x60AA ...de color 6
 C 0x60AD rellena
 L 0x60B3 huerfana_puntuacion_0
-C 0x60B3 nadie la llama: escribe la puntuacion a 0 en (0x00, 0x18)...
+C 0x60B3 sin llamada localizada y no se ejecuta en lo medido: escribe la puntuacion a 0 en (0x00, 0x18)...
 D 0x60BE 0x60C6 texto_cero_2  seis espacios y "0"
 C 0x60C6 ...y luego la de verdad
 L 0x60D4 puntuacion
@@ -898,7 +898,7 @@ L 0x7876 coloca_pop
 L 0x7878 coloca_jugador
 C 0x7878 x = H
 C 0x787C y = L
-D 0x7881 0x7886 resto_7881  cinco bytes que nadie ejecuta (`ld a,b / and 0xE1 / jr`)
+D 0x7881 0x7886 resto_7881  cinco bytes que no se ejecuta en lo medido (`ld a,b / and 0xE1 / jr`)
 L 0x7886 orienta
 C 0x7886 en una cuesta no cambia de lado
 C 0x788E derecha: mira a la derecha (bit 0 = 0)
@@ -920,7 +920,7 @@ C 0x78BF 8: a la izquierda
 C 0x78C4 1: encima...
 C 0x78C5 ...la fila de y - 0x0C
 C 0x78CA por debajo de la fila 12: fuera
-D 0x78D1 0x78D5 resto_78D1  cuatro bytes que nadie ejecuta (`sub 0x10 / jr`)
+D 0x78D1 0x78D5 resto_78D1  cuatro bytes que no se ejecuta en lo medido (`sub 0x10 / jr`)
 L 0x78D5 fila_de_encima
 C 0x78D5 BC = la fila (y & 0xF0) / 8 * 2...
 C 0x78D9 ...mas la columna: x / 16 * 2
@@ -1106,7 +1106,7 @@ L 0x7D45 caja_b_2
 L 0x7D5E caja_c
 L 0x7D76 caja_c_2
 L 0x7D8F huerfana_caja_d
-C 0x7D8F nadie llega aqui: otra caja sin usar
+C 0x7D8F sin salto localizado y no se ejecuta en lo medido: otra caja
 L 0x7DA8 caja_e
 L 0x7DC1 caja_f
 L 0x7DDA caja_g
@@ -1117,7 +1117,7 @@ C 0x7E10 ...solo con la pose 0x14 del objeto...
 C 0x7E30 ...y si le da, +25 bit 6
 L 0x7E37 caja_i
 L 0x7E50 huerfana_caja_j
-C 0x7E50 nadie llega aqui
+C 0x7E50 sin salto localizado y no se ejecuta en lo medido
 L 0x7E69 le_da
 C 0x7E69 vida - fuerza
 C 0x7E6D 0 o menos: p07:807C (se acaba)...

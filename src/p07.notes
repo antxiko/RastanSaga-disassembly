@@ -96,7 +96,7 @@ L 0x8250 caja_ataque_d
 L 0x8280 caja_ataque_d_izq
 L 0x828E caja_ataque_e
 L 0x82BE caja_ataque_e_izq
-B 0x82CA Huerfana (ninguna entrada de la tabla la elige): segun la pose, una caja
+B 0x82CA Ninguna entrada de la tabla la elige y no se ejecuta en lo medido: segun la pose, una caja
 B 0x82CA y un dano; con las poses 0-1 ademas le quita el arma y el escudo.
 L 0x82CA huerfana_ataque_f
 L 0x8310 ataque_f_0
@@ -169,7 +169,7 @@ C 0x858D sin dano: nada
 C 0x858F todo junto a la vida
 D 0x8596 0x85F2 cuerpo_por_tipo  Por cada tipo de actor (1-23): el dano de tocarlo, un byte a 0 y la rutina de su caja (p07:847A)
 F 0x8596 4
-D 0x85F2 0x85F6 cuerpo_tipo_24  la entrada del tipo 24, que no se usa
+D 0x85F2 0x85F6 cuerpo_tipo_24  la entrada del tipo 24, que no se lee en lo medido
 B 0x85F6 La salida de la fase: si debajo de los pies de Rastan hay casillas de la
 B 0x85F6 clase 0xB0, D910 bit 0 (p00:5303 pasa a la fase siguiente).
 L 0x85F6 mira_salida
@@ -246,7 +246,7 @@ B 0x883D Tipos 0x17, 0x1E y 0x1F: tocarlos quita 8.
 L 0x883D choque_contacto
 C 0x883D dentro de la caja...
 C 0x884F ...8 de dano
-D 0x8855 0x8856 resto_8855  un `ret` que nadie ejecuta
+D 0x8855 0x8856 resto_8855  un `ret` que no se ejecuta en lo medido
 L 0x8856 choque_tipo_20
 C 0x8856 tipo 0x20: solo con la pose 0, caja 0x1B x 0x23, dano 8
 L 0x8873 choque_tipo_21
@@ -525,7 +525,7 @@ L 0x9470 jefe_5_p6
 L 0x9485 jefe_5_cuerpo
 C 0x9485 el cuerpo: dano 0x0C
 C 0x9498 pose 8: p07:94DC; si no, p07:94CB
-D 0x949F 0x94CB resto_949F  44 bytes de codigo que nadie ejecuta (mas cajas del jefe 5)
+D 0x949F 0x94CB resto_949F  44 bytes de codigo que no se ejecuta en lo medido (mas cajas del jefe 5)
 L 0x94CB jefe_5_caja_a
 L 0x94DC jefe_5_caja_b
 L 0x94ED dano_jefe_cuerpo

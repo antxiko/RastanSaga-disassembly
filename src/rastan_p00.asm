@@ -294,7 +294,7 @@ copia_franja:
 	call copia_bloque		;41e8   ; HMMM
 	ret			;41eb
 huerfana_vdp_r32:
-	call espera_vdp		;41ec   ; nadie la llama: espera a que el VDP acabe el comando anterior...
+	call espera_vdp		;41ec   ; sin llamada localizada y no se ejecuta en lo medido: espera a que el VDP acabe el comando anterior...
 	ld bc,(00007h)		;41ef   ; ...y apunta a R#32 con autoincremento (R#17 = 0x20)
 	inc c			;41f3
 	ld a,020h		;41f4
@@ -310,7 +310,7 @@ huerfana_vdp_r32:
 
 ; ----------------------------------------------------------------------
 ; DATOS comando_vdp: Los 15 registros de un comando del VDP (R#32-R#46) que
-;   vuelca p00:41EC; nadie lo usa
+;   vuelca p00:41EC, que no se ejecuta en lo medido
 ;   0x4206..0x4215  (15 bytes)
 DATA_comando_vdp:
 	defb 000h,000h,040h,001h,000h,000h,010h,001h,000h,001h,008h,000h,000h,000h,00dh	; 4206  ..@............
@@ -321,7 +321,7 @@ DATA_comando_vdp:
 
 
 huerfana_tarea_on:
-	push hl			;4215   ; nadie la llama: pone a 1 el contador de la tarea A (C000+A)
+	push hl			;4215   ; sin llamada localizada y no se ejecuta en lo medido: pone a 1 el contador de la tarea A (C000+A)
 	ld h,0c0h		;4216
 	ld l,a			;4218
 	ld (hl),001h		;4219
@@ -500,7 +500,7 @@ lee_joystick:
 	ei			;4311
 	ret			;4312
 multiplica_h_por_e:
-	ld l,000h		;4313   ; nadie la llama: HL = H * E, por sumas y desplazamientos
+	ld l,000h		;4313   ; sin llamada localizada y no se ejecuta en lo medido: HL = H * E, por sumas y desplazamientos
 	ld d,l			;4315
 	ld b,008h		;4316   ; ocho bits
 L_4318:
@@ -522,7 +522,7 @@ borra_vram:
 	ret			;4331
 
 ; ----------------------------------------------------------------------
-; Huerfana: un rectangulo de bytes de la CPU a la VRAM con el comando HMMC
+; Sin llamada localizada y no se ejecuta en lo medido: un rectangulo de bytes de la CPU a la VRAM con el comando HMMC
 ; del V9938. HL = esquina de destino, DE = la otra esquina, A' = pagina, IX =
 ; los bytes.
 ; ----------------------------------------------------------------------
@@ -760,7 +760,7 @@ L_448A:
 	ret			;449a
 
 ; ----------------------------------------------------------------------
-; Huerfana: un fundido. Los 48 componentes de D574 (16 colores x R,G,B) se
+; Sin llamada localizada y no se ejecuta en lo medido: un fundido. Los 48 componentes de D574 (16 colores x R,G,B) se
 ; acercan un paso a los de DE, y los colores marcados en D5A4 se mandan con
 ; p00:4445... que no escribe la paleta sino que lee un estado: sin terminar.
 ; ----------------------------------------------------------------------
@@ -986,7 +986,7 @@ L_45EB:
 	ret			;45eb   ; vuelve
 
 ; ----------------------------------------------------------------------
-; DATOS resto_45EC: `pop hl / ret` sueltos que nadie ejecuta
+; DATOS resto_45EC: `pop hl / ret` sueltos que no se ejecuta en lo medido
 ;   0x45ec..0x45ee  (2 bytes)
 DATA_resto_45EC:
 	defb 0e1h,0c9h	; 45ec
@@ -1648,7 +1648,7 @@ L_4A08:
 	jp pinta_actor_nuevo		;4a16   ; y se pinta
 
 ; ----------------------------------------------------------------------
-; DATOS resto_4A19: dos `ret` sueltos que nadie ejecuta
+; DATOS resto_4A19: dos `ret` sueltos que no se ejecuta en lo medido
 ;   0x4a19..0x4a1b  (2 bytes)
 DATA_resto_4A19:
 	defb 0c9h,0c9h	; 4a19
@@ -2686,7 +2686,7 @@ fase_siguiente:
 	ld hl,0d5e5h		;5313   ; D5E5 + 1: la fase siguiente
 	inc (hl)			;5316
 	ld a,(hl)			;5317
-	cp 011h		;5318   ; la 0x11 no se juega: de la 0x10 se pasa a la 0x12
+	cp 011h		;5318   ; al acabar la 0x10 se salta la 0x11 y se pasa a la 0x12 (el truco de 0x4010 cambia de fase sin pasar por aqui)
 	jp nz,entra_en_fase		;531a
 	inc (hl)			;531d
 	jp entra_en_fase		;531e

@@ -51,8 +51,8 @@ C 0x80B4 un paso atras
 C 0x80B7 en los bordes: salta
 C 0x80C4 animacion
 L 0x80C7 huerfana_jefe_1_x20
-C 0x80C7 nadie llega aqui: x = 0x20 y salta
-D 0x80CE 0x80E0 resto_80CE  18 bytes que nadie ejecuta
+C 0x80C7 sin salto localizado y no se ejecuta en lo medido: x = 0x20 y salta
+D 0x80CE 0x80E0 resto_80CE  18 bytes que no se ejecuta en lo medido
 L 0x80E0 jefe_1_pared
 C 0x80E0 a menos de 0x18 de Rastan...
 C 0x80E7 ...si no, anda 2
@@ -121,8 +121,8 @@ C 0x82EC cerca: salta
 L 0x82F4 jefe_2_anda
 L 0x8301 jefe_2_cerca
 L 0x8321 huerfana_jefe_2_x20
-C 0x8321 nadie llega aqui
-D 0x8328 0x833A resto_8328  18 bytes que nadie ejecuta
+C 0x8321 sin salto localizado y no se ejecuta en lo medido
+D 0x8328 0x833A resto_8328  18 bytes que no se ejecuta en lo medido
 L 0x833A jefe_2_pared
 C 0x833A a menos de 8 de Rastan: ataca
 C 0x8341 si no, cada tres cuadros...
@@ -181,14 +181,14 @@ C 0x8531 lejos de Rastan (0x30): se aleja
 C 0x853B animacion
 L 0x853E jefe_3_cerca
 C 0x853E cerca: se acerca un pixel
-D 0x8546 0x855C resto_8546  22 bytes que nadie ejecuta
+D 0x8546 0x855C resto_8546  22 bytes que no se ejecuta en lo medido
 L 0x855C jefe_acerca_1
 C 0x855C mirando a la izquierda: x + 1
 L 0x8566 jefe_acerca_1_izq
 L 0x856A jefe_aleja_1
 C 0x856A lo contrario
 L 0x8574 jefe_aleja_1_der
-D 0x8578 0x858B resto_8578  19 bytes que nadie ejecuta
+D 0x8578 0x858B resto_8578  19 bytes que no se ejecuta en lo medido
 L 0x858B jefe_3_lanza
 C 0x858B ya hay proyectil: p04:8767
 C 0x8593 pose de lanzar, +12 bit 0 a 0, +10 bit 0
@@ -232,7 +232,7 @@ L 0x8696 proyectil_jefe_3_fin
 L 0x8699 sigue_proyectil_jefe_3
 L 0x869C proyectil_jefe_3_pinta
 L 0x86A2 huerfana_acaba_jefe_3
-C 0x86A2 nadie llega aqui
+C 0x86A2 sin salto localizado y no se ejecuta en lo medido
 L 0x86AC coloca_proyectil_jefe_3
 C 0x86AC pose 0x0D
 C 0x86B0 +13 = el lado del jefe
@@ -259,7 +259,7 @@ L 0x8756 fin_proyectil_jefe_3
 C 0x8756 acabada: ya no hay
 L 0x8767 jefe_3_ya_lanzo
 C 0x8767 fuera la pose de lanzar
-D 0x876E 0x877F resto_876E  17 bytes que nadie ejecuta
+D 0x876E 0x877F resto_876E  17 bytes que no se ejecuta en lo medido
 L 0x877F jefe_3_tocado
 C 0x877F D96B a 0
 C 0x8783 +15 + 1: el primer golpe...
@@ -286,8 +286,8 @@ L 0x8822 jefe_4_anda
 L 0x882F jefe_4_cerca
 C 0x8842 en los bordes: p04:88AD
 L 0x884F huerfana_jefe_4_x20
-C 0x884F nadie llega aqui
-D 0x8856 0x8861 resto_8856  11 bytes que nadie ejecuta
+C 0x884F sin salto localizado y no se ejecuta en lo medido
+D 0x8856 0x8861 resto_8856  11 bytes que no se ejecuta en lo medido
 L 0x8861 jefe_4_pared
 C 0x8861 a menos de 0x10: ataca
 C 0x8868 si no, un paso cada tres cuadros
@@ -353,14 +353,14 @@ C 0x8A7D sin proyectil: sale
 C 0x8A84 efecto 0x0E
 C 0x8A89 pose 6 con el lado
 C 0x8A93 +10 bit 1
-D 0x8A9A 0x8B19 resto_8A9A  127 bytes de codigo que nadie ejecuta (otra version del jefe 5)
+D 0x8A9A 0x8B19 resto_8A9A  127 bytes de codigo que no se ejecuta en lo medido (otra version del jefe 5)
 L 0x8B19 distancia_jefe_5
 C 0x8B19 B = x de Rastan + 0x10
 C 0x8B1F C = x del jefe + 0x18
 C 0x8B25 mirando a la izquierda: C - B
 L 0x8B2E distancia_jefe_5_der
 C 0x8B2E a la derecha: B - C
-D 0x8B31 0x8B55 resto_8B31  36 bytes que nadie ejecuta
+D 0x8B31 0x8B55 resto_8B31  36 bytes que no se ejecuta en lo medido
 L 0x8B55 jefe_5_tocado
 C 0x8B55 efecto 0x0E
 C 0x8B5A D96B a 0

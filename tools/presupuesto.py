@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Presupuesto del cartucho: ni un byte sin explicar, sumado sobre las 16 paginas.
+"""Presupuesto del cartucho: ni un byte sin explicar, sumado sobre las 32 paginas.
 
 Por que este control y no el porcentaje de codigo trazado: buena parte de estos
-128 KB son datos (dibujos, habitaciones, musica), asi que un porcentaje de codigo
+256 KB son datos (tiles, sprites, mapas, musica), asi que un porcentaje de codigo
 bajo suena a trabajo a medias cuando puede estar entero. Lo que mide el avance
 de verdad es que cada byte sea una de estas dos cosas:
 
@@ -16,10 +16,10 @@ perfecto y estar sin explicar; o peor, estar mal explicado: si unos graficos se
 marcan como codigo, el binario reensamblado sigue saliendo identico -los bytes
 no cambian, solo su lectura- y el listado miente igual.
 
-LO QUE CAMBIA RESPECTO A UN CARTUCHO DE 16 KB: aqui hay 16 paginas de 8 KB y
+LO QUE CAMBIA RESPECTO A UN CARTUCHO DE 16 KB: aqui hay 32 paginas de 8 KB y
 cada una tiene su propio org (tools/paginas.py), su trazado y sus notas. El
 presupuesto se hace pagina a pagina y se suma. Las direcciones se repiten
-entre paginas -0x6000 es el principio de la 1, de la 4 y de la 11-, asi que
+entre paginas -0x6000 es el principio de la 1, de la 3 y de la 5-, asi que
 un rango D solo vale para la pagina en cuyas notas esta.
 
 Uso: presupuesto.py <directorio_work> <directorio_src> [--por-pagina]

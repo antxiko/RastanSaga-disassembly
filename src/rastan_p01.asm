@@ -693,7 +693,7 @@ pon_cabecera:
 	pop hl			;646a   ; ...HL de vuelta
 	ret			;646b   ; vuelve
 huerfana_silencio:
-	ld a,080h		;646c   ; nadie la llama: sonido apagado y el mezclador todo cerrado
+	ld a,080h		;646c   ; sin llamada localizada y no se ejecuta en lo medido: sonido apagado y el mezclador todo cerrado
 	ld (0d069h),a		;646e
 	ld a,007h		;6471
 	ld e,0bfh		;6473
