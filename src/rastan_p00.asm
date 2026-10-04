@@ -10,11 +10,18 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS cabecera: Cabecera del cartucho: "AB", INIT = 0x4011 (el arranque,
-;   p00:4011), STATEMENT, DEVICE y TEXT a 0, y un 0 de relleno
-;   0x4000..0x4011  (17 bytes)
+; DATOS cabecera: Cabecera del cartucho: "AB", INIT = 0x4011 (el arranque),
+;   STATEMENT, DEVICE y TEXT a 0
+;   0x4000..0x4010  (16 bytes)
 DATA_cabecera:
 	defb 041h,042h,011h,040h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 4000  AB.@............
+
+; ----------------------------------------------------------------------
+; DATOS truco_de_fases: El interruptor del truco de pruebas: p00:5321 lo lee
+;   y, si no es 0, la tecla 7 pasa a la fase siguiente y la 6 a la anterior;
+;   en el cartucho vale 0
+;   0x4010..0x4011  (1 bytes)
+DATA_truco_de_fases:
 	defb 000h	; 4010
 
 ; ======================================================================

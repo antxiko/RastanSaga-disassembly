@@ -1662,4 +1662,5 @@ C 0x5a03 cual es el bloque especial = a
 C 0x5a06 ix -> los 6 actores de la pantalla
 C 0x5b2e a = lo que se suma a la y de los sprites
 # --- fin de anota ---
-D 0x4000 0x4011 cabecera  Cabecera del cartucho: "AB", INIT = 0x4011 (el arranque, p00:4011), STATEMENT, DEVICE y TEXT a 0, y un 0 de relleno
+D 0x4000 0x4010 cabecera  Cabecera del cartucho: "AB", INIT = 0x4011 (el arranque), STATEMENT, DEVICE y TEXT a 0
+D 0x4010 0x4011 truco_de_fases  El interruptor del truco de pruebas: p00:5321 lo lee y, si no es 0, la tecla 7 pasa a la fase siguiente y la 6 a la anterior; en el cartucho vale 0
