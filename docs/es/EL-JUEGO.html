@@ -1,0 +1,123 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>El juego — Rastan Saga (Taito, 1988)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html" style=color:var(--tinta)>El juego</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html">Hallazgos</a><a href="EN-EL-EMULADOR.html">En el emulador</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../THE-GAME.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<h1 id="el-juego">El juego</h1>
+<p>Rastan recorre siete rondas. Cada fase es una rejilla de pantallas de 256 × 176 puntos, 11 filas de 16 bloques de 16 × 16, y se pasa de una a otra saliendo por un borde (<code>p00:5367</code>).</p>
+<h2 id="la-pantalla-de-titulo">La pantalla de título</h2>
+<p>Siete filas de nueve bloques (<code>p00:5189</code>) con su paleta (<code>p00:5207</code>), el rótulo de Taito (<code>p00:5227</code>) y dos líneas de texto con la fuente del juego.</p>
+<p><img src="../imagenes/titulo.png" alt="La pantalla de título"></p>
+<h2 id="las-rondas">Las rondas</h2>
+<p>Hay 24 fichas de fase de 16 bytes (<code>p02:9035</code>): la tabla de pantallas, la de bloques, el tamaño, la pantalla de salida, los dos fondos, la paleta, el banco de los mapas y dónde aparece Rastan. La ronda sale de la fase (<code>p00:566C</code>):</p>
+<table><tr><th>ronda</th><th>fases</th><th>qué hay</th></tr><tr><td>1-5</td><td>tres cada una</td><td>el exterior, el castillo y la sala del jefe</td></tr><tr><td>6</td><td>0x0F, 0x10</td><td>dos fases y ningún jefe: la 0x11 se salta</td></tr><tr><td>7</td><td>0x12-0x16</td><td>cinco fases que repiten los cinco jefes</td></tr></table>
+<p>La 0x17 es el final. En total, 257 pantallas; 255 en las 22 fases que se juegan.</p>
+<p><img src="../imagenes/ronda_1.png" alt="La ronda 1"></p>
+<p>La ronda 1: el exterior, el castillo y la sala del jefe, con los enemigos donde salen (<code>p00:58F9</code>), el jefe donde lo pone su rutina (<code>p04:8016</code>) y Rastan en la pantalla de salida, recuadrada.</p>
+<p><img src="../imagenes/ronda_2.png" alt="La ronda 2"></p>
+<p>La ronda 2: fases 0x03, 0x04 y 0x05.</p>
+<p><img src="../imagenes/ronda_3.png" alt="La ronda 3"></p>
+<p>La ronda 3: fases 0x06, 0x07 y 0x08.</p>
+<p><img src="../imagenes/ronda_4.png" alt="La ronda 4"></p>
+<p>La ronda 4: fases 0x09, 0x0A y 0x0B.</p>
+<p><img src="../imagenes/ronda_5.png" alt="La ronda 5"></p>
+<p>La ronda 5: fases 0x0C, 0x0D y 0x0E.</p>
+<p><img src="../imagenes/ronda_6.png" alt="La ronda 6"></p>
+<p>La ronda 6: fases 0x0F y 0x10.</p>
+<p><img src="../imagenes/ronda_7.png" alt="La ronda 7"></p>
+<p>La ronda 7: cinco fases que repiten los cinco jefes, cada uno en una pantalla concreta (<code>p04:8BF4</code>).</p>
+<h2 id="una-pantalla">Una pantalla</h2>
+<p>Un fondo opaco para la fila de arriba y otro para las demás, la lista de bloques de delante, las columnas que se alargan hacia abajo (<code>p00:55C5</code>) y, al final, los actores: hasta 8 enemigos, 3 objetos y un bloque especial (<code>p00:58F9</code>). Las listas van empaquetadas: 0xD0 repite un bloque, EF EF acaba.</p>
+<h2 id="rastan">Rastan</h2>
+<p>Tres capas de sprites (<code>p06:6134</code>): el cuerpo (<code>p06:639F</code>), la segunda capa (<code>p06:64B3</code>) y el arma, que sale de una de cuatro tablas (<code>p06:6397</code>) según lo que lleve. En sus 92 poses hay 48 combinaciones distintas.</p>
+<p><img src="../imagenes/rastan.png" alt="Rastan"></p>
+<h2 id="los-actores">Los actores</h2>
+<p>37 tipos (<code>p00:4C68</code>), cada uno con su lista de poses; las definiciones de los tipos 0x01-0x17 están en el banco 30 y las de los demás en el 26. Un enemigo de la lista de la pantalla es un código que <code>p00:57D3</code> convierte en tipo y pose; con el bit 7, es un trozo de decorado animado.</p>
+<p><img src="../imagenes/actores.png" alt="Los actores"></p>
+<h2 id="los-jefes">Los jefes</h2>
+<p>Las salas de jefe no traen actores: el jefe lo da de alta su rutina en p04 (<code>p04:8016</code>, <code>8262</code>, <code>848E</code>, <code>8799</code> y <code>89CE</code>), tipos 1 a 5, con sus poses en <code>p03:7F76</code> y sus dibujos en el banco 8, y una vida de 320, 320, 160, 320 y 400 (medido). Al morir pasa al tipo 7, la muerte (<code>p03:7FDA</code>), y suma sus puntos: 500, 1000, 1500, 2000 y 2500 (<code>p07:9709</code>). En la ronda 7, cada uno sale en una pantalla concreta (<code>p04:8BF4</code>-<code>8C4B</code>).</p>
+<p><img src="../imagenes/jefes.png" alt="Los jefes"></p>
+<h2 id="el-final">El final</h2>
+<p>La fase 0x17: la música 5, la pantalla a 0 y el texto de <code>p04:8D01</code> subiendo línea a línea; después, el rótulo de Taito y el juego se queda ahí.</p>
+<p><img src="../imagenes/creditos.png" alt="Los créditos"></p>
+<footer><p><em>Rastan Saga</em> lo public&oacute; Taito para MSX2 en 1988, en un cartucho de 256 KB. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservaci&oacute;n, estudio y documentaci&oacute;n, y la imagen del cartucho no se distribuye.</p></footer></div>

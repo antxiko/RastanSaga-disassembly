@@ -1,0 +1,111 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Findings — Rastan Saga (Taito, 1988)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html" style=color:var(--tinta)>Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/HALLAZGOS.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="findings">Findings</h1>
+<h2 id="the-dragon-stage-that-gets-skipped">The dragon stage that gets skipped</h2>
+<p>Stage 0x11 has its record, its palette and its screen: a winged dragon over the sea, with 130 tiles no other stage uses. <code>p00:5318</code> skips it: from 0x10 the game goes to 0x12. Built from the ROM.</p>
+<p><img src="imagenes/dragon_fase.png" alt="Stage 0x11"></p>
+<p><img src="imagenes/dragon_cabeza.png" alt="The dragon&#x27;s head"></p>
+<p>The dragon&#x27;s head: blocks 0x60-0x77 of stage 0x11&#x27;s table, which its map does not use.</p>
+<h2 id="a-test-cheat-in-the-header">A test cheat in the header</h2>
+<p>Byte 0x4010 is 0. Set to 1, key 7 goes to the next stage, 6 to the previous one and BS ends the game (<code>p00:5321</code>, <code>p00:5349</code>); in the attract sequence, 4 and 5 change the VRAM page on display (<code>p00:4E41</code>). Measured in openMSX on a copy of the ROM with that byte set to 1.</p>
+<h2 id="a-throne-with-no-layout">A throne with no layout</h2>
+<p>95 tiles in bank 0x19 make up a man sitting on a throne. There is no table that lays them out and no routine found that draws them. The layout is the one in The Cutting Room Floor&#x27;s picture, checked tile by tile.</p>
+<p><img src="imagenes/trono.png" alt="The throne"></p>
+<h2 id="an-ending-never-drawn">An ending never drawn</h2>
+<p>The barbarian looking at the horizon, with blocks 0x2A-0x57 of the title&#x27;s table. The table is cut at 0x6000, at the end of bank 0, and the last two rows of tiles fall outside it. No routine found draws it, and its blocks are not read in the run through the 257 screens. The palette is not in the ROM: it is The Cutting Room Floor&#x27;s.</p>
+<p><img src="imagenes/final.png" alt="The ending"></p>
+<h2 id="round-6-has-no-boss">Round 6 has no boss</h2>
+<p>The round comes from the stage (<code>p00:566C</code>: stage / 3 + 1). Round 6 gets 0x0F, 0x10 and 0x11, and 0x11 is the one that is skipped: two stages and no boss room. 0x11 sits where that room would be and, like the five boss rooms, is a single screen. Read in the code.</p>
+<h2 id="the-last-byte-of-every-16-kb">The last byte of every 16 KB</h2>
+<p>The tiles go to VRAM 16 KB at a time with an LDIRVM of 0x3FFF bytes (<code>p01:6077</code>): the last byte of each piece stays at 0. Checked against openMSX&#x27;s VRAM.</p>
+<h2 id="the-credits-as-they-are">The credits, as they are</h2>
+<p>CONGRATURATIONS, CHARACTOR and SPETIAL THANKS: that is how the ending text is stored at <code>p04:8D6D</code>.</p>
+<h2 id="points-never-given">Points never given</h2>
+<p>The bosses&#x27; points table has six words (<code>p07:9709</code>), but <code>p07:96DD</code> only lets types 1 to 5 through: the sixth, 3000, is not read.</p>
+<h2 id="code-that-does-not-run">Code that does not run</h2>
+<p>61 routines and pieces of code have no call or jump found: two that switch the sound on and off (<code>p01:6478</code>), a palette fade (<code>p00:449B</code>), an HMMC copy (<code>p00:4332</code>), hit boxes, another version of boss 5 (<code>p04:8A9A</code>)... None of them runs in what was measured (see <a href="IN-THE-EMULATOR.html">In the emulator</a>). The listing keeps them with their code and that sentence, not as &quot;unused&quot;.</p>
+<p>Thanks to <a href="https://tcrf.net/">The Cutting Room Floor</a> for the pictures of the throne and the ending.</p>
+<footer><p><em>Rastan Saga</em> was published by Taito for the MSX2 in 1988, on a 256 KB cartridge. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

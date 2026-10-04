@@ -1,0 +1,123 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The game — Rastan Saga (Taito, 1988)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html" style=color:var(--tinta)>The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EL-JUEGO.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="the-game">The game</h1>
+<p>Rastan goes through seven rounds. Each stage is a grid of 256 × 176 pixel screens, 11 rows of 16 blocks of 16 × 16, and you go from one to the next by leaving through an edge (<code>p00:5367</code>).</p>
+<h2 id="the-title-screen">The title screen</h2>
+<p>Seven rows of nine blocks (<code>p00:5189</code>) with their palette (<code>p00:5207</code>), the Taito sign (<code>p00:5227</code>) and two lines of text in the game&#x27;s font.</p>
+<p><img src="imagenes/titulo.png" alt="The title screen"></p>
+<h2 id="the-rounds">The rounds</h2>
+<p>There are 24 stage records of 16 bytes (<code>p02:9035</code>): the screen table, the block table, the size, the starting screen, the two backgrounds, the palette, the map bank and where Rastan appears. The round comes from the stage (<code>p00:566C</code>):</p>
+<table><tr><th>round</th><th>stages</th><th>what is there</th></tr><tr><td>1-5</td><td>three each</td><td>the outdoors, the castle and the boss room</td></tr><tr><td>6</td><td>0x0F, 0x10</td><td>two stages and no boss: 0x11 is skipped</td></tr><tr><td>7</td><td>0x12-0x16</td><td>five stages that repeat the five bosses</td></tr></table>
+<p>0x17 is the ending. In all, 257 screens; 255 in the 22 stages that are played.</p>
+<p><img src="imagenes/ronda_1.png" alt="Round 1"></p>
+<p>Round 1: the outdoors, the castle and the boss room, with the enemies where they come out (<code>p00:58F9</code>), the boss where its routine puts it (<code>p04:8016</code>) and Rastan on the starting screen, framed.</p>
+<p><img src="imagenes/ronda_2.png" alt="Round 2"></p>
+<p>Round 2: stages 0x03, 0x04 and 0x05.</p>
+<p><img src="imagenes/ronda_3.png" alt="Round 3"></p>
+<p>Round 3: stages 0x06, 0x07 and 0x08.</p>
+<p><img src="imagenes/ronda_4.png" alt="Round 4"></p>
+<p>Round 4: stages 0x09, 0x0A and 0x0B.</p>
+<p><img src="imagenes/ronda_5.png" alt="Round 5"></p>
+<p>Round 5: stages 0x0C, 0x0D and 0x0E.</p>
+<p><img src="imagenes/ronda_6.png" alt="Round 6"></p>
+<p>Round 6: stages 0x0F and 0x10.</p>
+<p><img src="imagenes/ronda_7.png" alt="Round 7"></p>
+<p>Round 7: five stages that repeat the five bosses, each on a given screen (<code>p04:8BF4</code>).</p>
+<h2 id="a-screen">A screen</h2>
+<p>An opaque background for the top row and another for the rest, the list of foreground blocks, the columns that stretch downwards (<code>p00:55C5</code>) and, at the end, the actors: up to 8 enemies, 3 objects and a special block (<code>p00:58F9</code>). The lists are packed: 0xD0 repeats a block, EF EF ends.</p>
+<h2 id="rastan">Rastan</h2>
+<p>Three sprite layers (<code>p06:6134</code>): the body (<code>p06:639F</code>), the second layer (<code>p06:64B3</code>) and the weapon, which comes from one of four tables (<code>p06:6397</code>) depending on what he carries. His 92 poses have 48 different combinations.</p>
+<p><img src="imagenes/rastan.png" alt="Rastan"></p>
+<h2 id="the-actors">The actors</h2>
+<p>37 types (<code>p00:4C68</code>), each with its list of poses; the definitions of types 0x01-0x17 are in bank 30 and the rest in bank 26. An enemy in a screen&#x27;s list is a code that <code>p00:57D3</code> turns into type and pose; with bit 7 set, it is a piece of animated scenery.</p>
+<p><img src="imagenes/actores.png" alt="The actors"></p>
+<h2 id="the-bosses">The bosses</h2>
+<p>Boss rooms have no actors in their list: each boss is created by its routine in p04 (<code>p04:8016</code>, <code>8262</code>, <code>848E</code>, <code>8799</code> and <code>89CE</code>), types 1 to 5, with their poses at <code>p03:7F76</code>, their patterns in bank 8, and 320, 320, 160, 320 and 400 of life (measured). When one dies it becomes type 7, the death (<code>p03:7FDA</code>), and its points are added: 500, 1000, 1500, 2000 and 2500 (<code>p07:9709</code>). In round 7, each comes out on a given screen (<code>p04:8BF4</code>-<code>8C4B</code>).</p>
+<p><img src="imagenes/jefes.png" alt="The bosses"></p>
+<h2 id="the-ending">The ending</h2>
+<p>Stage 0x17: music 5, the screen cleared and the text at <code>p04:8D01</code> scrolling up line by line; then the Taito sign, and the game stays there.</p>
+<p><img src="imagenes/creditos.png" alt="The credits"></p>
+<footer><p><em>Rastan Saga</em> was published by Taito for the MSX2 in 1988, on a 256 KB cartridge. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>
