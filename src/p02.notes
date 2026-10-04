@@ -1,0 +1,16 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x8000 0x8C41 partituras_8000  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x8C41 0x8C47 sonido_suelto_8C41  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x8C47 0x8D1A partituras_8C47  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x8D1A 0x8D1B sonido_suelto_8D1A  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x8D1B 0x8DB9 partituras_8D1B  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x8DB9 0x8DBA sonido_suelto_8DB9  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x8DBA 0x8E58 partituras_8DBA  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x8E58 0x8E59 sonido_suelto_8E58  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x8E59 0x9033 partituras_8E59  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x9033 0x9035 sonido_suelto_9033  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x9035 0x91B5 fichas_de_fase_9035  Las 24 fichas de fase (p00:5655), 16 bytes: pantallas, bloques, tamano, salida, fondos, paleta, banco de mapas y donde sale Rastan
+D 0x91B5 0x9409 pantallas_de_fase_91B5  Por fase, la direccion de la lista de cada pantalla, fila a fila (0xFF = no hay); p00:5461
+D 0x9409 0x96E9 paletas_de_fase_9409  Paleta de cada fase, 16 colores de 2 bytes (0RRR0BBB 00000GGG), ficha +0x0C
+D 0x96E9 0xA000 relleno_96E9  Relleno: todo 0xFF

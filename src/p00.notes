@@ -1662,3 +1662,4 @@ C 0x5a03 cual es el bloque especial = a
 C 0x5a06 ix -> los 6 actores de la pantalla
 C 0x5b2e a = lo que se suma a la y de los sprites
 # --- fin de anota ---
+D 0x4000 0x4011 cabecera  Cabecera del cartucho: "AB", INIT = 0x4011 (el arranque, p00:4011), STATEMENT, DEVICE y TEXT a 0, y un 0 de relleno

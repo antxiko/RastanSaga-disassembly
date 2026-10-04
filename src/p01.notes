@@ -189,12 +189,12 @@ L 0x6455 pon_cabecera
 C 0x6463 mezclador = 0xB8
 L 0x646C huerfana_silencio
 C 0x646C nadie la llama: sonido apagado y el mezclador todo cerrado
-D 0x6478 0x6481 resto_6478  datos sin uso delante de las cabeceras
+D 0x6478 0x6481 resto_6478  Dos rutinas de sonido sin llamada localizada: sub a / ld (D069),a / ret (sonido encendido) y ld a,1 / jr 6479 (D069 = 1, apagado); ni call ni jp en los 32 bancos y no se ejecutan en el recorrido medido (tools/omsx_lecturas.tcl)
 D 0x6481 0x64B1 voces_cabecera  Las cabeceras de las tres voces de musica (16 bytes cada una)
 F 0x6481 16
 D 0x64B1 0x64C1 voz_efectos  La cabecera de la voz de efectos (16 bytes)
 F 0x64B1 16
-D 0x64C1 0x64C4 resto_64C1  tres bytes sin uso
+D 0x64C1 0x64C4 envolvente_por_defecto  La envolvente a la que apuntan las cuatro cabeceras de voz (+0C y +0E, p01:6481 y p01:64B1): un paso F0 00 y el 0 que la acaba
 L 0x64C4 escribe_psg
 C 0x64C4 el registro A del PSG...
 C 0x64C8 ...vale E
@@ -388,3 +388,30 @@ C 0x6140 copia del registro del mapper de 0xA000 = a
 C 0x6143 registro del mapper: banco A en 0xA000
 C 0x6149 de -> contador de la tarea 0
 # --- fin de anota ---
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x64CC 0x64F0 tabla_de_efectos_64CC  La partitura de cada uno de los 18 efectos de sonido (p01:63FA)
+D 0x64F0 0x6526 tabla_de_musicas_64F0  Las tres partituras (una por voz) de cada una de las 9 musicas (p01:6437)
+D 0x6526 0x653C tabla_de_envolventes_de_volumen_6526  Las 11 envolventes de volumen que pide el codigo 0x80 de una partitura (p01:6338)
+D 0x653C 0x6542 envolventes_de_volumen_653C  Envolventes de volumen (p01:619B): pasos de 2 bytes (veces/cuadros, cambio) hasta un 0
+D 0x6542 0x6544 sonido_suelto_6542  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x6544 0x6548 relleno_6544  Relleno: todo 0xFF
+D 0x6548 0x654A sonido_suelto_6548  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x654A 0x6571 envolventes_de_volumen_654A  Envolventes de volumen (p01:619B): pasos de 2 bytes (veces/cuadros, cambio) hasta un 0
+D 0x6571 0x658B tabla_de_envolventes_de_tono_6571  Las 13 envolventes de tono que pide el codigo 0x81 de una partitura (p01:634F)
+D 0x658B 0x65C5 envolventes_de_tono_658B  Envolventes de tono (p01:61F7): pasos de 2 bytes (veces/cuadros, cambio) hasta un 0
+D 0x65C5 0x65C7 sonido_suelto_65C5  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x65C7 0x65D6 envolventes_de_tono_65C7  Envolventes de tono (p01:61F7): pasos de 2 bytes (veces/cuadros, cambio) hasta un 0
+D 0x65D6 0x65E9 partituras_65D6  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x65E9 0x65EA sonido_suelto_65E9  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x65EA 0x660A partituras_65EA  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x660A 0x660B sonido_suelto_660A  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x660B 0x663A partituras_660B  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x663A 0x663B sonido_suelto_663A  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x663B 0x664B partituras_663B  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x664B 0x664C sonido_suelto_664B  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x664C 0x6742 partituras_664C  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x6742 0x6743 sonido_suelto_6742  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x6743 0x68DE partituras_6743  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin
+D 0x68DE 0x68DF sonido_suelto_68DE  Bytes en la zona del sonido a los que no llega ninguna tabla, partitura ni envolvente, y que no se leen en el recorrido medido (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x68DF 0x8000 partituras_68DF  Partituras (p01:6253): nota = duracion + tono (2) o silencio (bit 7); 0x80/0x81 envolvente, 0x82 salto, 0x83 llamada, 0x84 vuelta, 0x85 repite, 0x90-0xBF repeticion, 0xC0 ruido, 0xE0 mezclador, 0xF0 volumen, 0 fin

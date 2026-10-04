@@ -1,0 +1,10 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0xA000 0xA640 tablas_de_bloques_A000  Tabla de bloques de 16x16 de una fase (p00:4777, ficha +2): cuatro palabras de tile por bloque, en filas de 8 bloques (64 bytes)
+D 0xA640 0xA680 bloques_sin_pantalla_A640  Filas de bloques de una tabla que no pinta el mapa de ninguna pantalla de su fase; ojo: p06:6226 repinta desde la copia del fondo (D5F4) y en el recorrido medido lee los bloques 0x70 y 0x71 de la tabla A2C0 (A640/A644) (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0xA680 0xAA00 tablas_de_bloques_A680  Tabla de bloques de 16x16 de una fase (p00:4777, ficha +2): cuatro palabras de tile por bloque, en filas de 8 bloques (64 bytes)
+D 0xAA00 0xAA40 bloques_sin_pantalla_AA00  Filas de bloques de una tabla que no pinta el mapa de ninguna pantalla de su fase; ojo: p06:6226 repinta desde la copia del fondo (D5F4) y en el recorrido medido lee los bloques 0x70 y 0x71 de la tabla A2C0 (A640/A644) (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0xAA40 0xBAC0 tablas_de_bloques_AA40  Tabla de bloques de 16x16 de una fase (p00:4777, ficha +2): cuatro palabras de tile por bloque, en filas de 8 bloques (64 bytes)
+D 0xBAC0 0xBB00 bloques_sin_pantalla_BAC0  Filas de bloques de una tabla que no pinta el mapa de ninguna pantalla de su fase; ojo: p06:6226 repinta desde la copia del fondo (D5F4) y en el recorrido medido lee los bloques 0x70 y 0x71 de la tabla A2C0 (A640/A644) (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0xBB00 0xBF40 tablas_de_bloques_BB00  Tabla de bloques de 16x16 de una fase (p00:4777, ficha +2): cuatro palabras de tile por bloque, en filas de 8 bloques (64 bytes)
+D 0xBF40 0xC000 relleno_BF40  Relleno: todo 0xFF

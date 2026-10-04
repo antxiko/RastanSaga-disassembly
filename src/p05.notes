@@ -524,3 +524,6 @@ C 0x64cb p00 pinta_actor_b5
 C 0x64e1 p00 baja_actor_b5
 C 0x653d p00 pinta_actor_b5
 # --- fin de anota ---
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x658F 0x8000 relleno_658F  Relleno: todo 0xFF

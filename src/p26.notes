@@ -1,0 +1,13 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x8000 0x8FAB definiciones_de_sprite_8000  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x8FAB 0x8FCD definiciones_sueltas_8FAB  Con el formato de una definicion de sprite (cabecera y cuadros); ni lista de poses ni puntero llega a ellas y en el recorrido medido no se animan (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x8FCD 0x959D definiciones_de_sprite_8FCD  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x959D 0x95C8 definiciones_sueltas_959D  Con el formato de una definicion de sprite (cabecera y cuadros); ni lista de poses ni puntero llega a ellas y en el recorrido medido no se animan (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x95C8 0x96C1 definiciones_de_sprite_95C8  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x96C1 0x9A00 relleno_96C1  Relleno: todo 0xFF
+D 0x9A00 0x9B08 definiciones_de_sprite_9A00  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x9B08 0x9D01 relleno_9B08  Relleno: todo 0xFF
+D 0x9D01 0x9EFE definiciones_de_sprite_9D01  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x9EFE 0x9F02 relleno_9EFE  Relleno: todo 0xFF
+D 0x9F02 0xA000 definiciones_de_sprite_9F02  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)

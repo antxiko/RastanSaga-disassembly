@@ -1,0 +1,6 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x6000 0x6E84 definiciones_de_jefe_6000  Definiciones de sprite de los jefes, mismo formato (p00:5AA5), con el banco 8 en 0x6000 (p00:58C3); listas en p03:7F76
+D 0x6E84 0x7C00 patrones_de_sprite_6E84  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x7C00 0x7C44 patrones_sin_definicion_7C00  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x7C44 0x8000 patrones_de_sprite_7C44  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca

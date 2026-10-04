@@ -1417,3 +1417,8 @@ C 0x96c1 no cabe: fuera
 C 0x96fc actor 1, byte +12 = a
 C 0x9704 actor 0, byte +25 = a
 # --- fin de anota ---
+D 0x9709 0x9713 puntos_de_jefe  Puntos de cada jefe al morir, palabra BCD por tipo 1-5 (500, 1000, 1500, 2000, 2500): p07:96E2 la indexa con 0x9707 + tipo * 2
+D 0x9713 0x9715 puntos_de_jefe_6  Sexta palabra (3000): p07:96DD solo deja pasar los tipos 1-5 (cp 6 / jr nc), asi que este indice no se lee
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x9715 0xA000 relleno_9715  Relleno: todo 0xFF

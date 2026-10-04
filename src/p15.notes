@@ -1,0 +1,49 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x8000 0x8040 relleno_8000  Relleno: todo 0xFF
+D 0x8040 0x8060 patrones_de_sprite_8040  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8060 0x80C0 relleno_8060  Relleno: todo 0xFF
+D 0x80C0 0x8100 patrones_de_sprite_80C0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8100 0x8160 relleno_8100  Relleno: todo 0xFF
+D 0x8160 0x8180 patrones_de_sprite_8160  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8180 0x81E0 relleno_8180  Relleno: todo 0xFF
+D 0x81E0 0x8200 patrones_de_sprite_81E0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8200 0x8280 relleno_8200  Relleno: todo 0xFF
+D 0x8280 0x82A0 patrones_de_sprite_8280  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x82A0 0x83C0 relleno_82A0  Relleno: todo 0xFF
+D 0x83C0 0x84E0 patrones_de_sprite_83C0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x84E0 0x8980 relleno_84E0  Relleno: todo 0xFF
+D 0x8980 0x89A0 patrones_de_sprite_8980  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x89A0 0x89E0 relleno_89A0  Relleno: todo 0xFF
+D 0x89E0 0x8A00 patrones_de_sprite_89E0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8A00 0x8A20 relleno_8A00  Relleno: todo 0xFF
+D 0x8A20 0x8AA0 patrones_de_sprite_8A20  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8AA0 0x8AC0 relleno_8AA0  Relleno: todo 0xFF
+D 0x8AC0 0x8B20 patrones_de_sprite_8AC0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8B20 0x8B40 relleno_8B20  Relleno: todo 0xFF
+D 0x8B40 0x8BA0 patrones_de_sprite_8B40  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8BA0 0x8BC0 relleno_8BA0  Relleno: todo 0xFF
+D 0x8BC0 0x8BE0 patrones_de_sprite_8BC0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8BE0 0x8C20 relleno_8BE0  Relleno: todo 0xFF
+D 0x8C20 0x8C60 patrones_de_sprite_8C20  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8C60 0x8CE0 relleno_8C60  Relleno: todo 0xFF
+D 0x8CE0 0x8D00 patrones_de_sprite_8CE0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8D00 0x8E20 relleno_8D00  Relleno: todo 0xFF
+D 0x8E20 0x8E40 patrones_de_sprite_8E20  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8E40 0x8E80 relleno_8E40  Relleno: todo 0xFF
+D 0x8E80 0x8EA0 patrones_de_sprite_8E80  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8EA0 0x9060 relleno_8EA0  Relleno: todo 0xFF
+D 0x9060 0x9080 patrones_de_sprite_9060  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x9080 0x91E0 relleno_9080  Relleno: todo 0xFF
+D 0x91E0 0x9200 patrones_de_sprite_91E0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x9200 0x95E0 relleno_9200  Relleno: todo 0xFF
+D 0x95E0 0x9600 patrones_de_sprite_95E0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x9600 0x9680 relleno_9600  Relleno: todo 0xFF
+D 0x9680 0x96A0 patrones_de_sprite_9680  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x96A0 0x97E0 relleno_96A0  Relleno: todo 0xFF
+D 0x97E0 0x9800 patrones_de_sprite_97E0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x9800 0x9860 relleno_9800  Relleno: todo 0xFF
+D 0x9860 0x98C0 patrones_de_sprite_9860  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x98C0 0x98E0 relleno_98C0  Relleno: todo 0xFF
+D 0x98E0 0x99C0 patrones_de_sprite_98E0  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x99C0 0xA000 relleno_99C0  Relleno: todo 0xFF

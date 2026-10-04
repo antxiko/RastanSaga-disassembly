@@ -1,0 +1,11 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x8000 0x80C4 patrones_de_sprite_8000  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x80C4 0x8184 patrones_sin_definicion_80C4  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x8184 0x8604 patrones_de_sprite_8184  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8604 0x86C4 patrones_sin_definicion_8604  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x86C4 0x8F84 patrones_de_sprite_86C4  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x8F84 0x9004 patrones_sin_definicion_8F84  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x9004 0x9EC4 patrones_de_sprite_9004  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0x9EC4 0x9F44 patrones_sin_definicion_9EC4  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x9F44 0xA000 patrones_de_sprite_9F44  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca

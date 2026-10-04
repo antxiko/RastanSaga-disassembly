@@ -602,3 +602,6 @@ C 0x8cd1 actor 0, byte +1 = a
 C 0x8ce6 actor 0, byte +2 = a
 C 0x8cf2 la lista o la cadena que se esta pintando = bc
 # --- fin de anota ---
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x8EB5 0xA000 relleno_8EB5  Relleno: todo 0xFF

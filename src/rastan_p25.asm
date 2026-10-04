@@ -10,8 +10,10 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0xa000..0xc000  (8192 bytes)
-DATA_A000:
+; DATOS tiles_A000: Tiles de 8x8 de SCREEN 5 (4 bits por punto, filas de 128
+;   bytes): p01:6077 copia los bancos 0x10-0x19 enteros a la VRAM
+;   0xa000..0xc000  (8192 bytes)
+DATA_tiles_A000:
 	defb 0eeh,0eeh,0eeh,0eeh,0e4h,0e4h,0e4h,0e4h,04eh,04eh,0eeh,0eeh,0eeh,0eeh,0eeh,0eeh	; a000  ........NN......
 	defb 0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h	; a010  ................
 	defb 0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0e4h,0eeh,0eeh,0eeh,0eeh	; a020  ................

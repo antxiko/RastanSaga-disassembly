@@ -1,0 +1,4 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0xA000 0xBC04 mapas_A000  Mapas de las fases (p00:5461): bloques empaquetados (0xD0 repite, EF EF acaba), columnas alargadas (p00:55C5, hasta 0xFF) y actores (p00:58F9: enemigos, objetos y bloque especial, cada lista con su 0xFF)
+D 0xBC04 0xC000 relleno_BC04  Relleno: todo 0xFF

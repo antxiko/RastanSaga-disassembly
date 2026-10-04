@@ -10,8 +10,11 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x8000..0xa000  (8192 bytes)
-DATA_8000:
+; DATOS mapas_8000: Mapas de las fases (p00:5461): bloques empaquetados (0xD0
+;   repite, EF EF acaba), columnas alargadas (p00:55C5, hasta 0xFF) y actores
+;   (p00:58F9: enemigos, objetos y bloque especial, cada lista con su 0xFF)
+;   0x8000..0xa000  (8192 bytes)
+DATA_mapas_8000:
 	defb 02dh,02fh,00fh,0d0h,0ffh,0ffh,02dh,02fh,00fh,0d0h,0ffh,0ffh,02dh,02fh,00fh,0d0h	; 8000  -/....-/....-/..
 	defb 0ffh,0ffh,02dh,02fh,00fh,0d0h,0ffh,0ffh,02dh,02fh,00fh,0d0h,0ffh,0ffh,02dh,02fh	; 8010  ..-/....-/....-/
 	defb 00fh,0d0h,0ffh,0ffh,02dh,02fh,00fh,0d0h,0ffh,0ffh,02dh,02fh,00fh,0d0h,0ffh,0ffh	; 8020  ....-/....-/....

@@ -10,8 +10,10 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x6000..0x8000  (8192 bytes)
-DATA_6000:
+; DATOS patrones_de_sprite_6000: Patrones de sprite de 16x16 (32 bytes) que
+;   nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+;   0x6000..0x7420  (5152 bytes)
+DATA_patrones_de_sprite_6000:
 	defb 004h,003h,001h,00fh,001h,03dh,008h,077h,0f7h,08bh,064h,0f9h,035h,00eh,016h,018h	; 6000  .....=.w..d.5...
 	defb 040h,060h,0f0h,098h,0f8h,088h,064h,098h,0b8h,070h,0e8h,0d4h,0b6h,045h,0f3h,063h	; 6010  @`....d..p...E.c
 	defb 007h,008h,01bh,017h,037h,037h,077h,064h,043h,08dh,00eh,00eh,00ch,004h,018h,03eh	; 6020  ....77wdC......>
@@ -334,8 +336,22 @@ DATA_6000:
 	defb 090h,0f0h,068h,018h,098h,098h,098h,008h,0d0h,050h,080h,0a0h,0a0h,0a0h,000h,0c0h	; 73f0  ..h......P......
 	defb 003h,000h,003h,003h,001h,001h,000h,000h,000h,000h,001h,001h,003h,001h,006h,00eh	; 7400  ................
 	defb 090h,0f0h,068h,018h,098h,090h,0d0h,080h,060h,020h,040h,060h,060h,040h,020h,0f8h	; 7410  ..h.....` @``@ .
+
+; ----------------------------------------------------------------------
+; DATOS patrones_sin_definicion_7420: Patrones de sprite de 32 bytes que no
+;   nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo
+;   pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido
+;   medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+;   0x7420..0x7440  (32 bytes)
+DATA_patrones_sin_definicion_7420:
 	defb 003h,000h,003h,003h,001h,001h,000h,000h,000h,000h,001h,001h,002h,007h,003h,001h	; 7420  ................
 	defb 090h,0f0h,068h,09ch,08eh,0c7h,0c2h,09dh,06bh,0a0h,0c0h,080h,000h,000h,080h,0c0h	; 7430  ..h.....k.......
+
+; ----------------------------------------------------------------------
+; DATOS patrones_de_sprite_7440: Patrones de sprite de 16x16 (32 bytes) que
+;   nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+;   0x7440..0x7620  (480 bytes)
+DATA_patrones_de_sprite_7440:
 	defb 020h,030h,030h,030h,030h,030h,030h,030h,030h,030h,031h,013h,02eh,03ch,018h,000h	; 7440   0000000001..<..
 	defb 011h,013h,00eh,002h,001h,006h,01fh,02fh,070h,0cfh,008h,007h,000h,000h,000h,000h	; 7450  ......./p.......
 	defb 0c8h,0e8h,050h,0c0h,020h,0d0h,038h,030h,0d4h,02ch,0d2h,023h,0c1h,080h,0c0h,040h	; 7460  ..P. .80.,.#...@
@@ -366,8 +382,22 @@ DATA_6000:
 	defb 0c0h,000h,0c0h,0c0h,0c0h,080h,080h,080h,000h,080h,080h,080h,080h,000h,0c0h,0e0h	; 75f0  ................
 	defb 009h,00fh,016h,018h,019h,009h,00bh,001h,006h,004h,002h,006h,006h,002h,004h,01fh	; 7600  ................
 	defb 0c0h,000h,0c0h,0c0h,080h,080h,000h,000h,000h,000h,080h,080h,0c0h,080h,060h,070h	; 7610  ..............`p
+
+; ----------------------------------------------------------------------
+; DATOS patrones_sin_definicion_7620: Patrones de sprite de 32 bytes que no
+;   nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo
+;   pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido
+;   medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+;   0x7620..0x7640  (32 bytes)
+DATA_patrones_sin_definicion_7620:
 	defb 009h,00fh,016h,039h,071h,0e3h,043h,0b9h,0d6h,005h,003h,001h,000h,000h,001h,003h	; 7620  ...9q.C.........
 	defb 0c0h,000h,0c0h,0c0h,080h,080h,000h,000h,000h,000h,080h,080h,040h,0e0h,0c0h,080h	; 7630  ............@...
+
+; ----------------------------------------------------------------------
+; DATOS patrones_de_sprite_7640: Patrones de sprite de 16x16 (32 bytes) que
+;   nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+;   0x7640..0x8000  (2496 bytes)
+DATA_patrones_de_sprite_7640:
 	defb 000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,001h,003h,003h,002h	; 7640  ................
 	defb 013h,017h,00ah,003h,004h,00bh,01ch,00ch,02bh,034h,04bh,0c4h,083h,001h,003h,002h	; 7650  ........+4K.....
 	defb 088h,0c8h,070h,040h,080h,060h,0f8h,0f4h,00eh,0f3h,010h,0e0h,000h,000h,000h,000h	; 7660  ..p@.`..........

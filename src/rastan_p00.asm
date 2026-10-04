@@ -10,8 +10,10 @@
 
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x4000..0x4011  (17 bytes)
-DATA_4000:
+; DATOS cabecera: Cabecera del cartucho: "AB", INIT = 0x4011 (el arranque,
+;   p00:4011), STATEMENT, DEVICE y TEXT a 0, y un 0 de relleno
+;   0x4000..0x4011  (17 bytes)
+DATA_cabecera:
 	defb 041h,042h,011h,040h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h	; 4000  AB.@............
 	defb 000h	; 4010
 

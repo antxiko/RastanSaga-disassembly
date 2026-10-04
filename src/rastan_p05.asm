@@ -670,8 +670,9 @@ decorado_destino:
 	jp siguiente_cosa		;658c   ; la siguiente
 
 ; ----------------------------------------------------------------------
-; DATOS sin identificar  0x658f..0x8000  (6769 bytes)
-DATA_658F:
+; DATOS relleno_658F: Relleno: todo 0xFF
+;   0x658f..0x8000  (6769 bytes)
+DATA_relleno_658F:
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; 658f  ................
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; 659f  ................
 	defb 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0ffh	; 65af  ................

@@ -1,0 +1,8 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0x8000 0x84E3 definiciones_de_sprite_8000  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x84E3 0x84ED definiciones_sueltas_84E3  Con el formato de una definicion de sprite (cabecera y cuadros); ni lista de poses ni puntero llega a ellas y en el recorrido medido no se animan (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x84ED 0x8541 definiciones_de_sprite_84ED  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x8541 0x854D definiciones_sueltas_8541  Con el formato de una definicion de sprite (cabecera y cuadros); ni lista de poses ni puntero llega a ellas y en el recorrido medido no se animan (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0x854D 0x9012 definiciones_de_sprite_854D  Definiciones de sprite (p00:5AA5): base de patrones (2), numero de cuadros (1) y sus direcciones; cuadro = duracion, n sprites, n x (patron, x, y, juego)
+D 0x9012 0xA000 mapas_9012  Mapas de las fases (p00:5461): bloques empaquetados (0xD0 repite, EF EF acaba), columnas alargadas (p00:55C5, hasta 0xFF) y actores (p00:58F9: enemigos, objetos y bloque especial, cada lista con su 0xFF)

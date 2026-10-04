@@ -1,0 +1,9 @@
+
+# Datos recorridos por tools/datos.py (tools/notas_de_datos.py)
+D 0xA000 0xA244 patrones_de_sprite_A000  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0xA244 0xA424 patrones_sin_definicion_A244  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0xA424 0xA724 patrones_de_sprite_A424  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0xA724 0xA9C4 patrones_sin_definicion_A724  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0xA9C4 0xAB64 patrones_de_sprite_A9C4  Patrones de sprite de 16x16 (32 bytes) que nombra alguna definicion; p00:4534 copia cada uno a la VRAM cuando toca
+D 0xAB64 0xABC4 patrones_sin_definicion_AB64  Patrones de sprite de 32 bytes que no nombra ninguna definicion recorrida por tools/datos.py; este banco solo lo pone la copia de patrones (p00:4534, y p00:58C3 el 8), y en el recorrido medido no se copia ninguno (tools/omsx_lecturas.tcl por las 257 pantallas)
+D 0xABC4 0xC000 relleno_ABC4  Relleno: todo 0xFF
