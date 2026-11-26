@@ -84,79 +84,6 @@ PORTADA = {
     ),
 }
 
-HALLAZGOS = {
-    "es": [
-        ("La fase del drag&oacute;n que se salta",
-         "<p>La fase 0x11 tiene su ficha, su paleta y su pantalla: un "
-         "drag&oacute;n alado sobre el mar, con 130 tiles que no usa ninguna "
-         "otra. <code>p00:5318</code> la salta: de la 0x10 se pasa a la "
-         "0x12.</p><p>Montada desde la ROM.</p>"),
-        ("Un truco de pruebas en la cabecera",
-         "<p>El byte 0x4010 vale 0. Puesto a 1, la tecla 7 pasa a la fase "
-         "siguiente, la 6 a la anterior y BS acaba la partida "
-         "(<code>p00:5321</code>, <code>p00:5349</code>); en la "
-         "presentaci&oacute;n, 4 y 5 cambian la p&aacute;gina de VRAM que se ve "
-         "(<code>p00:4E41</code>).</p><p>Medido en openMSX con una copia de la "
-         "ROM con ese byte a 1.</p>"),
-        ("Un trono sin colocar",
-         "<p>95 tiles del banco 0x19 forman un hombre sentado en un trono. No "
-         "hay tabla que los coloque ni rutina localizada que los pinte.</p>"
-         "<p>La colocaci&oacute;n es la de la l&aacute;mina de The Cutting Room "
-         "Floor, cotejada tile a tile.</p>"),
-        ("Un final sin pintar",
-         "<p>El b&aacute;rbaro mirando al horizonte, con los bloques 0x2A-0x57 "
-         "de la tabla del t&iacute;tulo. La tabla se corta en 0x6000, al final "
-         "del banco 0, y las dos &uacute;ltimas filas de tiles se quedan fuera "
-         "de ella. Ninguna rutina localizada lo pinta, y sus bloques no se leen "
-         "en el recorrido de las 257 pantallas.</p><p>La paleta no est&aacute; "
-         "en la ROM: es la de The Cutting Room Floor.</p>"),
-        ("La ronda 6 no tiene jefe",
-         "<p>Las rondas salen de la fase (<code>p00:566C</code>: fase / 3 + 1). "
-         "A la 6 le tocan la 0x0F, la 0x10 y la 0x11, y la 0x11 es la que se "
-         "salta: dos fases y ninguna sala de jefe. La 0x11 ocupa el sitio de "
-         "esa sala y, como las cinco salas de jefe, es de una sola "
-         "pantalla.</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("El &uacute;ltimo byte de cada 16 KB",
-         "<p>Los tiles se copian a la VRAM de 16 KB en 16 KB con LDIRVM de "
-         "0x3FFF bytes (<code>p01:6077</code>): el &uacute;ltimo byte de cada "
-         "trozo se queda a 0.</p><p>Cotejado contra la VRAM de openMSX.</p>"),
-    ],
-    "en": [
-        ("The dragon stage that gets skipped",
-         "<p>Stage 0x11 has its record, its palette and its screen: a winged "
-         "dragon over the sea, with 130 tiles no other stage uses. "
-         "<code>p00:5318</code> skips it: from 0x10 the game goes to "
-         "0x12.</p><p>Built from the ROM.</p>"),
-        ("A test cheat in the header",
-         "<p>Byte 0x4010 is 0. Set to 1, key 7 goes to the next stage, 6 to "
-         "the previous one and BS ends the game (<code>p00:5321</code>, "
-         "<code>p00:5349</code>); in the attract sequence, 4 and 5 change the "
-         "VRAM page on display (<code>p00:4E41</code>).</p><p>Measured in "
-         "openMSX on a copy of the ROM with that byte set to 1.</p>"),
-        ("A throne with no layout",
-         "<p>95 tiles in bank 0x19 make up a man sitting on a throne. There is "
-         "no table that lays them out and no routine found that draws "
-         "them.</p><p>The layout is the one in The Cutting Room Floor's "
-         "picture, checked tile by tile.</p>"),
-        ("An ending never drawn",
-         "<p>The barbarian looking at the horizon, with blocks 0x2A-0x57 of "
-         "the title's table. The table is cut at 0x6000, at the end of bank 0, "
-         "and the last two rows of tiles fall outside it. No routine found "
-         "draws it, and its blocks are not read in the run through the 257 "
-         "screens.</p><p>The palette is not in the ROM: it is The Cutting Room "
-         "Floor's.</p>"),
-        ("Round 6 has no boss",
-         "<p>The round comes from the stage (<code>p00:566C</code>: stage / 3 "
-         "+ 1). Round 6 gets 0x0F, 0x10 and 0x11, and 0x11 is the one that is "
-         "skipped: two stages and no boss room. 0x11 sits where that room "
-         "would be and, like the five boss rooms, is a single screen.</p>"
-         "<p>Read in the code.</p>"),
-        ("The last byte of every 16 KB",
-         "<p>The tiles go to VRAM 16 KB at a time with an LDIRVM of 0x3FFF "
-         "bytes (<code>p01:6077</code>): the last byte of each piece stays at "
-         "0.</p><p>Checked against openMSX's VRAM.</p>"),
-    ],
-}
 
 # (imagen, pie en castellano, pie en ingles). El logotipo de la cabecera es
 # LOGOTIPO: el titulo que pinta el cartucho, no un montaje.
@@ -215,3 +142,40 @@ GALERIA = [
      "El texto del final (<code>p04:8D01</code>) con la fuente del cartucho.",
      "The ending text (<code>p04:8D01</code>) in the cartridge's own font."),
 ]
+ESTILO = '\n:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;\n  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}\n@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;\n  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}\n:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;\n  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}\n:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;\n  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}\n*{box-sizing:border-box}\nbody{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;\n  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}\n.w{max-width:1120px;margin:0 auto}\n.n{max-width:68ch}\nh1,h2,h3,h4{font-weight:400;text-wrap:balance}\na{color:var(--cyan)}\nimg{image-rendering:pixelated;max-width:100%;height:auto;display:block}\nheader.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;\n  padding:4rem 0 2rem;text-align:center}\nheader.top img{width:min(100%,642px)}\n.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}\n.claim b{color:var(--tinta);font-weight:400}\n.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;\n  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);\n  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}\n.ficha b{color:var(--rojo);font-weight:400}\nnav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;\n  font-size:12px;letter-spacing:.08em;text-transform:uppercase}\nnav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}\nnav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}\nnav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);\n  margin-bottom:1rem}\nsection{margin-top:4.5rem;scroll-margin-top:1rem}\nsection>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;\n  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}\n.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);\n  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}\n.cifra{background:var(--panel);padding:1.1rem}\n.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;\n  font-variant-numeric:tabular-nums;line-height:1.2}\n.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}\n.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}\n.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}\n.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}\n.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}\n.hall p{margin:0 0 1rem}\npre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;\n  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}\n.par{display:grid;gap:1.25rem;grid-template-columns:1fr}\n@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}\n.par figure{margin:0}\ntable{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;\n  overflow-x:auto}\nth,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}\nth{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}\ntd.num{font-variant-numeric:tabular-nums;color:var(--oro)}\n.nivel{margin-top:2rem}\n.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}\n.nivel em{color:var(--cyan);font-style:normal}\n.sep{color:var(--suave);margin:0 .6rem}\n.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}\n.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}\n.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;\n  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}\n.dir{font-variant-numeric:tabular-nums;color:var(--verde)}\nfooter{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);\n  color:var(--suave);font-size:12px}\n\n/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un\n   100% mal leido hace mas dano que no ponerlo. */\n.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;\n  padding:1rem 1.2rem;max-width:900px;border-radius:4px}\n.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}\n.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));\n  gap:1.5rem;margin:1.5rem 0}\n.galeria figure{margin:0}\n.galeria img{width:100%;height:auto;image-rendering:pixelated;\n  border:1px solid var(--linea);border-radius:3px}\n.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}\naudio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}\n'
+
+# La portada: las cifras y el pie tal como estaban
+for _i, _c in {'es': ([('100 %', 'del binario explicado'), ('1.406', 'rutinas con nombre'), ('46,1 %', 'del listado comentado'), ('29.820', 'bytes de código'), ('232.324', 'bytes de datos'), ('0', 'bytes sin identificar')], 'El cartucho en cifras', 'Esto es trabajo de documentación y preservación: el código y los gráficos siguen siendo de sus autores y de Taito, y la imagen del cartucho no se distribuye.'), 'en': ([('100%', 'of the binary explained'), ('1,406', 'named routines'), ('46.1%', 'of the listing commented'), ('29,820', 'bytes of code'), ('232,324', 'bytes of data'), ('0', 'bytes unidentified')], 'The cartridge in numbers', 'This is documentation and preservation work: the code and artwork still belong to their authors and to Taito, and the cartridge image is not distributed.')}.items():
+    PORTADA[_i]["cifras"] = _c[0]
+    PORTADA[_i]["h_num"] = _c[1]
+    PORTADA[_i]["pie_leg"] = _c[2]
+
+PAGINAS = [
+    [('THE-GAME.html', 'EL-JUEGO.html', 'The game', 'El juego',
+      'what the game is and how it plays',
+      'qu&eacute; es el juego y c&oacute;mo se juega'),
+     ('THE-PICTURES.html', 'LAS-IMAGENES.html', 'What the cartridge draws', 'Lo que el cartucho dibuja',
+      'every picture drawn from the ROM, with its caption',
+      'todas las im&aacute;genes dibujadas desde la ROM, con su pie')],
+    [('CURIOSITIES.html', 'CURIOSIDADES.html', 'Curiosities', 'Curiosidades',
+      'what turned up when taking it apart, and what is still open',
+      'lo que apareci&oacute; al desmontarlo y lo que queda abierto')],
+    [('UNDER-THE-HOOD.html', 'POR-DENTRO.html', 'Under the hood', 'Por dentro',
+      'getting started, the cartridge, the code and the emulator',
+      'empezar, el cartucho, el c&oacute;digo y el emulador')],
+]
+
+VIEJAS = {
+    'FINDINGS.html': 'CURIOSITIES.html',
+    'HALLAZGOS.html': 'CURIOSIDADES.html',
+    'GETTING-STARTED.html': 'UNDER-THE-HOOD.html',
+    'EMPEZAR.html': 'POR-DENTRO.html',
+    'IN-THE-EMULATOR.html': 'UNDER-THE-HOOD.html',
+    'EN-EL-EMULADOR.html': 'POR-DENTRO.html',
+    'OPEN-QUESTIONS.html': 'CURIOSITIES.html',
+    'PREGUNTAS-ABIERTAS.html': 'CURIOSIDADES.html',
+    'THE-CARTRIDGE.html': 'UNDER-THE-HOOD.html',
+    'EL-CARTUCHO.html': 'POR-DENTRO.html',
+    'THE-CODE.html': 'UNDER-THE-HOOD.html',
+    'EL-CODIGO.html': 'POR-DENTRO.html',
+}

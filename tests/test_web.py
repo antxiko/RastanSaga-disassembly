@@ -83,8 +83,8 @@ class Web(unittest.TestCase):
             "README.md": (d_en + "%", "{:,}".format(C.RUTINAS), "{:,}".format(C.CODIGO)),
             "README.es.md": (d_es + " %", "{:,}".format(C.RUTINAS).replace(",", "."),
                              "{:,}".format(C.CODIGO).replace(",", ".")),
-            os.path.join("docs", "THE-CODE.md"): (d_en + "%", "{:,}".format(C.INSTRUCCIONES)),
-            os.path.join("docs", "es", "EL-CODIGO.md"): (d_es + " %",),
+            os.path.join("docs", "UNDER-THE-HOOD.md"): (d_en + "%", "{:,}".format(C.INSTRUCCIONES)),
+            os.path.join("docs", "es", "POR-DENTRO.md"): (d_es + " %",),
         }
         for fichero, cifras in textos.items():
             texto = _lee(os.path.join(RAIZ, fichero))
@@ -111,14 +111,18 @@ class Web(unittest.TestCase):
             self.assertIn(C.NOMBRE, _lee(os.path.join(RAIZ, f)), f)
 
     def test_las_siete_paginas_en_los_dos_idiomas(self):
-        en = ("GETTING-STARTED", "THE-GAME", "THE-CARTRIDGE", "THE-CODE", "FINDINGS",
-              "IN-THE-EMULATOR", "OPEN-QUESTIONS")
-        es = ("EMPEZAR", "EL-JUEGO", "EL-CARTUCHO", "EL-CODIGO", "HALLAZGOS",
-              "EN-EL-EMULADOR", "PREGUNTAS-ABIERTAS")
-        for carpeta, paginas in (("docs", en), (os.path.join("docs", "es"), es)):
-            for p in paginas:
-                for ext in (".md", ".html"):
-                    self.assertTrue(os.path.exists(os.path.join(RAIZ, carpeta, p + ext)), p + ext)
+        """Las paginas de contenido_web.PAGINAS, en un .md por idioma."""
+        import sys
+        _R = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        DOCS = os.path.join(_R, "docs")
+        sys.path.insert(0, os.path.join(_R, "tools"))
+        import contenido_web as _C
+        for b in _C.PAGINAS:
+            for p in b:
+                self.assertTrue(os.path.exists(os.path.join(DOCS, p[0][:-5] + ".md")), p[0])
+                self.assertTrue(os.path.exists(os.path.join(DOCS, "es", p[1][:-5] + ".md")), p[1])
+        for carpeta in (DOCS, os.path.join(DOCS, "es")):
+            self.assertTrue(os.path.exists(os.path.join(carpeta, "index.html")))
 
     def test_la_galeria_existe(self):
         for fich, _, _ in C.GALERIA + [(C.LOGOTIPO, "", "")]:

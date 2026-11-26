@@ -35,7 +35,7 @@ sha256  03fa40fa0fa58f252ad9cd9e78b2bc01a0127b5509fe1babdb5a9443ec1f705e
 make
 ```
 
-The details, in [Getting started](docs/GETTING-STARTED.md).
+The details, in [Getting started](docs/UNDER-THE-HOOD.md).
 
 ## Notice
 

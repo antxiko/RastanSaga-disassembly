@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The game — Rastan Saga (Taito, 1988)</title>
+<title>{{ page.title }} — Rastan Saga (Konami, 1988)</title>
 <style>
 :root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
   --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
@@ -82,42 +82,6 @@ footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
 .galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
 audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 </style>
-<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html" style=color:var(--tinta)>The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="IN-THE-EMULATOR.html">In the emulator</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EL-JUEGO.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
-<h1 id="the-game">The game</h1>
-<p>Rastan goes through seven rounds. Each stage is a grid of 256 × 176 pixel screens, 11 rows of 16 blocks of 16 × 16, and you go from one to the next by leaving through an edge (<code>p00:5367</code>).</p>
-<h2 id="the-title-screen">The title screen</h2>
-<p>Seven rows of nine blocks (<code>p00:5189</code>) with their palette (<code>p00:5207</code>), the Taito sign (<code>p00:5227</code>) and two lines of text in the game&#x27;s font.</p>
-<p><img src="imagenes/titulo.png" alt="The title screen"></p>
-<h2 id="the-rounds">The rounds</h2>
-<p>There are 24 stage records of 16 bytes (<code>p02:9035</code>): the screen table, the block table, the size, the starting screen, the two backgrounds, the palette, the map bank and where Rastan appears. The round comes from the stage (<code>p00:566C</code>):</p>
-<table><tr><th>round</th><th>stages</th><th>what is there</th></tr><tr><td>1-5</td><td>three each</td><td>the outdoors, the castle and the boss room</td></tr><tr><td>6</td><td>0x0F, 0x10</td><td>two stages and no boss: 0x11 is skipped</td></tr><tr><td>7</td><td>0x12-0x16</td><td>five stages that repeat the five bosses</td></tr></table>
-<p>0x17 is the ending. In all, 257 screens; 255 in the 22 stages that are played.</p>
-<p><img src="imagenes/ronda_1.png" alt="Round 1"></p>
-<p>Round 1: the outdoors, the castle and the boss room, with the enemies where they come out (<code>p00:58F9</code>), the boss where its routine puts it (<code>p04:8016</code>) and Rastan on the starting screen, framed.</p>
-<p><img src="imagenes/ronda_2.png" alt="Round 2"></p>
-<p>Round 2: stages 0x03, 0x04 and 0x05.</p>
-<p><img src="imagenes/ronda_3.png" alt="Round 3"></p>
-<p>Round 3: stages 0x06, 0x07 and 0x08.</p>
-<p><img src="imagenes/ronda_4.png" alt="Round 4"></p>
-<p>Round 4: stages 0x09, 0x0A and 0x0B.</p>
-<p><img src="imagenes/ronda_5.png" alt="Round 5"></p>
-<p>Round 5: stages 0x0C, 0x0D and 0x0E.</p>
-<p><img src="imagenes/ronda_6.png" alt="Round 6"></p>
-<p>Round 6: stages 0x0F and 0x10.</p>
-<p><img src="imagenes/ronda_7.png" alt="Round 7"></p>
-<p>Round 7: five stages that repeat the five bosses, each on a given screen (<code>p04:8BF4</code>).</p>
-<h2 id="a-screen">A screen</h2>
-<p>An opaque background for the top row and another for the rest, the list of foreground blocks, the columns that stretch downwards (<code>p00:55C5</code>) and, at the end, the actors: up to 8 enemies, 3 objects and a special block (<code>p00:58F9</code>). The lists are packed: 0xD0 repeats a block, EF EF ends.</p>
-<h2 id="rastan">Rastan</h2>
-<p>Three sprite layers (<code>p06:6134</code>): the body (<code>p06:639F</code>), the second layer (<code>p06:64B3</code>) and the weapon, which comes from one of four tables (<code>p06:6397</code>) depending on what he carries. His 92 poses have 48 different combinations.</p>
-<p><img src="imagenes/rastan.png" alt="Rastan"></p>
-<h2 id="the-actors">The actors</h2>
-<p>37 types (<code>p00:4C68</code>), each with its list of poses; the definitions of types 0x01-0x17 are in bank 30 and the rest in bank 26. An enemy in a screen&#x27;s list is a code that <code>p00:57D3</code> turns into type and pose; with bit 7 set, it is a piece of animated scenery.</p>
-<p><img src="imagenes/actores.png" alt="The actors"></p>
-<h2 id="the-bosses">The bosses</h2>
-<p>Boss rooms have no actors in their list: each boss is created by its routine in p04 (<code>p04:8016</code>, <code>8262</code>, <code>848E</code>, <code>8799</code> and <code>89CE</code>), types 1 to 5, with their poses at <code>p03:7F76</code>, their patterns in bank 8, and 320, 320, 160, 320 and 400 of life (measured). When one dies it becomes type 7, the death (<code>p03:7FDA</code>), and its points are added: 500, 1000, 1500, 2000 and 2500 (<code>p07:9709</code>). In round 7, each comes out on a given screen (<code>p04:8BF4</code>-<code>8C4B</code>).</p>
-<p><img src="imagenes/jefes.png" alt="The bosses"></p>
-<h2 id="the-ending">The ending</h2>
-<p>Stage 0x17: music 5, the screen cleared and the text at <code>p04:8D01</code> scrolling up line by line; then the Taito sign, and the game stays there.</p>
-<p><img src="imagenes/creditos.png" alt="The credits"></p>
-<footer><p><em>Rastan Saga</em> was published by Taito for the MSX2 in 1988, on a 256 KB cartridge. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>
+<div class="w"><nav class="top"><a href="index.html"{% if page.name == "index.md" %} style=color:var(--tinta){% endif %}>Portada</a><span style="opacity:.35">|</span><a href="EL-JUEGO.html"{% if page.name == "EL-JUEGO.md" %} style=color:var(--tinta){% endif %}>El juego</a><a href="LAS-IMAGENES.html"{% if page.name == "LAS-IMAGENES.md" %} style=color:var(--tinta){% endif %}>Lo que el cartucho dibuja</a><span style="opacity:.35">|</span><a href="CURIOSIDADES.html"{% if page.name == "CURIOSIDADES.md" %} style=color:var(--tinta){% endif %}>Curiosidades</a><span style="opacity:.35">|</span><a href="POR-DENTRO.html"{% if page.name == "POR-DENTRO.md" %} style=color:var(--tinta){% endif %}>Por dentro</a><a href="../{% case page.name %}{% when "EL-JUEGO.md" %}THE-GAME.html{% when "LAS-IMAGENES.md" %}THE-PICTURES.html{% when "CURIOSIDADES.md" %}CURIOSITIES.html{% when "POR-DENTRO.md" %}UNDER-THE-HOOD.html{% else %}index.html{% endcase %}" style="margin-left:auto;color:var(--oro)">English</a></nav>
+{{ content }}
+<footer><p><em>Rastan Saga</em> lo public&oacute; Taito para MSX2 en 1988, en un cartucho de 256 KB. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservaci&oacute;n, estudio y documentaci&oacute;n, y la imagen del cartucho no se distribuye.</p></footer></div>
